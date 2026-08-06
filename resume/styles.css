@@ -1416,11 +1416,20 @@ body.sidebar-expanded {
 body.proj-open { overflow: hidden; }
 
 /* ── Responsive ── */
+@media (max-width: 700px) {
+  .proj-chip {
+    display: inline-flex;
+    margin-left: 0;
+    margin-top: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.75rem;
+  }
+}
+
 @media (max-width: 600px) {
   .proj-card {
     padding: 1.25rem;
     max-height: 90vh;
   }
-  .proj-chip { display: none; }
   .proj-modal-title { font-size: 1rem; }
 }

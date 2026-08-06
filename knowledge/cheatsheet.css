@@ -1,0 +1,656 @@
+/*
+ * cheatsheet.css — Shared stylesheet for all Knowledge Base cheatsheets
+ * Covers: dark default theme, responsive tables, mobile-first, sticky header,
+ *         dark/light toggle, readable typography, smooth transitions.
+ *
+ * Per-page accent customisation: set --accent and --accent-h2 on <body> or :root
+ */
+
+/* ─────────────────────────────────────────────
+   1. RESET & BASE
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;          /* base; everything else is relative */
+}
+
+/* ─────────────────────────────────────────────
+   2. DESIGN TOKENS (dark mode default)
+───────────────────────────────────────────── */
+:root {
+  /* surfaces */
+  --bg:          #0d1117;
+  --bg-card:     #161b22;
+  --bg-section:  #111318;
+  --bg-header:   rgba(13,17,23,0.94);
+  --bg-code:     #1e1e1e;
+  --bg-toc:      #161b22;
+  --bg-row-alt:  rgba(255,255,255,0.03);
+  --bg-row-hover:rgba(88,166,255,0.07);
+  --bg-toggle:   #21262d;
+
+  /* borders */
+  --border:      rgba(255,255,255,0.10);
+  --border-code: rgba(255,255,255,0.08);
+
+  /* text */
+  --text:        #e6edf3;
+  --text-muted:  #a8b4bf;
+  --text-dim:    #7d8590;
+  --text-code:   #d4d4d4;
+  --text-th:     #e6edf3;
+
+  /* accent — overridable per page */
+  --accent:      #58a6ff;
+  --accent-dim:  rgba(88,166,255,0.15);
+  --accent-h2:   #1e3a5f;   /* h2 background */
+  --accent-th:   #1e3a5f;   /* table header background */
+
+  /* syntax highlight */
+  --sh-cmd:   #4ec9b0;
+  --sh-cmt:   #6a9955;
+  --sh-kw:    #c586c0;
+  --sh-str:   #ce9178;
+  --sh-fn:    #dcdcaa;
+  --sh-val:   #b5cea8;
+  --sh-num:   #b5cea8;
+
+  /* radius & spacing */
+  --radius:   10px;
+  --radius-sm: 6px;
+  --transition: 0.2s ease;
+}
+
+/* ─────────────────────────────────────────────
+   3. LIGHT THEME (applied when body has .light)
+───────────────────────────────────────────── */
+body.light {
+  --bg:          #ffffff;
+  --bg-card:     #f6f8fa;
+  --bg-section:  #f0f2f5;
+  --bg-header:   rgba(255,255,255,0.95);
+  --bg-code:     #1e1e1e;
+  --bg-toc:      #f0f6ff;
+  --bg-row-alt:  #f8f9fa;
+  --bg-row-hover:#edf2f7;
+  --bg-toggle:   #eaeef2;
+
+  --border:      rgba(0,0,0,0.12);
+  --border-code: rgba(0,0,0,0.15);
+
+  --text:        #1a1a2e;
+  --text-muted:  #444f5c;
+  --text-dim:    #6b7280;
+  --text-code:   #d4d4d4;
+  --text-th:     #ffffff;
+}
+
+/* ─────────────────────────────────────────────
+   4. BODY
+───────────────────────────────────────────── */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-size: 0.9375rem;     /* 15px */
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+  transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ─────────────────────────────────────────────
+   5. STICKY HEADER BAR
+───────────────────────────────────────────── */
+.cs-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: var(--bg-header);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cs-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.cs-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.cs-back-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  text-decoration: none;
+}
+
+.cs-page-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cs-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Theme toggle button */
+.cs-theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-toggle);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+  line-height: 1;
+}
+.cs-theme-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ─────────────────────────────────────────────
+   6. PAGE HERO / TITLE AREA
+───────────────────────────────────────────── */
+.cs-hero {
+  text-align: center;
+  padding: 2.5rem 1.25rem 1.5rem;
+}
+
+.cs-hero h1 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  margin-bottom: 0.4rem;
+}
+
+.cs-hero .subtitle,
+body > p.subtitle,
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────
+   7. MAIN CONTENT WRAPPER
+───────────────────────────────────────────── */
+.cs-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+}
+
+/* fallback for pages without .cs-content wrapper */
+body > h1:first-of-type,
+body > p.subtitle,
+body > .toggle-all,
+body > .toc,
+body > h2,
+body > table,
+body > .section-desc,
+body > nav,
+body > footer {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─────────────────────────────────────────────
+   8. SECTION HEADINGS
+───────────────────────────────────────────── */
+h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  padding: 2rem 1.25rem 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 2rem 0 0.6rem;
+  padding: 0.55rem 0.9rem;
+  background: var(--accent-h2);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--accent);
+  line-height: 1.4;
+  scroll-margin-top: 60px;  /* offset for sticky header */
+}
+
+h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 1.25rem 0 0.5rem;
+}
+
+.section-desc {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0 0 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-dim);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────
+   9. TABLES — responsive with horizontal scroll
+───────────────────────────────────────────── */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+/* For pages that don't wrap tables yet, still allow scroll */
+table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+th {
+  background: var(--accent-th);
+  color: var(--text-th);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+tr:nth-child(even) { background: var(--bg-row-alt); }
+tr:last-child td   { border-bottom: none; }
+tr:hover           { background: var(--bg-row-hover); }
+
+td:first-child {
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────
+   10. CODE BLOCKS & INLINE CODE
+───────────────────────────────────────────── */
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace;
+  font-size: 0.82em;
+  background: var(--bg-toggle);
+  color: var(--accent);
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+pre {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  background: var(--bg-code);
+  color: var(--text-code);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  white-space: pre;
+  border: 1px solid var(--border-code);
+  margin: 0.35rem 0;
+}
+
+/* Syntax colours */
+pre .cmd { color: var(--sh-cmd); }
+pre .cmt { color: var(--sh-cmt); font-style: italic; }
+pre .kw  { color: var(--sh-kw);  }
+pre .str { color: var(--sh-str); }
+pre .fn  { color: var(--sh-fn);  }
+pre .val { color: var(--sh-val); }
+pre .num { color: var(--sh-num); }
+pre .flag{ color: var(--sh-str); }
+
+/* ─────────────────────────────────────────────
+   11. DETAILS / SUMMARY (collapsible examples)
+───────────────────────────────────────────── */
+details {
+  margin: 0.15rem 0;
+}
+
+details summary {
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  user-select: none;
+  padding: 0.15rem 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color var(--transition);
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: '▶';
+  font-size: 0.65rem;
+  transition: transform var(--transition);
+}
+details[open] summary::before { transform: rotate(90deg); }
+
+details summary:hover     { color: var(--accent); }
+details[open] summary     { color: var(--accent); font-weight: 500; }
+
+details pre {
+  margin-top: 0.4rem;
+}
+
+/* ─────────────────────────────────────────────
+   12. TABLE OF CONTENTS
+───────────────────────────────────────────── */
+.toc,
+nav#toc,
+nav.toc {
+  background: var(--bg-toc);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  column-count: 3;
+  column-gap: 1.25rem;
+}
+
+.toc h3,
+nav#toc h3,
+nav.toc h3 {
+  column-span: all;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.6rem;
+}
+
+.toc a,
+nav#toc a,
+nav.toc a {
+  display: block;
+  padding: 0.2rem 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  transition: color var(--transition);
+  break-inside: avoid;
+}
+.toc a:hover,
+nav#toc a:hover,
+nav.toc a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* ol inside nav */
+nav#toc ol,
+nav.toc ol {
+  padding-left: 1.1rem;
+}
+nav#toc li,
+nav.toc li {
+  margin: 0.2rem 0;
+  break-inside: avoid;
+}
+
+/* ─────────────────────────────────────────────
+   13. TOGGLE-ALL SWITCH
+───────────────────────────────────────────── */
+.toggle-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.toggle-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Custom toggle switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--bg-toggle);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  transition: background var(--transition);
+}
+.slider::before {
+  position: absolute;
+  content: '';
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  transition: transform var(--transition), background var(--transition);
+}
+input:checked + .slider { background: var(--accent); border-color: var(--accent); }
+input:checked + .slider::before { transform: translateX(20px); background: #fff; }
+
+/* ─────────────────────────────────────────────
+   14. CALLOUT BOXES (note / tip / warning)
+───────────────────────────────────────────── */
+.note, .tip, .warning, .qa-box {
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.note    { background: rgba(255,193,7,0.10);  border-left: 4px solid #ffc107; }
+.tip     { background: rgba(63,185,80,0.10);  border-left: 4px solid #3fb950; }
+.warning { background: rgba(240,81,51,0.10);  border-left: 4px solid #f05133; }
+
+.qa-box {
+  background: rgba(255,179,71,0.08);
+  border: 1px solid rgba(255,179,71,0.25);
+  border-left: 4px solid #ff9800;
+}
+.qa-box h4 { color: #ff9800; font-size: 0.85rem; margin-bottom: 0.35rem; }
+.qa-box p, .qa-box .answer { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; }
+.qa-box .answer { margin-top: 0.4rem; padding-left: 0.75rem; border-left: 2px solid rgba(255,152,0,0.4); }
+
+/* ─────────────────────────────────────────────
+   15. SPECIAL LABELS (Jenkins / GitLab / etc.)
+───────────────────────────────────────────── */
+.label {
+  display: inline-block;
+  padding: 0.1em 0.5em;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-right: 0.3rem;
+}
+.label-jenkins { background: rgba(211,47,47,0.15); color: #ef5350; border: 1px solid rgba(211,47,47,0.3); }
+.label-gitlab  { background: rgba(226,67,41,0.15);  color: #ff6d4a; border: 1px solid rgba(226,67,41,0.3); }
+
+/* ─────────────────────────────────────────────
+   16. FOOTER
+───────────────────────────────────────────── */
+.cs-footer,
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  padding: 1.25rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 2rem;
+}
+
+/* ─────────────────────────────────────────────
+   17. BACK-TO-TOP BUTTON
+───────────────────────────────────────────── */
+#back-to-top {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 300;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--transition), transform var(--transition);
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+#back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+#back-to-top:hover { filter: brightness(1.15); }
+
+/* ─────────────────────────────────────────────
+   18. RESPONSIVE — TABLET (≤ 900px)
+───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .toc,
+  nav#toc,
+  nav.toc {
+    column-count: 2;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   19. RESPONSIVE — MOBILE (≤ 600px)
+───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  html { font-size: 15px; }
+
+  body { padding: 0; }
+
+  h1 { font-size: 1.4rem; padding: 1.5rem 1rem 0.4rem; }
+  h2 { font-size: 0.9rem; padding: 0.5rem 0.75rem; }
+  h3 { font-size: 0.875rem; }
+
+  .cs-hero { padding: 1.5rem 1rem 1rem; }
+  .cs-content { padding: 0 0.85rem 3rem; }
+
+  /* TOC: single column */
+  .toc,
+  nav#toc,
+  nav.toc {
+    column-count: 1;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Tables: scroll container on small screens */
+  table { font-size: 0.78rem; min-width: 380px; }
+  th, td { padding: 0.4rem 0.55rem; }
+
+  /* Wider code blocks */
+  pre { font-size: 0.75rem; padding: 0.6rem 0.75rem; }
+
+  .toggle-all { margin-bottom: 1rem; }
+
+  .cs-page-title { display: none; }
+
+  #back-to-top { bottom: 1rem; right: 1rem; }
+}
+
+/* ─────────────────────────────────────────────
+   20. PRINT STYLES
+───────────────────────────────────────────── */
+@media print {
+  body { font-size: 10px; color: #000; background: #fff; }
+  .cs-header, #back-to-top, .cs-theme-btn, .toggle-all { display: none; }
+  h2 { break-after: avoid; break-before: page; background: #ddd; color: #000; border-left: 4px solid #555; }
+  h2:first-of-type { break-before: avoid; }
+  pre { white-space: pre-wrap; border: 1px solid #ccc; color: #000; background: #f5f5f5; }
+  code { background: #eee; color: #000; border: none; }
+  details { open: true; }
+  details[open] pre { break-inside: avoid; }
+  tr { break-inside: avoid; }
+  .toc, nav#toc { break-after: page; }
+  a { color: #000; text-decoration: underline; }
+}

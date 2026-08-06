@@ -4,62 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kubernetes Cheatsheet — Beginner to Advanced</title>
+    <link rel="stylesheet" href="cheatsheet.css">
     <style>
-        :root {
-            --k8s-blue: #326ce5;
-            --k8s-dark: #1e1e1e;
-            --code-fg: #d4d4d4;
-            --bg: #f5f7fa;
-            --text: #222;
-            --border: #ddd;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; max-width: 1200px; margin: 0 auto; }
-        h1 { color: var(--k8s-blue); font-size: 2.2rem; margin-bottom: 0.5rem; }
-        h1 span { font-size: 1rem; color: #666; display: block; margin-top: 0.25rem; }
-        h2 { color: var(--k8s-blue); border-bottom: 3px solid var(--k8s-blue); padding-bottom: 0.4rem; margin: 2.5rem 0 1rem; font-size: 1.5rem; }
-        nav { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0 2rem; }
-        nav h3 { color: var(--k8s-blue); margin-bottom: 0.75rem; }
-        nav ol { columns: 2; column-gap: 2rem; padding-left: 1.5rem; }
-        nav li { margin-bottom: 0.4rem; }
-        nav a { color: var(--k8s-blue); text-decoration: none; }
-        nav a:hover { text-decoration: underline; }
-        table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        th { background: var(--k8s-blue); color: #fff; padding: 0.75rem 1rem; text-align: left; font-size: 0.9rem; }
-        td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 0.9rem; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover { background: #f0f4ff; }
-        .cmd { font-family: 'Fira Code', 'Consolas', monospace; background: var(--k8s-dark); color: var(--code-fg); padding: 2px 6px; border-radius: 3px; font-size: 0.82rem; }
-        .cmt { color: #6a9955; font-style: italic; }
-        details { margin: 0; }
-        details summary { cursor: pointer; color: var(--k8s-blue); font-weight: 600; font-size: 0.82rem; }
-        details pre { background: var(--k8s-dark); color: var(--code-fg); padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.8rem; line-height: 1.5; margin-top: 0.5rem; white-space: pre; }
-        .note { background: #e8f0fe; border-left: 4px solid var(--k8s-blue); padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; font-size: 0.9rem; }
-        @media print {
-            body { padding: 0; font-size: 10pt; }
-            nav { break-after: page; }
-            h2 { break-before: page; }
-            details[open] pre { break-inside: avoid; }
-            table { font-size: 9pt; box-shadow: none; }
-            .cmd { font-size: 8pt; }
-        }
-        @media (max-width: 768px) {
-            nav ol { columns: 1; }
-            body { padding: 1rem; }
-            table { font-size: 0.8rem; }
-        }
-        .toggle-all { text-align: center; margin-bottom: 16px; }
-        .toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
-        input:checked + .slider { background: #4a90d9; }
-        input:checked + .slider:before { transform: translateX(20px); }
-        .section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+      :root {
+        --accent:    #7cb9e8;
+        --accent-h2: #1a2d6e;
+        --accent-th: #326ce5;
+        --accent-dim: rgba(124,185,232,0.12);
+      }
     </style>
 </head>
 <body>
+
+<header class="cs-header">
+  <div class="cs-header-left">
+    <a href="index.html" class="cs-back-btn">&#8592; Knowledge Base</a>
+    <span class="cs-page-title">Kubernetes Cheatsheet</span>
+  </div>
+  <div class="cs-header-right">
+    <button class="cs-theme-btn" id="themeToggle" title="Toggle light/dark mode">&#9788;</button>
+  </div>
+</header>
 
 <h1>☸ Kubernetes Cheatsheet <span>Beginner → Advanced | kubectl, Helm, Operators &amp; more</span></h1>
 
@@ -1697,13 +1662,33 @@ spec:
     <span class="cmd">kubectl get all -A</span> — overview of all workloads
 </div>
 
+<button id="back-to-top" title="Back to top">&#8679;</button>
+
 <script>
 document.getElementById('toggleAll').addEventListener('change', function() {
-  const details = document.querySelectorAll('details');
-  details.forEach(d => d.open = this.checked);
-  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+  document.querySelectorAll('details').forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All' : 'Expand All Examples';
+});
+const themeBtn = document.getElementById('themeToggle');
+if (localStorage.getItem('cs-theme') === 'light') document.body.classList.add('light');
+themeBtn.textContent = document.body.classList.contains('light') ? '☽' : '☀';
+themeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  themeBtn.textContent = isLight ? '☽' : '☀';
+  localStorage.setItem('cs-theme', isLight ? 'light' : 'dark');
+});
+const btt = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400));
+btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+document.querySelectorAll('table').forEach(t => {
+  if (!t.parentElement.classList.contains('table-wrap')) {
+    const w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  }
 });
 </script>
-
 </body>
 </html>

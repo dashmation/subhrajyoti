@@ -4,53 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CI/CD Cheatsheet — Jenkins &amp; GitLab CI</title>
+<link rel="stylesheet" href="cheatsheet.css">
 <style>
-:root { --header: #d32f2f; --bg: #fafafa; --code-bg: #1e1e1e; --code-fg: #d4d4d4; --border: #ddd; --jenkins: #d32f2f; --gitlab: #e24329; }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #222; line-height: 1.6; padding: 2rem; max-width: 1200px; margin: auto; }
-h1 { color: var(--header); border-bottom: 3px solid var(--header); padding-bottom: 0.5rem; margin-bottom: 1rem; }
-h2 { color: var(--header); margin: 2rem 0 1rem; padding: 0.3rem 0.6rem; border-left: 5px solid var(--header); background: #fce4ec; }
-h3 { margin: 1rem 0 0.5rem; color: #333; }
-table { width: 100%; border-collapse: collapse; margin: 1rem 0 2rem; font-size: 0.95rem; }
-th { background: var(--header); color: #fff; padding: 0.6rem; text-align: left; }
-td { border: 1px solid var(--border); padding: 0.5rem 0.6rem; vertical-align: top; }
-tr:nth-child(even) { background: #f5f5f5; }
-details { margin: 0; }
-details summary { cursor: pointer; color: var(--header); font-weight: 600; font-size: 0.85rem; }
-details pre { background: var(--code-bg); color: var(--code-fg); padding: 0.8rem; border-radius: 4px; overflow-x: auto; font-size: 0.82rem; margin-top: 0.3rem; white-space: pre; line-height: 1.5; }
-.cmd { color: #9cdcfe; }
-.cmt { color: #6a9955; font-style: italic; }
-.kw { color: #c586c0; }
-.str { color: #ce9178; }
-.label { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 0.75rem; font-weight: 700; margin-right: 4px; }
-.label-jenkins { background: #ffcdd2; color: #b71c1c; }
-.label-gitlab { background: #fff3e0; color: #e65100; }
-#toc { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.5rem; margin-bottom: 2rem; }
-#toc h3 { margin: 0 0 0.5rem; }
-#toc ol { padding-left: 1.2rem; }
-#toc li { margin: 0.3rem 0; }
-#toc a { color: var(--header); text-decoration: none; }
-#toc a:hover { text-decoration: underline; }
-@media print {
-  body { padding: 0; font-size: 0.85rem; }
-  h2 { break-before: page; }
-  details[open] summary { display: none; }
-  details { open: true; }
-  details pre { border: 1px solid #ccc; }
-  #toc { break-after: page; }
-}
-.toggle-all { text-align: center; margin-bottom: 16px; }
-.toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
-.switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
-.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
-input:checked + .slider { background: #4a90d9; }
-input:checked + .slider:before { transform: translateX(20px); }
-.section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+  :root {
+    --accent:    #ef5350;
+    --accent-h2: #5c1010;
+    --accent-th: #d32f2f;
+    --accent-dim: rgba(239,83,80,0.12);
+  }
 </style>
 </head>
 <body>
+
+<header class="cs-header">
+  <div class="cs-header-left">
+    <a href="index.html" class="cs-back-btn">&#8592; Knowledge Base</a>
+    <span class="cs-page-title">CI/CD — Jenkins &amp; GitLab</span>
+  </div>
+  <div class="cs-header-right">
+    <button class="cs-theme-btn" id="themeToggle" title="Toggle light/dark mode">&#9788;</button>
+  </div>
+</header>
 <h1>CI/CD Cheatsheet — Jenkins &amp; GitLab CI</h1>
 <p><em>Beginner → Advanced | Generated 2026-08-01</em></p>
 
@@ -2088,13 +2062,33 @@ deploy-production:
 <p>CI/CD Cheatsheet — Jenkins &amp; GitLab CI | Generated 2026-08-01 | For reference use</p>
 </footer>
 
+<button id="back-to-top" title="Back to top">&#8679;</button>
+
 <script>
 document.getElementById('toggleAll').addEventListener('change', function() {
-  const details = document.querySelectorAll('details');
-  details.forEach(d => d.open = this.checked);
-  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+  document.querySelectorAll('details').forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All' : 'Expand All Examples';
+});
+const themeBtn = document.getElementById('themeToggle');
+if (localStorage.getItem('cs-theme') === 'light') document.body.classList.add('light');
+themeBtn.textContent = document.body.classList.contains('light') ? '☽' : '☀';
+themeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  themeBtn.textContent = isLight ? '☽' : '☀';
+  localStorage.setItem('cs-theme', isLight ? 'light' : 'dark');
+});
+const btt = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400));
+btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+document.querySelectorAll('table').forEach(t => {
+  if (!t.parentElement.classList.contains('table-wrap')) {
+    const w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  }
 });
 </script>
-
 </body>
 </html>

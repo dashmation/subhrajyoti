@@ -4,96 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Selenium (Java) ↔ Playwright (TypeScript) Cheatsheet</title>
+<link rel="stylesheet" href="cheatsheet.css">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 13px;
-    line-height: 1.4;
-    color: #1a1a1a;
-    padding: 24px 30px;
-    background: #fff;
+  :root {
+    --accent:    #5dade2;
+    --accent-h2: #0e2d45;
+    --accent-th: #1f618d;
+    --accent-dim: rgba(93,173,226,0.12);
   }
-  h1 { text-align: center; font-size: 24px; margin-bottom: 4px; }
-  .subtitle { text-align: center; color: #555; margin-bottom: 24px; font-size: 13px; }
-  h2 {
-    font-size: 15px;
-    margin: 24px 0 8px 0;
-    padding: 5px 10px;
-    background: #1a5276;
-    color: #fff;
-    border-radius: 4px;
-  }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 12px; }
-  th { background: #1f618d; color: #fff; font-weight: 600; text-align: left; padding: 6px 8px; }
-  td { padding: 4px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
-  tr:nth-child(even) { background: #f8f9fa; }
-  tr:hover { background: #edf2f7; }
-  td:first-child { font-weight: 500; color: #1a5276; width: 14%; white-space: nowrap; }
-  td:nth-child(2) { width: 30%; }
-  td:nth-child(3) { width: 30%; }
-  td:nth-child(4) { width: 26%; }
-  code {
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-    font-size: 11px;
-    background: #f0f0f0;
-    padding: 1px 4px;
-    border-radius: 3px;
-    color: #d35400;
-  }
-  td:nth-child(3) code { color: #2471a3; }
-  details { margin: 0; }
-  details summary {
-    cursor: pointer;
-    font-size: 10px;
-    color: #7f8c8d;
-    user-select: none;
-    padding: 1px 0;
-  }
-  details summary:hover { color: #1a5276; }
-  details[open] summary { color: #1a5276; font-weight: 500; }
-  details pre {
-    margin: 4px 0 0 0;
-    padding: 5px 8px;
-    border-radius: 4px;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-    font-size: 10.5px;
-    line-height: 1.4;
-    overflow-x: auto;
-    white-space: pre;
-    background: #f9f9f9;
-    border: 1px solid #e8e8e8;
-  }
-  details pre .s { color: #d35400; }
-  details pre .p { color: #2471a3; }
-  .toc { columns: 3; margin-bottom: 20px; padding: 10px; background: #f4f6f9; border-radius: 5px; }
-  .toc a { display: block; padding: 2px 0; color: #1f618d; text-decoration: none; font-size: 12px; }
-  .toc a:hover { text-decoration: underline; }
-  .badge {
-    display: inline-block; font-size: 9px; padding: 1px 5px; border-radius: 3px;
-    font-weight: 600; vertical-align: middle; margin-left: 4px;
-  }
-  .web { background: #d4efdf; color: #1e8449; }
-  .app { background: #fdebd0; color: #d35400; }
-  .both { background: #d6eaf8; color: #1a5276; }
-  @media print {
-    body { padding: 8px 12px; font-size: 10px; }
-    details[open] pre { break-inside: avoid; }
-    h2 { break-after: avoid; }
-    tr { break-inside: avoid; }
-  }
-  .toggle-all { text-align: center; margin-bottom: 16px; }
-  .toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
-  .switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
-  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
-  input:checked + .slider { background: #4a90d9; }
-  input:checked + .slider:before { transform: translateX(20px); }
-  .section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+  /* Per-page: Selenium (Java) = orange, Playwright (TS) = blue in code cells */
+  details pre .s { color: #ff8c5a; }
+  details pre .p { color: var(--accent); }
+  .badge { display: inline-block; font-size: 0.72rem; padding: 0.1em 0.45em; border-radius: 3px; font-weight: 600; vertical-align: middle; margin-left: 4px; }
+  .web  { background: rgba(63,185,80,0.15);  color: #3fb950; }
+  .app  { background: rgba(255,140,90,0.15); color: #ff8c5a; }
+  .both { background: rgba(93,173,226,0.15); color: var(--accent); }
 </style>
 </head>
 <body>
+
+<header class="cs-header">
+  <div class="cs-header-left">
+    <a href="index.html" class="cs-back-btn">&#8592; Knowledge Base</a>
+    <span class="cs-page-title">Selenium ↔ Playwright</span>
+  </div>
+  <div class="cs-header-right">
+    <button class="cs-theme-btn" id="themeToggle" title="Toggle light/dark mode">&#9788;</button>
+  </div>
+</header>
 
 <h1>Selenium (Java) ↔ Playwright (TypeScript)</h1>
 <p class="subtitle">Web + Mobile App automation — click ▶ to expand examples &nbsp;
@@ -881,13 +819,33 @@ export default defineConfig({
   <a href="https://appium.io/docs/en/latest/">Appium Docs</a>
 </p>
 
+<button id="back-to-top" title="Back to top">&#8679;</button>
+
 <script>
 document.getElementById('toggleAll').addEventListener('change', function() {
-  const details = document.querySelectorAll('details');
-  details.forEach(d => d.open = this.checked);
-  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+  document.querySelectorAll('details').forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All' : 'Expand All Examples';
+});
+const themeBtn = document.getElementById('themeToggle');
+if (localStorage.getItem('cs-theme') === 'light') document.body.classList.add('light');
+themeBtn.textContent = document.body.classList.contains('light') ? '☽' : '☀';
+themeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  themeBtn.textContent = isLight ? '☽' : '☀';
+  localStorage.setItem('cs-theme', isLight ? 'light' : 'dark');
+});
+const btt = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400));
+btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+document.querySelectorAll('table').forEach(t => {
+  if (!t.parentElement.classList.contains('table-wrap')) {
+    const w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  }
 });
 </script>
-
 </body>
 </html>

@@ -4,50 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mobile Testing Cheatsheet - Android &amp; iOS</title>
+<link rel="stylesheet" href="cheatsheet.css">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif; font-size: 13px; line-height: 1.6; color: #333; max-width: 1100px; margin: 0 auto; padding: 20px; background: #fafafa; }
-h1 { color: #6a1b9a; font-size: 28px; text-align: center; margin-bottom: 4px; }
-.subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 16px; }
-h2 { color: #6a1b9a; font-size: 18px; margin: 30px 0 12px 0; padding-bottom: 6px; border-bottom: 2px solid #6a1b9a; }
-h3 { color: #4a148c; font-size: 14px; margin: 16px 0 8px 0; }
-table { width: 100%; border-collapse: collapse; margin: 10px 0 20px 0; font-size: 12px; }
-th { background: #6a1b9a; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
-td { padding: 7px 10px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
-tr:nth-child(even) { background: #f5f0fa; }
-tr:hover { background: #ede7f6; }
-.cmd { background: #1e1e1e; color: #d4d4d4; padding: 2px 6px; border-radius: 3px; font-family: 'Consolas', 'Monaco', monospace; font-size: 11.5px; }
-.cmt { color: #6a9955; }
-details { margin: 4px 0; }
-details summary { cursor: pointer; color: #6a1b9a; font-weight: 500; font-size: 12px; }
-details pre { background: #1e1e1e; color: #d4d4d4; padding: 10px 14px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; font-size: 11.5px; overflow-x: auto; margin-top: 6px; line-height: 1.5; }
-.toc { background: #f5f0fa; border: 1px solid #ce93d8; border-radius: 6px; padding: 14px 20px; margin-bottom: 24px; }
-.toc h3 { color: #6a1b9a; margin: 0 0 8px 0; font-size: 14px; }
-.toc a { color: #6a1b9a; text-decoration: none; font-size: 12.5px; }
-.toc a:hover { text-decoration: underline; }
-.toc ol { padding-left: 20px; }
-.toc li { margin: 3px 0; }
-.toggle-all { text-align: center; margin-bottom: 16px; }
-.toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
-.switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
-.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
-input:checked + .slider { background: #6a1b9a; }
-input:checked + .slider:before { transform: translateX(20px); }
-.section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
-@media print {
-  body { font-size: 11px; padding: 10px; }
-  details[open] summary { display: none; }
-  details { open: true; }
-  details pre { border: 1px solid #ccc; }
-  .toggle-all { display: none; }
-  h2 { page-break-before: always; }
-  h2:first-of-type { page-break-before: avoid; }
-}
+  :root {
+    --accent:    #ce93d8;
+    --accent-h2: #2d0a4e;
+    --accent-th: #6a1b9a;
+    --accent-dim: rgba(206,147,216,0.12);
+  }
 </style>
 </head>
 <body>
+
+<header class="cs-header">
+  <div class="cs-header-left">
+    <a href="index.html" class="cs-back-btn">&#8592; Knowledge Base</a>
+    <span class="cs-page-title">Mobile Testing</span>
+  </div>
+  <div class="cs-header-right">
+    <button class="cs-theme-btn" id="themeToggle" title="Toggle light/dark mode">&#9788;</button>
+  </div>
+</header>
 <h1>📱 Mobile Testing Cheatsheet</h1>
 <p class="subtitle">Android &amp; iOS — Native, Hybrid, Flutter, React Native | Beginner → Advanced</p>
 
@@ -2261,10 +2238,16 @@ driver.executeScript("mobile: sendBiometricMatch", ImmutableMap.of(
 </table>
 
 <script>
-document.getElementById('toggleAll').addEventListener('change', function() {
-  const details = document.querySelectorAll('details');
-  details.forEach(d => d.open = this.checked);
-  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+// toggleAll handler — also initialised again in end-of-file script
+document.addEventListener('DOMContentLoaded', function() {
+  var toggle = document.getElementById('toggleAll');
+  if (toggle) {
+    toggle.addEventListener('change', function() {
+      document.querySelectorAll('details').forEach(d => d.open = this.checked);
+      var lbl = document.querySelector('.toggle-label');
+      if (lbl) lbl.textContent = this.checked ? 'Collapse All' : 'Expand All Examples';
+    });
+  }
 });
 </script>
 
@@ -3298,5 +3281,30 @@ A: Watchdog killed app — main thread blocked too long during
 A: Debug build flag, Frida/objection runtime bypass, or
    configure test environment with pinning disabled.</span></pre></details></td></tr>
 </table>
+
+<button id="back-to-top" title="Back to top">&#8679;</button>
+
+<script>
+const themeBtn = document.getElementById('themeToggle');
+if (localStorage.getItem('cs-theme') === 'light') document.body.classList.add('light');
+themeBtn.textContent = document.body.classList.contains('light') ? '☽' : '☀';
+themeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  themeBtn.textContent = isLight ? '☽' : '☀';
+  localStorage.setItem('cs-theme', isLight ? 'light' : 'dark');
+});
+const btt = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400));
+btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+document.querySelectorAll('table').forEach(t => {
+  if (!t.parentElement.classList.contains('table-wrap')) {
+    const w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  }
+});
+</script>
 </body>
 </html>

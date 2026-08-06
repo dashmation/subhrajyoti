@@ -14,7 +14,10 @@
 
   <!-- Floating Left Sidebar -->
   <aside id="sidebar">
-    <div class="sidebar-logo">SJ<span class="dot">.</span></div>
+    <div class="sidebar-logo">
+      <span class="logo-short">SJ</span>
+      <span class="logo-full">Subhrajyoti</span>
+    </div>
     <nav class="sidebar-nav">
       <a href="#about"       class="sidebar-link" data-section="about">
         <i class="fas fa-user"></i><span>About</span>
@@ -35,8 +38,15 @@
         <i class="fas fa-envelope"></i><span>Contact</span>
       </a>
     </nav>
+    <button id="collapseAllBtn" aria-label="Collapse all sections" title="Collapse / Expand all">
+      <i class="fas fa-compress-alt"></i><span>Collapse All</span>
+    </button>
+    <div id="collapseHint">
+      <span>Collapse or expand all sections in one click</span>
+      <button id="collapseHintDismiss" aria-label="Dismiss hint"><i class="fas fa-xmark"></i></button>
+    </div>
     <button id="sidebarToggle" aria-label="Toggle sidebar">
-      <i class="fas fa-chevron-left"></i>
+      <i class="fas fa-chevron-right"></i>
     </button>
   </aside>
 

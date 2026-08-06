@@ -40,9 +40,18 @@ const sections     = document.querySelectorAll('section[id]');
 
 function updateActiveLink() {
   let current = '';
-  sections.forEach(sec => {
-    if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
-  });
+  const scrollBottom = window.scrollY + window.innerHeight;
+  const docHeight    = document.documentElement.scrollHeight;
+
+  // If near the bottom of the page, force the last section active
+  if (scrollBottom >= docHeight - 40) {
+    current = sections[sections.length - 1].id;
+  } else {
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 160) current = sec.id;
+    });
+  }
+
   sidebarLinks.forEach(a => {
     a.classList.remove('active');
     if (a.dataset.section === current) a.classList.add('active');
@@ -80,6 +89,54 @@ document.querySelectorAll('.collapse-btn').forEach(btn => {
     }
   });
 });
+
+/* ─── Collapse All / Expand All ─────────────────────────── */
+const collapseAllBtn = document.getElementById('collapseAllBtn');
+const collapseIcon   = collapseAllBtn.querySelector('i');
+const collapseLabel  = collapseAllBtn.querySelector('span');
+let allCollapsed = false;
+
+collapseAllBtn.addEventListener('click', () => {
+  allCollapsed = !allCollapsed;
+  document.querySelectorAll('.section-body').forEach(body => {
+    const btn = document.querySelector(`[aria-controls="${body.id}"]`);
+    if (allCollapsed) {
+      body.classList.add('collapsed');
+      if (btn) { btn.classList.add('collapsed'); btn.setAttribute('aria-expanded', 'false'); }
+    } else {
+      body.classList.remove('collapsed');
+      if (btn) { btn.classList.remove('collapsed'); btn.setAttribute('aria-expanded', 'true'); }
+    }
+  });
+  collapseIcon.className    = allCollapsed ? 'fas fa-expand-alt' : 'fas fa-compress-alt';
+  collapseLabel.textContent = allCollapsed ? 'Expand All' : 'Collapse All';
+  collapseAllBtn.title      = allCollapsed ? 'Expand all sections' : 'Collapse all sections';
+  dismissHint();
+});
+
+/* ─── First-visit hint ───────────────────────────────────── */
+const collapseHint        = document.getElementById('collapseHint');
+const collapseHintDismiss = document.getElementById('collapseHintDismiss');
+let hintTimer;
+
+function dismissHint() {
+  collapseHint.classList.remove('visible');
+  collapseAllBtn.classList.remove('hinted');
+  clearTimeout(hintTimer);
+  localStorage.setItem('collapseHintSeen', '1');
+}
+
+if (!localStorage.getItem('collapseHintSeen')) {
+  // Show after 1.8s so the page has settled
+  setTimeout(() => {
+    collapseHint.classList.add('visible');
+    collapseAllBtn.classList.add('hinted');
+    // Auto-dismiss after 5s
+    hintTimer = setTimeout(dismissHint, 5000);
+  }, 1800);
+}
+
+collapseHintDismiss.addEventListener('click', dismissHint);
 
 /* ─── Navbar scroll effect (kept for hero) ──────────────── */
 const navbar = document.getElementById('navbar');
@@ -167,57 +224,34 @@ const statsObserver  = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 if (statsSection) statsObserver.observe(statsSection);
 
-/* ─── Timeline staggered entrance ───────────────────────── */
+/* ─── Timeline entrance (fade only, no slide) ───────────── */
 const timelineObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.style.opacity  = '1';
-      entry.target.style.transform = 'translateX(0)';
+      entry.target.style.opacity = '1';
       timelineObserver.unobserve(entry.target);
     }
   });
 }, { threshold: 0.1 });
 
 document.querySelectorAll('.timeline-item').forEach((item, i) => {
-  item.style.opacity   = '0';
-  item.style.transform = 'translateX(-20px)';
-  item.style.transition = `opacity 0.5s ease ${i * 0.08}s, transform 0.5s ease ${i * 0.08}s`;
+  item.style.opacity    = '0';
+  item.style.transition = `opacity 0.4s ease ${i * 0.06}s`;
   timelineObserver.observe(item);
 });
-
-/* ─── Skill tag pop-in ───────────────────────────────────── */
-const skillObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.querySelectorAll('.tag').forEach((tag, i) => {
-        tag.style.opacity   = '0';
-        tag.style.transform = 'scale(0.85)';
-        setTimeout(() => {
-          tag.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-          tag.style.opacity   = '1';
-          tag.style.transform = 'scale(1)';
-        }, i * 60);
-      });
-      skillObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.2 });
-document.querySelectorAll('.skill-group').forEach(g => skillObserver.observe(g));
 
 /* ─── Card entrance animations ──────────────────────────── */
 const cardObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.style.opacity   = '1';
-      entry.target.style.transform = 'translateY(0)';
+      entry.target.style.opacity = '1';
       cardObserver.unobserve(entry.target);
     }
   });
 }, { threshold: 0.12 });
 
 document.querySelectorAll('.highlight-card, .edu-card, .about-card, .contact-card').forEach((c, i) => {
-  c.style.opacity   = '0';
-  c.style.transform = 'translateY(16px)';
-  c.style.transition = `opacity 0.4s ease ${i * 0.06}s, transform 0.4s ease ${i * 0.06}s`;
+  c.style.opacity    = '0';
+  c.style.transition = `opacity 0.4s ease ${i * 0.05}s`;
   cardObserver.observe(c);
 });

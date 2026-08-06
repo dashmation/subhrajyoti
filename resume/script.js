@@ -22,35 +22,15 @@ sidebarToggle.addEventListener('click', () => {
   setSidebarExpanded(!isExpanded);
 });
 
-// Mobile: floating button opens/closes bottom sidebar (FAB hidden on mobile, kept for safety)
-sidebarOpen.addEventListener('click', () => {
-  toggleMobileSidebar();
-});
+// Mobile: FAB removed — bottom tab bar handles mobile nav
+if (sidebarOpen) sidebarOpen.addEventListener('click', () => {});
 
-// Backdrop for mobile sidebar
-const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+// Legacy — no longer used
+const sidebarBackdrop = null;
+function toggleMobileSidebar(forceClose) {}
 
-function toggleMobileSidebar(forceClose) {
-  const isOpen = sidebar.classList.contains('mobile-open');
-  if (forceClose || isOpen) {
-    sidebar.classList.remove('mobile-open');
-    if (sidebarBackdrop) sidebarBackdrop.classList.remove('visible');
-  } else {
-    sidebar.classList.add('mobile-open');
-    if (sidebarBackdrop) sidebarBackdrop.classList.add('visible');
-  }
-}
-
-// Close mobile sidebar when backdrop is tapped
-if (sidebarBackdrop) {
-  sidebarBackdrop.addEventListener('click', () => toggleMobileSidebar(true));
-}
-
-// Close mobile sidebar when a link is clicked
 document.querySelectorAll('.sidebar-link').forEach(link => {
-  link.addEventListener('click', () => {
-    toggleMobileSidebar(true);
-  });
+  link.addEventListener('click', () => {});
 });
 
 /* ─── Active sidebar link on scroll ─────────────────────── */
@@ -190,36 +170,25 @@ document.getElementById('backToTop').addEventListener('click', () => {
 /* ─── Mobile nav toggle (top navbar) ────────────────────── */
 const navToggle  = document.getElementById('navToggle');
 const navLinksEl = document.querySelector('.nav-links');
-if (navToggle) {
+// Top navbar is hidden on mobile — bottom tab bar handles mobile nav.
+// Keep desktop nav-links toggle as fallback (navbar visible on desktop is also hidden,
+// so this is purely defensive).
+if (navToggle && navLinksEl) {
   navToggle.addEventListener('click', () => {
-    // On mobile (<= 700px): toggle the bottom sidebar drawer
-    if (window.innerWidth <= 700) {
-      toggleMobileSidebar();
-      const icon = navToggle.querySelector('i');
-      const isOpen = sidebar.classList.contains('mobile-open');
-      icon.className = isOpen ? 'fas fa-xmark' : 'fas fa-bars';
-    } else if (navLinksEl) {
-      // Desktop fallback (navbar hidden on desktop anyway)
-      navLinksEl.classList.toggle('open');
-      navToggle.querySelector('i').classList.toggle('fa-bars');
-      navToggle.querySelector('i').classList.toggle('fa-xmark');
+    navLinksEl.classList.toggle('open');
+    const icon = navToggle.querySelector('i');
+    if (icon) {
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-xmark');
     }
   });
-  // Reset hamburger icon when sidebar closes via backdrop or link
-  document.querySelectorAll('.sidebar-link').forEach(a => {
+  navLinksEl.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', () => {
-      if (navToggle.querySelector('i')) {
-        navToggle.querySelector('i').className = 'fas fa-bars';
-      }
+      navLinksEl.classList.remove('open');
+      const icon = navToggle.querySelector('i');
+      if (icon) { icon.className = 'fas fa-bars'; }
     });
   });
-  if (sidebarBackdrop) {
-    sidebarBackdrop.addEventListener('click', () => {
-      if (navToggle.querySelector('i')) {
-        navToggle.querySelector('i').className = 'fas fa-bars';
-      }
-    });
-  }
 }
 
 /* ─── Fade-in on scroll ──────────────────────────────────── */
@@ -457,3 +426,39 @@ projModal.addEventListener('keydown', e => {
     if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
   }
 });
+
+/* ─── Floating Bottom Tab Bar ────────────────────────────── */
+const bottomTabBar  = document.getElementById('bottomTabBar');
+const tabItems      = bottomTabBar ? bottomTabBar.querySelectorAll('.tab-item') : [];
+
+function updateActiveTab() {
+  if (!bottomTabBar) return;
+  let current = '';
+  const scrollBottom = window.scrollY + window.innerHeight;
+  const docHeight    = document.documentElement.scrollHeight;
+
+  if (scrollBottom >= docHeight - 40) {
+    current = sections[sections.length - 1].id;
+  } else {
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 160) current = sec.id;
+    });
+  }
+
+  tabItems.forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.section === current);
+  });
+}
+
+// Smooth scroll on tap
+tabItems.forEach(tab => {
+  tab.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(tab.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Integrate with existing scroll listener
+window.addEventListener('scroll', updateActiveTab, { passive: true });
+updateActiveTab();

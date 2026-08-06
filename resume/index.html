@@ -51,11 +51,6 @@
     </button>
   </aside>
 
-  <!-- Mobile sidebar open button -->
-  <button id="sidebarOpen" aria-label="Open navigation">
-    <i class="fas fa-bars"></i>
-  </button>
-
   <!-- Navigation -->
   <nav id="navbar">
     <div class="nav-container">
@@ -717,8 +712,27 @@
 
   <button id="backToTop" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
-  <!-- Mobile sidebar backdrop -->
-  <div id="sidebarBackdrop"></div>
+  <!-- Floating Bottom Tab Bar (mobile only) -->
+  <nav id="bottomTabBar" aria-label="Mobile navigation">
+    <a href="#about"      class="tab-item" data-section="about">
+      <i class="fas fa-user"></i><span>About</span>
+    </a>
+    <a href="#highlights" class="tab-item" data-section="highlights">
+      <i class="fas fa-trophy"></i><span>Highlights</span>
+    </a>
+    <a href="#skills"     class="tab-item" data-section="skills">
+      <i class="fas fa-code"></i><span>Skills</span>
+    </a>
+    <a href="#experience" class="tab-item" data-section="experience">
+      <i class="fas fa-briefcase"></i><span>Experience</span>
+    </a>
+    <a href="#education"  class="tab-item" data-section="education">
+      <i class="fas fa-graduation-cap"></i><span>Education</span>
+    </a>
+    <a href="#contact"    class="tab-item" data-section="contact">
+      <i class="fas fa-envelope"></i><span>Contact</span>
+    </a>
+  </nav>
 
   <!-- Project Spec Modal -->
   <div id="projModal" role="dialog" aria-modal="true" aria-labelledby="projModalTitle" hidden>

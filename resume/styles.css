@@ -375,11 +375,25 @@ ul { list-style: none; }
   display: flex;
   gap: 1rem;
   align-items: flex-start;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  cursor: pointer;
+  position: relative;
+  user-select: none;
 }
 .highlight-card:hover {
   border-color: var(--accent);
+  box-shadow: 0 4px 24px rgba(88,166,255,0.15);
+  transform: translateY(-2px);
 }
+.highlight-card:hover .highlight-icon {
+  background: rgba(88,166,255,0.2);
+}
+.highlight-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Story cue pill — removed */
 .highlight-icon {
   flex-shrink: 0;
   width: 2.5rem;
@@ -404,6 +418,142 @@ ul { list-style: none; }
   color: var(--text-muted);
   line-height: 1.6;
 }
+
+/* =========================================================
+   HIGHLIGHT HOVER POPUP  (centered overlay)
+   ========================================================= */
+
+/* Dim backdrop behind the popup */
+.hl-popup-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.hl-popup-backdrop.hlp-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hl-popup {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  width: 520px;
+  max-width: calc(100vw - 32px);
+  background: #1a2233;
+  border: 1px solid rgba(88,166,255,0.3);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(88,166,255,0.08);
+  overflow-y: auto;
+  overflow-x: hidden;
+  pointer-events: auto;
+  max-height: calc(100vh - 32px);
+
+  /* pre-animation state */
+  opacity: 0;
+  transform: scale(0.94);
+  transform-origin: center center;
+  transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+/* Animated-in state */
+.hl-popup.hlp-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Header */
+.hlp-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 1.1rem 1.25rem 0.75rem;
+}
+.hlp-icon {
+  color: var(--accent);
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.hlp-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+  flex: 1;
+}
+.hlp-close {
+  flex-shrink: 0;
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 6px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+.hlp-close:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.08);
+}
+.hlp-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+  margin: 0 1.25rem;
+}
+
+/* Body */
+.hlp-body {
+  padding: 0.8rem 1.25rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.hlp-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+.hlp-label i { font-size: 0.65rem; }
+.hlp-bullets {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  list-style: disc;
+}
+.hlp-bullets li {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding-left: 0.2rem;
+}
+.hlp-bullets li strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Scrollbar */
+.hl-popup::-webkit-scrollbar { width: 4px; }
+.hl-popup::-webkit-scrollbar-track { background: transparent; }
+.hl-popup::-webkit-scrollbar-thumb { background: rgba(88,166,255,0.25); border-radius: 4px; }
 
 /* =========================================================
    SKILLS
@@ -1467,6 +1617,24 @@ body.sidebar-expanded {
   font-size: 0.9rem;
   color: var(--text-muted);
   line-height: 1.85;
+}
+.proj-star-bullets {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  list-style: disc;
+}
+.proj-star-bullets li {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  padding-left: 0.2rem;
+}
+.proj-star-bullets li strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 /* ── Tech stack row ── */

@@ -291,6 +291,23 @@
 
         <div class="skill-group">
           <div class="skill-group-header">
+            <i class="fas fa-mobile-screen-button"></i>
+            <h3>App Testing</h3>
+          </div>
+          <div class="skill-tags">
+            <span class="tag tag-auto">Flutter</span>
+            <span class="tag tag-auto">Android Studio</span>
+            <span class="tag tag-auto">Xcode</span>
+            <span class="tag tag-auto">adb</span>
+            <span class="tag tag-auto">xcrun</span>
+            <span class="tag tag-auto">React-based</span>
+            <span class="tag tag-auto">Native</span>
+            <span class="tag tag-auto">Hybrid</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-header">
             <i class="fas fa-code"></i>
             <h3>Programming</h3>
           </div>
@@ -398,11 +415,12 @@
         <!-- BT Group -->
         <div class="timeline-item">
           <div class="timeline-marker"></div>
-          <div class="timeline-content">
+          <div class="timeline-content" data-project="one-checkout">
             <div class="timeline-header">
               <div>
                 <h3 class="timeline-role">QA Lead / Quality Assurance Team Lead</h3>
                 <span class="timeline-company">BT Group</span>
+                <button class="proj-chip" aria-label="View project spec"><i class="fas fa-diagram-project"></i> Project Spec</button>
               </div>
               <div class="timeline-meta">
                 <span class="timeline-period"><i class="fas fa-calendar"></i> Apr 2026 – Present</span>
@@ -410,7 +428,6 @@
               </div>
             </div>
             <ul class="timeline-bullets">
-              <li>Leading a team of 6 QA engineers across Broadband and SIM acquisition journeys.</li>
               <li>Defined and implemented QA standards, test strategy, and quality gates for a multi-journey checkout platform.</li>
               <li>Introduced in-sprint Playwright automation, improving regression coverage and enabling faster releases.</li>
               <li>Driving AI adoption (Copilot, Amazon Q, KIRO) to reduce manual testing effort and improve productivity.</li>
@@ -422,11 +439,12 @@
         <!-- BT Group - QA Engineering Manager -->
         <div class="timeline-item">
           <div class="timeline-marker"></div>
-          <div class="timeline-content">
+          <div class="timeline-content" data-project="digital-sales-manager">
             <div class="timeline-header">
               <div>
                 <h3 class="timeline-role">QA Engineering Manager</h3>
                 <span class="timeline-company">BT Group</span>
+                <button class="proj-chip" aria-label="View project spec"><i class="fas fa-diagram-project"></i> Project Spec</button>
               </div>
               <div class="timeline-meta">
                 <span class="timeline-period"><i class="fas fa-calendar"></i> May 2024 – Mar 2026</span>
@@ -434,7 +452,6 @@
               </div>
             </div>
             <ul class="timeline-bullets">
-              <li>Led QA delivery across multiple squads (~50 engineers including vendors and internal teams).</li>
               <li>Defined automation strategy and quality practices across Web and App platforms.</li>
               <li>Collaborated with Product, Architecture, and Design teams to align quality goals with business outcomes.</li>
               <li>Reduced defect leakage from 30% to 5% through RCA-driven improvements and AI-assisted quality analysis.</li>
@@ -446,11 +463,12 @@
         <!-- BT Group - Engineering Specialist -->
         <div class="timeline-item">
           <div class="timeline-marker"></div>
-          <div class="timeline-content">
+          <div class="timeline-content" data-project="digital-sales-specialist">
             <div class="timeline-header">
               <div>
                 <h3 class="timeline-role">QA Engineering Specialist</h3>
                 <span class="timeline-company">BT Group</span>
+                <button class="proj-chip" aria-label="View project spec"><i class="fas fa-diagram-project"></i> Project Spec</button>
               </div>
               <div class="timeline-meta">
                 <span class="timeline-period"><i class="fas fa-calendar"></i> Jul 2023 – May 2024</span>
@@ -698,6 +716,15 @@
   </footer>
 
   <button id="backToTop" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+  <!-- Project Spec Modal -->
+  <div id="projModal" role="dialog" aria-modal="true" aria-labelledby="projModalTitle" hidden>
+    <div class="proj-backdrop"></div>
+    <div class="proj-card">
+      <button class="proj-close" aria-label="Close project specification"><i class="fas fa-xmark"></i></button>
+      <div class="proj-card-body" id="projModalBody"></div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

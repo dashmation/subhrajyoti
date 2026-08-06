@@ -255,3 +255,169 @@ document.querySelectorAll('.highlight-card, .edu-card, .about-card, .contact-car
   c.style.transition = `opacity 0.4s ease ${i * 0.05}s`;
   cardObserver.observe(c);
 });
+
+
+/* ─── Project Spec Modal ──────────────────────────────── */
+
+/* ── Data map ── */
+const projectData = {
+  'one-checkout': {
+    title:    'One Checkout',
+    role:     'QA Lead / Quality Assurance Team Lead',
+    company:  'BT Group',
+    period:   'Apr 2026 – Present',
+    teamSize: 20,
+    star: {
+      situation: 'Customers wanting to buy broadband and a mobile SIM together had to go through separate purchase journeys — different carts, different forms, different confirmations — creating a frustrating and lengthy buying experience.',
+      task:      'Build a unified checkout that combines broadband and mobile purchases into a single, seamless flow — reducing drop-offs and simplifying the customer journey.',
+      action:    'A converged cart was designed that holds both broadband and mobile products together. Customers now fill in their details once, go through a single payment step, and place one combined order. Behind the scenes, the system intelligently splits and routes each product to the right fulfilment channel automatically.',
+      result:    'Customers experience a frictionless, one-click-style purchase for bundled products. Fewer steps, no duplicate data entry, and a single order confirmation — making buying multiple products as simple as buying one.'
+    },
+    tech: [
+      { label: 'React',             cls: 'tag-fw'   },
+      { label: 'Flutter',           cls: 'tag-lang' },
+      { label: 'Hybris',            cls: 'tag-api'  },
+      { label: 'Java · Spring Boot', cls: 'tag-lang' }
+    ]
+  },
+
+  'digital-sales-manager': {
+    title:    'Digital Sales: Learn and Buy Broadband',
+    role:     'QA Engineering Manager',
+    company:  'BT Group',
+    period:   'May 2024 – Mar 2026',
+    teamSize: 80,
+    star: {
+      situation: 'Customers looking to purchase broadband, TV, or sport packages faced fragmented digital journeys. Whether they were new customers buying broadband for the first time, existing customers upgrading their plan, moving home, or adding TV and sport — each scenario had its own disconnected experience. This created confusion, drop-offs, and inconsistency across channels (web and app).',
+      task:      'Build a unified digital sales platform that covers the full spectrum of broadband, TV, and sport purchase journeys — from discovery and browsing through to checkout and fulfilment. The platform needed to serve new acquisitions, plan upgrades (regrades), home moves, in-life add-ons, TV-led bundles, soft bundles, and even colleague product purchases — all under one cohesive tribe.',
+      action:    'Multiple specialist squads were formed — Get Broadband (new customer acquisition), Get Better Broadband (existing customer upgrades/regrades), Browse (product discovery and learn pages), Home Move, TV & Sport, Inlife Add-On, and Engineering Capability. Each squad owns its end-to-end journey with dedicated frontend micro-frontends, backend APIs integrating with systems like Hybris, Pega, and a Journey Orchestrator. A shared architecture, CMS layer, and common engineering practices tie everything together. The platform also extended to BT.com and the EE Home App.',
+      result:    'A comprehensive digital sales ecosystem where customers can discover, compare, and purchase broadband, TV, and sport products through a single, consistent experience — whether they\'re buying for the first time, upgrading, moving home, or adding entertainment packages to their existing plan.'
+    },
+    tech: [
+      { label: 'React',             cls: 'tag-fw'   },
+      { label: 'Flutter',           cls: 'tag-lang' },
+      { label: 'Java · Spring Boot', cls: 'tag-lang' }
+    ]
+  },
+
+  'digital-sales-specialist': {
+    title:    'Get Better Broadband Journey',
+    role:     'QA Engineering Specialist',
+    company:  'BT Group',
+    period:   'Jul 2023 – May 2024',
+    teamSize: 15,
+    star: {
+      situation: 'Existing broadband customers wanting to upgrade (regrade) their plan — whether moving from a legacy BT package to the new Nayan platform, or upgrading within Nayan — faced a complex process. The system needed to check current assets, verify technical eligibility at their address, present available offers, and handle the transition seamlessly without service disruption.',
+      task:      'Build a digital self-service journey that allows existing customers to upgrade their broadband speed, add extras (like Smart Wi-Fi, Cyber Security, or Home Phone), and switch plans — all online without needing to call in. The journey needed to support both BT-to-Nayan migrations and Nayan-to-Nayan regrades.',
+      action:    'The squad built a Single Page Application (SPA) integrated with a Journey Orchestrator (JO) that handles the end-to-end flow. The system fetches customer details and billing accounts, checks current assets via Product Inventory, runs technical eligibility against the customer\'s address (using Openreach NAD keys), and then presents qualifying offers through Product Offering Qualification APIs. Customers can choose a new speed, select add-ons (Wi-Fi boosters, security packages), set up direct debit payments, and place an order — all following TMF (TeleManagement Forum) standard APIs. The journey also handles the converged checkout for customers adding a SIM alongside their broadband upgrade.',
+      result:    'Customers can now browse, compare, and upgrade their broadband package entirely online in minutes — seeing only the plans and extras they\'re eligible for based on their address and current setup. The digital-first approach reduces call centre volume and gives customers control over their upgrade journey.'
+    },
+    tech: [
+      { label: 'React',             cls: 'tag-fw'   },
+      { label: 'Flutter',           cls: 'tag-lang' },
+      { label: 'Java · Spring Boot', cls: 'tag-lang' }
+    ]
+  }
+};
+
+/* ── Render modal inner HTML from data key ── */
+function renderModal(key) {
+  const d = projectData[key];
+  if (!d) return '';
+
+  const techHTML = d.tech
+    .map(t => `<span class="tag ${t.cls}">${t.label}</span>`)
+    .join('');
+
+  const starIcons  = { situation: 'fa-circle-info', task: 'fa-bullseye', action: 'fa-gears', result: 'fa-chart-line' };
+  const starLabels = { situation: 'Situation',       task: 'Task',        action: 'Action',   result: 'Result'      };
+
+  const starHTML = ['situation', 'task', 'action', 'result'].map(k => `
+    <div class="proj-star-section">
+      <div class="proj-star-label"><i class="fas ${starIcons[k]}"></i> ${starLabels[k]}</div>
+      <p class="proj-star-text">${d.star[k]}</p>
+    </div>`).join('');
+
+  return `
+    <div class="proj-modal-header">
+      <h2 class="proj-modal-title" id="projModalTitle">${d.title}</h2>
+      <div class="proj-modal-meta">
+        <span class="proj-modal-role">${d.role} &middot; ${d.company}</span>
+        <span class="proj-modal-period"><i class="fas fa-calendar"></i> ${d.period}</span>
+        ${d.teamSize ? `<span class="proj-modal-team"><i class="fas fa-users"></i> ${d.teamSize}</span>` : ''}
+      </div>
+    </div>
+    ${starHTML}
+    <div class="proj-tech-row">
+      <span class="proj-tech-label">Tech Stack</span>
+      ${techHTML}
+    </div>`;
+}
+
+/* ── Open / close logic ── */
+let _modalTrigger  = null;
+const projModal    = document.getElementById('projModal');
+const projModalBody = document.getElementById('projModalBody');
+
+function openModal(key, triggerEl) {
+  _modalTrigger = triggerEl;
+  projModalBody.innerHTML = renderModal(key);
+  projModal.removeAttribute('hidden');
+  // Force a reflow so the CSS transition fires from the initial state
+  void projModal.offsetHeight;
+  projModal.classList.add('open');
+  document.body.classList.add('proj-open');
+  // Accessibility: move focus into the modal
+  const closeBtn = projModal.querySelector('.proj-close');
+  if (closeBtn) closeBtn.focus();
+}
+
+function closeModal() {
+  projModal.classList.remove('open');
+  document.body.classList.remove('proj-open');
+  // Wait for the CSS transition to finish, then truly hide the element
+  projModal.addEventListener('transitionend', function handler() {
+    projModal.setAttribute('hidden', '');
+    projModal.removeEventListener('transitionend', handler);
+    if (_modalTrigger) {
+      _modalTrigger.focus();
+      _modalTrigger = null;
+    }
+  }, { once: true });
+}
+
+/* ── Wire up trigger buttons (chip + CTA) ── */
+document.querySelectorAll('.proj-chip, .proj-cta-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const container = btn.closest('[data-project]');
+    if (!container) return;
+    openModal(container.dataset.project, btn);
+  });
+});
+
+/* ── Close via backdrop click ── */
+projModal.querySelector('.proj-backdrop').addEventListener('click', closeModal);
+
+/* ── Close via ✕ button ── */
+projModal.querySelector('.proj-close').addEventListener('click', closeModal);
+
+/* ── Close via Escape key ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && projModal.classList.contains('open')) closeModal();
+});
+
+/* ── Focus trap: keep Tab cycling inside the open modal ── */
+projModal.addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return;
+  const focusable = Array.from(
+    projModal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])')
+  ).filter(el => !el.hasAttribute('disabled'));
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last  = focusable[focusable.length - 1];
+  if (e.shiftKey) {
+    if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+  } else {
+    if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+  }
+});

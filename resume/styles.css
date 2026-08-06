@@ -1219,7 +1219,7 @@ body.sidebar-expanded {
   border-radius: 100px;
   background: rgba(88,166,255,0.10);
   border: 1px solid var(--accent);
-  color: var(--accent);
+  color: var(--accent) !important;
   font-size: 0.7rem;
   font-weight: 600;
   font-family: 'JetBrains Mono', monospace;

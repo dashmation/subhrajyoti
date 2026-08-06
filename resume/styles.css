@@ -64,8 +64,9 @@ ul { list-style: none; }
   transition: background var(--transition), box-shadow var(--transition);
 }
 #navbar.scrolled {
-  background: rgba(13,17,23,0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(13,17,23,0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 1px 0 var(--border);
 }
 .nav-container {
@@ -1192,9 +1193,9 @@ body.sidebar-expanded {
   z-index: 400;
 
   /* Pill shape */
-  background: rgba(22, 27, 34, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(22, 27, 34, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 100px;
   box-shadow:

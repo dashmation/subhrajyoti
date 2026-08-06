@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selenium (Java) ↔ Playwright (TypeScript) Cheatsheet</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #1a1a1a;
+    padding: 24px 30px;
+    background: #fff;
+  }
+  h1 { text-align: center; font-size: 24px; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #555; margin-bottom: 24px; font-size: 13px; }
+  h2 {
+    font-size: 15px;
+    margin: 24px 0 8px 0;
+    padding: 5px 10px;
+    background: #1a5276;
+    color: #fff;
+    border-radius: 4px;
+  }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 12px; }
+  th { background: #1f618d; color: #fff; font-weight: 600; text-align: left; padding: 6px 8px; }
+  td { padding: 4px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  tr:hover { background: #edf2f7; }
+  td:first-child { font-weight: 500; color: #1a5276; width: 14%; white-space: nowrap; }
+  td:nth-child(2) { width: 30%; }
+  td:nth-child(3) { width: 30%; }
+  td:nth-child(4) { width: 26%; }
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    font-size: 11px;
+    background: #f0f0f0;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #d35400;
+  }
+  td:nth-child(3) code { color: #2471a3; }
+  details { margin: 0; }
+  details summary {
+    cursor: pointer;
+    font-size: 10px;
+    color: #7f8c8d;
+    user-select: none;
+    padding: 1px 0;
+  }
+  details summary:hover { color: #1a5276; }
+  details[open] summary { color: #1a5276; font-weight: 500; }
+  details pre {
+    margin: 4px 0 0 0;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    font-size: 10.5px;
+    line-height: 1.4;
+    overflow-x: auto;
+    white-space: pre;
+    background: #f9f9f9;
+    border: 1px solid #e8e8e8;
+  }
+  details pre .s { color: #d35400; }
+  details pre .p { color: #2471a3; }
+  .toc { columns: 3; margin-bottom: 20px; padding: 10px; background: #f4f6f9; border-radius: 5px; }
+  .toc a { display: block; padding: 2px 0; color: #1f618d; text-decoration: none; font-size: 12px; }
+  .toc a:hover { text-decoration: underline; }
+  .badge {
+    display: inline-block; font-size: 9px; padding: 1px 5px; border-radius: 3px;
+    font-weight: 600; vertical-align: middle; margin-left: 4px;
+  }
+  .web { background: #d4efdf; color: #1e8449; }
+  .app { background: #fdebd0; color: #d35400; }
+  .both { background: #d6eaf8; color: #1a5276; }
+  @media print {
+    body { padding: 8px 12px; font-size: 10px; }
+    details[open] pre { break-inside: avoid; }
+    h2 { break-after: avoid; }
+    tr { break-inside: avoid; }
+  }
+  .toggle-all { text-align: center; margin-bottom: 16px; }
+  .toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+  input:checked + .slider { background: #4a90d9; }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Selenium (Java) ↔ Playwright (TypeScript)</h1>
+<p class="subtitle">Web + Mobile App automation — click ▶ to expand examples &nbsp;
+  <span class="badge web">WEB</span> <span class="badge app">APP</span> <span class="badge both">BOTH</span>
+</p>
+
+<div class="toggle-all">
+  <label class="switch">
+    <input type="checkbox" id="toggleAll">
+    <span class="slider"></span>
+  </label>
+  <span class="toggle-label">Expand All Examples</span>
+</div>
+
+<div class="toc">
+  <a href="#s1">1. Setup &amp; Installation</a>
+  <a href="#s2">2. Browser / Context</a>
+  <a href="#s3">3. Navigation</a>
+  <a href="#s4">4. Selectors / Locators</a>
+  <a href="#s5">5. Actions / Clicks</a>
+  <a href="#s6">6. Forms &amp; Input</a>
+  <a href="#s7">7. Waits</a>
+  <a href="#s8">8. Assertions</a>
+  <a href="#s9">9. Frames &amp; Windows</a>
+  <a href="#s10">10. Dropdowns &amp; Alerts</a>
+  <a href="#s11">11. Screenshots &amp; Videos</a>
+  <a href="#s12">12. File Upload / Download</a>
+  <a href="#s13">13. Keyboard &amp; Mouse</a>
+  <a href="#s14">14. Page Object Model</a>
+  <a href="#s15">15. API &amp; Network</a>
+  <a href="#s16">16. Mobile App (Appium vs Playwright)</a>
+  <a href="#s17">17. Advanced Mobile Gestures</a>
+  <a href="#s18">18. Parallel &amp; Grid</a>
+  <a href="#s19">19. Reporting</a>
+  <a href="#s20">20. Debugging</a>
+</div>
+
+<!-- Section 1 -->
+<h2 id="s1">1. Setup &amp; Installation <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Setting up the framework correctly is the foundation — Selenium needs separate drivers while Playwright bundles everything.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Install</td><td>Maven/Gradle dependency</td><td><code>npm init playwright@latest</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// pom.xml
+&lt;dependency&gt;
+  &lt;groupId&gt;org.seleniumhq.selenium&lt;/groupId&gt;
+  &lt;artifactId&gt;selenium-java&lt;/artifactId&gt;
+  &lt;version&gt;4.21.0&lt;/version&gt;
+&lt;/dependency&gt;</span>
+<span class="p">// terminal
+npm init playwright@latest
+// installs @playwright/test + browsers</span></pre></details></td></tr>
+<tr><td>Driver mgmt</td><td>WebDriverManager / Selenium Manager</td><td>Auto-bundled</td><td><details><summary>▶ Show</summary><pre><span class="s">// Selenium 4.6+ has built-in Selenium Manager
+// Or use WebDriverManager:
+WebDriverManager.chromedriver().setup();</span>
+<span class="p">// Playwright downloads browsers automatically
+npx playwright install</span></pre></details></td></tr>
+<tr><td>Test runner</td><td>JUnit 5 / TestNG</td><td><code>@playwright/test</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// JUnit 5
+import org.junit.jupiter.api.Test;
+@Test
+void testLogin() { ... }</span>
+<span class="p">// Playwright Test
+import { test, expect } from '@playwright/test';
+test('login', async ({ page }) =&gt; { ... });</span></pre></details></td></tr>
+<tr><td>Config file</td><td><code>pom.xml</code> / <code>build.gradle</code></td><td><code>playwright.config.ts</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Maven: pom.xml with surefire plugin
+// Gradle: build.gradle with test task</span>
+<span class="p">// playwright.config.ts
+import { defineConfig } from '@playwright/test';
+export default defineConfig({
+  use: { headless: true, baseURL: 'http://localhost:3000' },
+});</span></pre></details></td></tr>
+<tr><td>Mobile setup</td><td>Appium Java client</td><td>Playwright devices</td><td><details><summary>▶ Show</summary><pre><span class="s">// pom.xml: io.appium:java-client:9.x
+// Start Appium server: appium</span>
+<span class="p">// Built-in device emulation
+import { devices } from '@playwright/test';
+// playwright.config.ts: use: { ...devices['Pixel 5'] }</span></pre></details></td></tr>
+</table>
+
+<!-- Section 2 -->
+<h2 id="s2">2. Browser / Context Management <span class="badge web">WEB</span></h2>
+<p class="section-desc">Browser management controls how tests interact with the browser — Playwright's contexts enable true isolation between tests.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Launch browser</td><td><code>new ChromeDriver()</code></td><td><code>browser.launch()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">WebDriver driver = new ChromeDriver();</span>
+<span class="p">const browser = await chromium.launch();</span></pre></details></td></tr>
+<tr><td>Headless</td><td><code>options.addArguments("--headless")</code></td><td><code>launch({ headless: true })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">ChromeOptions opts = new ChromeOptions();
+opts.addArguments("--headless");
+WebDriver driver = new ChromeDriver(opts);</span>
+<span class="p">const browser = await chromium.launch({ headless: true });</span></pre></details></td></tr>
+<tr><td>New context</td><td>N/A (one per driver)</td><td><code>browser.newContext()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Selenium: no context isolation
+// Use new driver instance for each</span>
+<span class="p">const context = await browser.newContext({
+  viewport: { width: 1280, height: 720 }
+});
+const page = await context.newPage();</span></pre></details></td></tr>
+<tr><td>Set viewport</td><td><code>driver.manage().window().setSize()</code></td><td><code>newContext({ viewport })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.manage().window().setSize(new Dimension(1280, 720));</span>
+<span class="p">const ctx = await browser.newContext({
+  viewport: { width: 1280, height: 720 }
+});</span></pre></details></td></tr>
+<tr><td>User agent</td><td><code>options.addArguments("--user-agent=...")</code></td><td><code>newContext({ userAgent })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">opts.addArguments("--user-agent=MyBot/1.0");</span>
+<span class="p">const ctx = await browser.newContext({
+  userAgent: 'MyBot/1.0'
+});</span></pre></details></td></tr>
+<tr><td>Close browser</td><td><code>driver.quit()</code></td><td><code>await browser.close()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.quit(); // closes all windows + process</span>
+<span class="p">await browser.close();</span></pre></details></td></tr>
+<tr><td>Incognito</td><td><code>options.addArguments("--incognito")</code></td><td>Every context is isolated</td><td><details><summary>▶ Show</summary><pre><span class="s">opts.addArguments("--incognito");</span>
+<span class="p">// Each newContext() has separate cookies, storage
+const ctx = await browser.newContext();</span></pre></details></td></tr>
+</table>
+
+<!-- Section 3 -->
+<h2 id="s3">3. Navigation <span class="badge web">WEB</span></h2>
+<p class="section-desc">Navigation commands simulate user browsing — going to URLs, back/forward, and waiting for page loads.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Go to URL</td><td><code>driver.get(url)</code></td><td><code>await page.goto(url)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.get("https://example.com");</span>
+<span class="p">await page.goto('https://example.com');</span></pre></details></td></tr>
+<tr><td>Current URL</td><td><code>driver.getCurrentUrl()</code></td><td><code>page.url()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">String url = driver.getCurrentUrl();</span>
+<span class="p">const url = page.url();</span></pre></details></td></tr>
+<tr><td>Page title</td><td><code>driver.getTitle()</code></td><td><code>await page.title()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">String title = driver.getTitle();</span>
+<span class="p">const title = await page.title();</span></pre></details></td></tr>
+<tr><td>Back</td><td><code>driver.navigate().back()</code></td><td><code>await page.goBack()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.navigate().back();</span>
+<span class="p">await page.goBack();</span></pre></details></td></tr>
+<tr><td>Forward</td><td><code>driver.navigate().forward()</code></td><td><code>await page.goForward()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.navigate().forward();</span>
+<span class="p">await page.goForward();</span></pre></details></td></tr>
+<tr><td>Refresh</td><td><code>driver.navigate().refresh()</code></td><td><code>await page.reload()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.navigate().refresh();</span>
+<span class="p">await page.reload();</span></pre></details></td></tr>
+<tr><td>Wait for load</td><td>Page load timeout</td><td><code>goto(url, { waitUntil })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));</span>
+<span class="p">await page.goto(url, { waitUntil: 'networkidle' });
+// 'load' | 'domcontentloaded' | 'networkidle'</span></pre></details></td></tr>
+<tr><td>Get page source</td><td><code>driver.getPageSource()</code></td><td><code>await page.content()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">String html = driver.getPageSource();</span>
+<span class="p">const html = await page.content();</span></pre></details></td></tr>
+</table>
+
+<!-- Section 4 -->
+<h2 id="s4">4. Selectors / Locators <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Locators find elements on the page. Playwright's built-in role/text/label locators are more resilient than CSS/XPath.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>By ID</td><td><code>By.id("myId")</code></td><td><code>page.locator('#myId')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.id("username"));</span>
+<span class="p">page.locator('#username');</span></pre></details></td></tr>
+<tr><td>By CSS</td><td><code>By.cssSelector("...")</code></td><td><code>page.locator('css=...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.cssSelector("div.card > h2"));</span>
+<span class="p">page.locator('div.card > h2');</span></pre></details></td></tr>
+<tr><td>By XPath</td><td><code>By.xpath("//...")</code></td><td><code>page.locator('xpath=//...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.xpath("//button[@type='submit']"));</span>
+<span class="p">page.locator("xpath=//button[@type='submit']");</span></pre></details></td></tr>
+<tr><td>By text</td><td>XPath with text()</td><td><code>page.getByText('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.xpath("//*[text()='Sign In']"));</span>
+<span class="p">page.getByText('Sign In');</span></pre></details></td></tr>
+<tr><td>By role</td><td>Not built-in</td><td><code>page.getByRole('button')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// No direct equivalent
+driver.findElement(By.xpath("//button"));</span>
+<span class="p">page.getByRole('button', { name: 'Submit' });</span></pre></details></td></tr>
+<tr><td>By label</td><td>XPath workaround</td><td><code>page.getByLabel('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.xpath(
+    "//label[text()='Email']/../input"));</span>
+<span class="p">page.getByLabel('Email');</span></pre></details></td></tr>
+<tr><td>By placeholder</td><td><code>By.cssSelector("[placeholder='...']")</code></td><td><code>page.getByPlaceholder('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.cssSelector("[placeholder='Search']"));</span>
+<span class="p">page.getByPlaceholder('Search');</span></pre></details></td></tr>
+<tr><td>By test ID</td><td><code>By.cssSelector("[data-testid='...']")</code></td><td><code>page.getByTestId('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.cssSelector("[data-testid='nav']"));</span>
+<span class="p">page.getByTestId('nav');</span></pre></details></td></tr>
+<tr><td>Find all</td><td><code>findElements(...)</code></td><td><code>locator.all()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">List&lt;WebElement&gt; items = driver.findElements(By.cssSelector("li.item"));
+System.out.println(items.size());</span>
+<span class="p">const items = page.locator('li.item');
+console.log(await items.count());</span></pre></details></td></tr>
+<tr><td>Nth element</td><td><code>findElements(...).get(n)</code></td><td><code>locator.nth(n)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">WebElement third = driver.findElements(By.cssSelector("tr")).get(2);</span>
+<span class="p">page.locator('tr').nth(2);</span></pre></details></td></tr>
+<tr><td>Filter</td><td>Manual loop</td><td><code>locator.filter({ hasText })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Loop and check text manually
+for (WebElement el : elems) {
+    if (el.getText().contains("Active")) { ... }
+}</span>
+<span class="p">page.locator('li').filter({ hasText: 'Active' });</span></pre></details></td></tr>
+<tr><td>Chained</td><td>findElement from element</td><td><code>locator.locator(...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">WebElement card = driver.findElement(By.className("card"));
+WebElement title = card.findElement(By.tagName("h2"));</span>
+<span class="p">page.locator('.card').locator('h2');</span></pre></details></td></tr>
+</table>
+<!-- Section 5 -->
+<h2 id="s5">5. Actions / Clicks <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Actions simulate user interactions — clicking, hovering, dragging. Playwright auto-waits; Selenium needs explicit waits.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Click</td><td><code>element.click()</code></td><td><code>await locator.click()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.id("btn")).click();</span>
+<span class="p">await page.locator('#btn').click();</span></pre></details></td></tr>
+<tr><td>Double click</td><td><code>Actions.doubleClick(el)</code></td><td><code>await locator.dblclick()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">new Actions(driver).doubleClick(el).perform();</span>
+<span class="p">await page.locator('#item').dblclick();</span></pre></details></td></tr>
+<tr><td>Right click</td><td><code>Actions.contextClick(el)</code></td><td><code>await locator.click({ button: 'right' })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">new Actions(driver).contextClick(el).perform();</span>
+<span class="p">await page.locator('#item').click({ button: 'right' });</span></pre></details></td></tr>
+<tr><td>Force click</td><td>JS: <code>executeScript("el.click()")</code></td><td><code>await locator.click({ force: true })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">((JavascriptExecutor) driver).executeScript("arguments[0].click()", el);</span>
+<span class="p">await page.locator('#hidden-btn').click({ force: true });</span></pre></details></td></tr>
+<tr><td>Hover</td><td><code>Actions.moveToElement(el)</code></td><td><code>await locator.hover()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">new Actions(driver).moveToElement(el).perform();</span>
+<span class="p">await page.locator('#menu').hover();</span></pre></details></td></tr>
+<tr><td>Drag &amp; drop</td><td><code>Actions.dragAndDrop(src, tgt)</code></td><td><code>await locator.dragTo(target)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">new Actions(driver).dragAndDrop(src, tgt).perform();</span>
+<span class="p">await page.locator('#src').dragTo(page.locator('#tgt'));</span></pre></details></td></tr>
+<tr><td>Scroll to element</td><td>JS: <code>scrollIntoView()</code></td><td><code>await locator.scrollIntoViewIfNeeded()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">((JavascriptExecutor) driver).executeScript(
+    "arguments[0].scrollIntoView(true)", el);</span>
+<span class="p">await page.locator('#footer').scrollIntoViewIfNeeded();</span></pre></details></td></tr>
+<tr><td>Tap (mobile)</td><td>Appium TouchAction</td><td><code>await locator.tap()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Appium:
+new TouchAction(driver).tap(el).perform();</span>
+<span class="p">await page.locator('#btn').tap();</span></pre></details></td></tr>
+</table>
+
+<!-- Section 6 -->
+<h2 id="s6">6. Forms &amp; Input <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Form interaction is the core of testing user workflows — login, search, registration, data entry.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Type text</td><td><code>element.sendKeys("text")</code></td><td><code>await locator.fill('text')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.id("email")).sendKeys("a@b.com");</span>
+<span class="p">await page.locator('#email').fill('a@b.com');</span></pre></details></td></tr>
+<tr><td>Type slowly</td><td>Send one char at a time</td><td><code>await locator.type('text', { delay })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">for (char c : "hello".toCharArray()) {
+    el.sendKeys(String.valueOf(c));
+    Thread.sleep(100);
+}</span>
+<span class="p">await page.locator('#search').type('hello', { delay: 100 });</span></pre></details></td></tr>
+<tr><td>Clear field</td><td><code>element.clear()</code></td><td><code>await locator.clear()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.id("name")).clear();</span>
+<span class="p">await page.locator('#name').clear();</span></pre></details></td></tr>
+<tr><td>Get value</td><td><code>element.getAttribute("value")</code></td><td><code>await locator.inputValue()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">String val = el.getAttribute("value");</span>
+<span class="p">const val = await page.locator('#name').inputValue();</span></pre></details></td></tr>
+<tr><td>Checkbox check</td><td><code>if (!el.isSelected()) el.click()</code></td><td><code>await locator.check()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">WebElement cb = driver.findElement(By.id("agree"));
+if (!cb.isSelected()) cb.click();</span>
+<span class="p">await page.locator('#agree').check();</span></pre></details></td></tr>
+<tr><td>Uncheck</td><td><code>if (el.isSelected()) el.click()</code></td><td><code>await locator.uncheck()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">if (cb.isSelected()) cb.click();</span>
+<span class="p">await page.locator('#agree').uncheck();</span></pre></details></td></tr>
+<tr><td>Get text</td><td><code>element.getText()</code></td><td><code>await locator.textContent()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">String msg = driver.findElement(By.id("msg")).getText();</span>
+<span class="p">const msg = await page.locator('#msg').textContent();</span></pre></details></td></tr>
+<tr><td>Get attribute</td><td><code>element.getAttribute("href")</code></td><td><code>await locator.getAttribute('href')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">String href = el.getAttribute("href");</span>
+<span class="p">const href = await page.locator('a').getAttribute('href');</span></pre></details></td></tr>
+<tr><td>Is visible</td><td><code>element.isDisplayed()</code></td><td><code>await locator.isVisible()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">boolean vis = el.isDisplayed();</span>
+<span class="p">const vis = await page.locator('#el').isVisible();</span></pre></details></td></tr>
+<tr><td>Is enabled</td><td><code>element.isEnabled()</code></td><td><code>await locator.isEnabled()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">boolean enabled = el.isEnabled();</span>
+<span class="p">const enabled = await page.locator('#btn').isEnabled();</span></pre></details></td></tr>
+</table>
+
+<!-- Section 7 -->
+<h2 id="s7">7. Waits <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Waits handle timing issues — the #1 cause of flaky tests. Playwright's auto-wait eliminates most explicit waits.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Auto-wait</td><td>Not built-in</td><td>Built-in (all actions auto-wait)</td><td><details><summary>▶ Show</summary><pre><span class="s">// Must add explicit waits manually</span>
+<span class="p">// click() auto-waits for visible + enabled
+await page.locator('#btn').click(); // waits automatically</span></pre></details></td></tr>
+<tr><td>Implicit wait</td><td><code>driver.manage().timeouts().implicitlyWait(...)</code></td><td>Not needed</td><td><details><summary>▶ Show</summary><pre><span class="s">driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));</span>
+<span class="p">// Not needed — Playwright auto-waits on all actions</span></pre></details></td></tr>
+<tr><td>Explicit wait</td><td><code>new WebDriverWait(driver, ...).until(...)</code></td><td><code>await locator.waitFor()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("msg")));</span>
+<span class="p">await page.locator('#msg').waitFor({ state: 'visible' });</span></pre></details></td></tr>
+<tr><td>Wait for text</td><td><code>EC.textToBePresentInElement</code></td><td><code>expect(locator).toHaveText(...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">wait.until(ExpectedConditions.textToBePresentInElementLocated(
+    By.id("status"), "Done"));</span>
+<span class="p">await expect(page.locator('#status')).toHaveText('Done');</span></pre></details></td></tr>
+<tr><td>Wait hidden</td><td><code>EC.invisibilityOfElement</code></td><td><code>waitFor({ state: 'hidden' })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader")));</span>
+<span class="p">await page.locator('#loader').waitFor({ state: 'hidden' });</span></pre></details></td></tr>
+<tr><td>Wait for URL</td><td><code>EC.urlContains("...")</code></td><td><code>await page.waitForURL('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">wait.until(ExpectedConditions.urlContains("/dashboard"));</span>
+<span class="p">await page.waitForURL('**/dashboard');</span></pre></details></td></tr>
+<tr><td>Custom timeout</td><td>Pass Duration to wait</td><td><code>{ timeout: ms }</code> param</td><td><details><summary>▶ Show</summary><pre><span class="s">new WebDriverWait(driver, Duration.ofSeconds(30))
+    .until(EC.presenceOfElementLocated(By.id("el")));</span>
+<span class="p">await page.locator('#el').click({ timeout: 30000 });</span></pre></details></td></tr>
+</table>
+
+<!-- Section 8 -->
+<h2 id="s8">8. Assertions <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Assertions verify expected behavior. Playwright's expect() auto-retries; Selenium assertions are instant pass/fail.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Text equals</td><td><code>assertEquals(el.getText(), "...")</code></td><td><code>expect(loc).toHaveText('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertEquals("Success", driver.findElement(By.id("msg")).getText());</span>
+<span class="p">await expect(page.locator('#msg')).toHaveText('Success');</span></pre></details></td></tr>
+<tr><td>Text contains</td><td><code>assertTrue(el.getText().contains(...))</code></td><td><code>expect(loc).toContainText('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertTrue(el.getText().contains("welcome"));</span>
+<span class="p">await expect(page.locator('#msg')).toContainText('welcome');</span></pre></details></td></tr>
+<tr><td>Visible</td><td><code>assertTrue(el.isDisplayed())</code></td><td><code>expect(loc).toBeVisible()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertTrue(el.isDisplayed());</span>
+<span class="p">await expect(page.locator('#el')).toBeVisible();</span></pre></details></td></tr>
+<tr><td>Hidden</td><td><code>assertFalse(el.isDisplayed())</code></td><td><code>expect(loc).toBeHidden()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertFalse(el.isDisplayed());</span>
+<span class="p">await expect(page.locator('#el')).toBeHidden();</span></pre></details></td></tr>
+<tr><td>Enabled</td><td><code>assertTrue(el.isEnabled())</code></td><td><code>expect(loc).toBeEnabled()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertTrue(el.isEnabled());</span>
+<span class="p">await expect(page.locator('#btn')).toBeEnabled();</span></pre></details></td></tr>
+<tr><td>Checked</td><td><code>assertTrue(el.isSelected())</code></td><td><code>expect(loc).toBeChecked()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertTrue(cb.isSelected());</span>
+<span class="p">await expect(page.locator('#agree')).toBeChecked();</span></pre></details></td></tr>
+<tr><td>URL</td><td><code>assertTrue(driver.getCurrentUrl().contains(...))</code></td><td><code>expect(page).toHaveURL('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertTrue(driver.getCurrentUrl().contains("/dashboard"));</span>
+<span class="p">await expect(page).toHaveURL(/.*dashboard/);</span></pre></details></td></tr>
+<tr><td>Title</td><td><code>assertEquals(driver.getTitle(), "...")</code></td><td><code>expect(page).toHaveTitle('...')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertEquals("Home", driver.getTitle());</span>
+<span class="p">await expect(page).toHaveTitle('Home');</span></pre></details></td></tr>
+<tr><td>Count</td><td><code>assertEquals(elems.size(), n)</code></td><td><code>expect(loc).toHaveCount(n)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertEquals(5, driver.findElements(By.cssSelector("li")).size());</span>
+<span class="p">await expect(page.locator('li')).toHaveCount(5);</span></pre></details></td></tr>
+<tr><td>Attribute</td><td><code>assertEquals(el.getAttribute("x"), "y")</code></td><td><code>expect(loc).toHaveAttribute('x','y')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">assertEquals("true", el.getAttribute("disabled"));</span>
+<span class="p">await expect(page.locator('#btn')).toHaveAttribute('disabled', '');</span></pre></details></td></tr>
+</table>
+
+<!-- Section 9 -->
+<h2 id="s9">9. Frames &amp; Windows <span class="badge web">WEB</span></h2>
+<p class="section-desc">Frames and popups add complexity. Playwright handles them as scoped objects; Selenium requires context switching.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Switch to iframe</td><td><code>driver.switchTo().frame(...)</code></td><td><code>page.frameLocator(...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.switchTo().frame("iframe-name");
+// or by element:
+WebElement iframe = driver.findElement(By.tagName("iframe"));
+driver.switchTo().frame(iframe);</span>
+<span class="p">const frame = page.frameLocator('#iframe-name');
+await frame.locator('#btn').click();</span></pre></details></td></tr>
+<tr><td>Back to main</td><td><code>driver.switchTo().defaultContent()</code></td><td>Not needed</td><td><details><summary>▶ Show</summary><pre><span class="s">driver.switchTo().defaultContent();</span>
+<span class="p">// Not needed — frameLocator is scoped
+// Just use page.locator() for main content</span></pre></details></td></tr>
+<tr><td>New tab</td><td><code>driver.switchTo().newWindow(WindowType.TAB)</code></td><td><code>context.newPage()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.switchTo().newWindow(WindowType.TAB);
+driver.get("https://other.com");</span>
+<span class="p">const newPage = await context.newPage();
+await newPage.goto('https://other.com');</span></pre></details></td></tr>
+<tr><td>Switch window</td><td><code>driver.switchTo().window(handle)</code></td><td>Pages are independent</td><td><details><summary>▶ Show</summary><pre><span class="s">Set&lt;String&gt; handles = driver.getWindowHandles();
+for (String h : handles) {
+    driver.switchTo().window(h);
+}</span>
+<span class="p">// Each page is independent — no switching needed
+// page1.locator(...), page2.locator(...)</span></pre></details></td></tr>
+<tr><td>Handle popup</td><td><code>switchTo().window()</code></td><td><code>page.waitForEvent('popup')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">String main = driver.getWindowHandle();
+driver.findElement(By.id("open")).click();
+Set&lt;String&gt; all = driver.getWindowHandles();
+for (String h : all) {
+    if (!h.equals(main)) driver.switchTo().window(h);
+}</span>
+<span class="p">const [popup] = await Promise.all([
+  page.waitForEvent('popup'),
+  page.locator('#open').click()
+]);
+await popup.locator('#content').textContent();</span></pre></details></td></tr>
+<tr><td>Close tab</td><td><code>driver.close()</code></td><td><code>await page.close()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.close(); // closes current tab only</span>
+<span class="p">await popup.close(); // other pages still work</span></pre></details></td></tr>
+</table>
+
+<!-- Section 10 -->
+<h2 id="s10">10. Dropdowns &amp; Alerts <span class="badge web">WEB</span></h2>
+<p class="section-desc">Dropdowns and alerts are common UI patterns that require special handling in both frameworks.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Select by value</td><td><code>new Select(el).selectByValue("v")</code></td><td><code>locator.selectOption({ value: 'v' })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">Select sel = new Select(driver.findElement(By.id("country")));
+sel.selectByValue("us");</span>
+<span class="p">await page.locator('#country').selectOption({ value: 'us' });</span></pre></details></td></tr>
+<tr><td>Select by text</td><td><code>sel.selectByVisibleText("...")</code></td><td><code>selectOption({ label: '...' })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">sel.selectByVisibleText("United States");</span>
+<span class="p">await page.locator('#country').selectOption({ label: 'United States' });</span></pre></details></td></tr>
+<tr><td>Select by index</td><td><code>sel.selectByIndex(2)</code></td><td><code>selectOption({ index: 2 })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">sel.selectByIndex(2);</span>
+<span class="p">await page.locator('#country').selectOption({ index: 2 });</span></pre></details></td></tr>
+<tr><td>Multi-select</td><td>Multiple selectByValue calls</td><td><code>selectOption([...])</code></td><td><details><summary>▶ Show</summary><pre><span class="s">sel.selectByValue("a");
+sel.selectByValue("b");</span>
+<span class="p">await page.locator('#multi').selectOption(['a', 'b']);</span></pre></details></td></tr>
+<tr><td>Accept alert</td><td><code>driver.switchTo().alert().accept()</code></td><td><code>page.on('dialog', ...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">Alert alert = driver.switchTo().alert();
+System.out.println(alert.getText());
+alert.accept();</span>
+<span class="p">page.on('dialog', async dialog =&gt; {
+  console.log(dialog.message());
+  await dialog.accept();
+});
+await page.locator('#trigger').click();</span></pre></details></td></tr>
+<tr><td>Dismiss alert</td><td><code>alert.dismiss()</code></td><td><code>dialog.dismiss()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.switchTo().alert().dismiss();</span>
+<span class="p">page.on('dialog', d =&gt; d.dismiss());</span></pre></details></td></tr>
+<tr><td>Prompt input</td><td><code>alert.sendKeys("text")</code></td><td><code>dialog.accept(promptText)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">Alert alert = driver.switchTo().alert();
+alert.sendKeys("my answer");
+alert.accept();</span>
+<span class="p">page.on('dialog', async d =&gt; {
+  await d.accept('my answer');
+});</span></pre></details></td></tr>
+</table>
+
+<!-- Section 11 -->
+<h2 id="s11">11. Screenshots &amp; Videos <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Visual evidence helps debug failures. Playwright's built-in video/trace recording is a major advantage.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Full page screenshot</td><td><code>TakesScreenshot.getScreenshotAs(...)</code></td><td><code>page.screenshot({ fullPage: true })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+FileUtils.copyFile(src, new File("page.png"));</span>
+<span class="p">await page.screenshot({ path: 'page.png', fullPage: true });</span></pre></details></td></tr>
+<tr><td>Element screenshot</td><td><code>element.getScreenshotAs(...)</code></td><td><code>locator.screenshot()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">File src = el.getScreenshotAs(OutputType.FILE);
+FileUtils.copyFile(src, new File("elem.png"));</span>
+<span class="p">await page.locator('#card').screenshot({ path: 'card.png' });</span></pre></details></td></tr>
+<tr><td>Screenshot bytes</td><td><code>getScreenshotAs(OutputType.BYTES)</code></td><td><code>page.screenshot()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">byte[] png = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);</span>
+<span class="p">const buffer = await page.screenshot(); // returns Buffer</span></pre></details></td></tr>
+<tr><td>Video recording</td><td>External tools (FFMPEG)</td><td><code>newContext({ recordVideo })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// No built-in video — use external recording</span>
+<span class="p">const ctx = await browser.newContext({
+  recordVideo: { dir: './videos', size: { width: 1280, height: 720 } }
+});
+const page = await ctx.newPage();
+// ... test ...
+await ctx.close(); // video saved</span></pre></details></td></tr>
+<tr><td>Trace</td><td>Not built-in</td><td><code>context.tracing.start()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Use browser DevTools protocol or proxy</span>
+<span class="p">await context.tracing.start({ screenshots: true, snapshots: true });
+// ... test ...
+await context.tracing.stop({ path: 'trace.zip' });
+// npx playwright show-trace trace.zip</span></pre></details></td></tr>
+</table>
+
+<!-- Section 12 -->
+<h2 id="s12">12. File Upload / Download <span class="badge web">WEB</span></h2>
+<p class="section-desc">File operations test real user workflows. Playwright's event-based approach is cleaner than Selenium's workarounds.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Upload file</td><td><code>input.sendKeys(filePath)</code></td><td><code>locator.setInputFiles(path)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">WebElement upload = driver.findElement(By.cssSelector("input[type=file]"));
+upload.sendKeys("/path/to/file.pdf");</span>
+<span class="p">await page.locator('input[type=file]').setInputFiles('file.pdf');</span></pre></details></td></tr>
+<tr><td>Upload multiple</td><td>sendKeys with multiple paths</td><td><code>setInputFiles([f1, f2])</code></td><td><details><summary>▶ Show</summary><pre><span class="s">upload.sendKeys("/path/f1.pdf\n/path/f2.pdf");</span>
+<span class="p">await page.locator('input[type=file]').setInputFiles(['f1.pdf', 'f2.pdf']);</span></pre></details></td></tr>
+<tr><td>Remove files</td><td>Clear via JS</td><td><code>setInputFiles([])</code></td><td><details><summary>▶ Show</summary><pre><span class="s">((JavascriptExecutor) driver).executeScript("arguments[0].value=''", upload);</span>
+<span class="p">await page.locator('input[type=file]').setInputFiles([]);</span></pre></details></td></tr>
+<tr><td>Non-input upload</td><td>Robot class / AutoIT</td><td><code>waitForEvent('filechooser')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Needs OS-level: Robot class or AutoIT</span>
+<span class="p">const [fileChooser] = await Promise.all([
+  page.waitForEvent('filechooser'),
+  page.locator('#upload-btn').click()
+]);
+await fileChooser.setFiles('file.pdf');</span></pre></details></td></tr>
+<tr><td>Download file</td><td>Set download dir via prefs</td><td><code>waitForEvent('download')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">Map&lt;String, Object&gt; prefs = new HashMap&lt;&gt;();
+prefs.put("download.default_directory", "/tmp/downloads");
+opts.setExperimentalOption("prefs", prefs);
+driver.findElement(By.id("dl")).click();
+// poll for file</span>
+<span class="p">const [download] = await Promise.all([
+  page.waitForEvent('download'),
+  page.locator('#dl').click()
+]);
+await download.saveAs('./downloads/' + download.suggestedFilename());</span></pre></details></td></tr>
+</table>
+
+<!-- Section 13 -->
+<h2 id="s13">13. Keyboard &amp; Mouse <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Low-level input simulation is needed for complex interactions, shortcuts, and canvas/map testing.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Press key</td><td><code>element.sendKeys(Keys.ENTER)</code></td><td><code>await locator.press('Enter')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.id("search")).sendKeys(Keys.ENTER);</span>
+<span class="p">await page.locator('#search').press('Enter');</span></pre></details></td></tr>
+<tr><td>Key combo</td><td><code>sendKeys(Keys.chord(CONTROL, "a"))</code></td><td><code>press('Control+a')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">el.sendKeys(Keys.chord(Keys.CONTROL, "a"));</span>
+<span class="p">await page.locator('#input').press('Control+a');</span></pre></details></td></tr>
+<tr><td>Tab</td><td><code>sendKeys(Keys.TAB)</code></td><td><code>press('Tab')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">el.sendKeys(Keys.TAB);</span>
+<span class="p">await page.locator('#field1').press('Tab');</span></pre></details></td></tr>
+<tr><td>Escape</td><td><code>sendKeys(Keys.ESCAPE)</code></td><td><code>keyboard.press('Escape')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.findElement(By.tagName("body")).sendKeys(Keys.ESCAPE);</span>
+<span class="p">await page.keyboard.press('Escape');</span></pre></details></td></tr>
+<tr><td>Global keyboard</td><td><code>Actions.sendKeys(...)</code></td><td><code>page.keyboard.press(...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">new Actions(driver).sendKeys(Keys.F5).perform();</span>
+<span class="p">await page.keyboard.press('F5');</span></pre></details></td></tr>
+<tr><td>Type on page</td><td><code>Actions.sendKeys("text")</code></td><td><code>page.keyboard.type('text')</code></td><td><details><summary>▶ Show</summary><pre><span class="s">new Actions(driver).sendKeys("hello").perform();</span>
+<span class="p">await page.keyboard.type('hello', { delay: 50 });</span></pre></details></td></tr>
+<tr><td>Mouse move</td><td><code>Actions.moveByOffset(x, y)</code></td><td><code>page.mouse.move(x, y)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">new Actions(driver).moveByOffset(100, 200).perform();</span>
+<span class="p">await page.mouse.move(100, 200);</span></pre></details></td></tr>
+<tr><td>Mouse click at</td><td><code>Actions.moveByOffset().click()</code></td><td><code>page.mouse.click(x, y)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">new Actions(driver).moveByOffset(100, 200).click().perform();</span>
+<span class="p">await page.mouse.click(100, 200);</span></pre></details></td></tr>
+</table>
+
+<!-- Section 14 -->
+<h2 id="s14">14. Page Object Model <span class="badge both">BOTH</span></h2>
+<p class="section-desc">POM organizes test code into reusable page classes — essential for maintainable test suites at scale.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Page class</td><td>Class with WebDriver + By locators</td><td>Class with Page + Locators</td><td><details><summary>▶ Show</summary><pre><span class="s">public class LoginPage {
+    private WebDriver driver;
+    private By username = By.id("user");
+    private By password = By.id("pass");
+    private By loginBtn = By.id("login");
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+    }
+}</span>
+<span class="p">import { Page, Locator } from '@playwright/test';
+
+export class LoginPage {
+  readonly page: Page;
+  readonly username: Locator;
+  readonly password: Locator;
+  readonly loginBtn: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.username = page.locator('#user');
+    this.password = page.locator('#pass');
+    this.loginBtn = page.locator('#login');
+  }
+}</span></pre></details></td></tr>
+<tr><td>Page method</td><td>Find + action</td><td>Locator action</td><td><details><summary>▶ Show</summary><pre><span class="s">public void login(String user, String pwd) {
+    driver.findElement(username).sendKeys(user);
+    driver.findElement(password).sendKeys(pwd);
+    driver.findElement(loginBtn).click();
+}</span>
+<span class="p">async login(user: string, pwd: string) {
+  await this.username.fill(user);
+  await this.password.fill(pwd);
+  await this.loginBtn.click();
+}</span></pre></details></td></tr>
+<tr><td>Test usage</td><td>Instantiate with driver</td><td>Instantiate with page</td><td><details><summary>▶ Show</summary><pre><span class="s">@Test
+void testLogin() {
+    WebDriver driver = new ChromeDriver();
+    LoginPage loginPage = new LoginPage(driver);
+    driver.get("https://app.com/login");
+    loginPage.login("admin", "pass123");
+}</span>
+<span class="p">import { test } from '@playwright/test';
+import { LoginPage } from './pages/login-page';
+
+test('login', async ({ page }) =&gt; {
+  const loginPage = new LoginPage(page);
+  await page.goto('https://app.com/login');
+  await loginPage.login('admin', 'pass123');
+});</span></pre></details></td></tr>
+<tr><td>Fixtures</td><td>@BeforeEach / @AfterEach</td><td>Built-in page fixture</td><td><details><summary>▶ Show</summary><pre><span class="s">@BeforeEach
+void setUp() { driver = new ChromeDriver(); }
+@AfterEach
+void tearDown() { driver.quit(); }</span>
+<span class="p">// Playwright provides page fixture automatically
+test('example', async ({ page }) =&gt; {
+  // page is fresh per test
+});</span></pre></details></td></tr>
+</table>
+
+<!-- Section 15 -->
+<h2 id="s15">15. API &amp; Network Interception <span class="badge web">WEB</span></h2>
+<p class="section-desc">Network interception enables mocking APIs, blocking resources, and testing edge cases without backend changes.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Intercept requests</td><td>Not built-in (use proxy)</td><td><code>page.route(...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Use BrowserMob Proxy or similar
+// Complex external setup required</span>
+<span class="p">// Block images:
+await page.route('**/*.png', route =&gt; route.abort());
+// Modify request:
+await page.route('**/api/**', route =&gt; route.continue_());</span></pre></details></td></tr>
+<tr><td>Mock API</td><td>External mock server</td><td><code>route.fulfill({ body })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Use WireMock or mock server externally</span>
+<span class="p">await page.route('**/api/users', route =&gt; route.fulfill({
+  status: 200,
+  contentType: 'application/json',
+  body: JSON.stringify([{ name: 'Alice' }])
+}));</span></pre></details></td></tr>
+<tr><td>Wait for API</td><td>Not built-in</td><td><code>page.waitForResponse(...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Poll or use proxy logs</span>
+<span class="p">const [response] = await Promise.all([
+  page.waitForResponse('**/api/data'),
+  page.locator('#load').click()
+]);
+console.log(response.status(), await response.json());</span></pre></details></td></tr>
+<tr><td>Network events</td><td>CDP (complex)</td><td><code>page.on('request', ...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Chrome DevTools Protocol:
+// ((HasDevTools) driver).getDevTools() ...</span>
+<span class="p">page.on('request', req =&gt; console.log(req.url()));
+page.on('response', res =&gt; console.log(res.status()));</span></pre></details></td></tr>
+<tr><td>API testing</td><td>Use RestAssured / HttpClient</td><td><code>request.newContext()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// RestAssured:
+given().get("https://api.example.com/users")
+    .then().statusCode(200);</span>
+<span class="p">const api = await request.newContext({
+  baseURL: 'https://api.example.com'
+});
+const resp = await api.get('/users');
+expect(resp.ok()).toBeTruthy();</span></pre></details></td></tr>
+<tr><td>Cookies</td><td><code>driver.manage().getCookies()</code></td><td><code>context.cookies()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">Set&lt;Cookie&gt; cookies = driver.manage().getCookies();
+driver.manage().addCookie(new Cookie("tk", "abc"));</span>
+<span class="p">const cookies = await context.cookies();
+await context.addCookies([{ name: 'tk', value: 'abc', url: 'https://ex.com' }]);</span></pre></details></td></tr>
+<tr><td>Storage state</td><td>Manual cookie save</td><td><code>context.storageState()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Manually serialize cookies to file</span>
+<span class="p">// Save auth state:
+await context.storageState({ path: 'auth.json' });
+// Reuse:
+const ctx = await browser.newContext({ storageState: 'auth.json' });</span></pre></details></td></tr>
+</table>
+
+<!-- Section 16 -->
+<h2 id="s16">16. Mobile &amp; App Automation <span class="badge app">APP</span></h2>
+<p class="section-desc">Mobile testing requires Appium (full native support) or Playwright (Chrome-only on Android, device emulation).</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Appium Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Architecture</td><td>Appium server + Java client</td><td>Direct (Android Chrome only)</td><td><details><summary>▶ Show</summary><pre><span class="s">// Appium: separate server process
+// Supports iOS + Android native/hybrid/web</span>
+<span class="p">// Playwright: Android Chrome via USB/emulator
+// OR device emulation in browser
+// No iOS native app support</span></pre></details></td></tr>
+<tr><td>Android setup</td><td>DesiredCapabilities</td><td><code>devices / android</code></td><td><details><summary>▶ Show</summary><pre><span class="s">UiAutomator2Options opts = new UiAutomator2Options()
+    .setDeviceName("emulator-5554")
+    .setApp("/path/to/app.apk");
+AndroidDriver driver = new AndroidDriver(
+    new URL("http://localhost:4723"), opts);</span>
+<span class="p">// Device emulation (browser):
+import { devices } from '@playwright/test';
+const ctx = await browser.newContext({
+  ...devices['Pixel 5']
+});
+// OR real Android (experimental):
+// const device = (await android.devices())[0];
+// const ctx = await device.launchBrowser();</span></pre></details></td></tr>
+<tr><td>iOS setup</td><td>Appium + XCUITest</td><td>WebKit emulation only</td><td><details><summary>▶ Show</summary><pre><span class="s">XCUITestOptions opts = new XCUITestOptions()
+    .setDeviceName("iPhone 14")
+    .setApp("/path/to/app.ipa");
+IOSDriver driver = new IOSDriver(
+    new URL("http://localhost:4723"), opts);</span>
+<span class="p">// Playwright: no native iOS support
+// WebKit browser emulation for web testing:
+const ctx = await browser.newContext({
+  ...devices['iPhone 13']
+});</span></pre></details></td></tr>
+<tr><td>Find element</td><td><code>AppiumBy.accessibilityId(...)</code></td><td>CSS/XPath (web only)</td><td><details><summary>▶ Show</summary><pre><span class="s">WebElement el = driver.findElement(AppiumBy.accessibilityId("loginBtn"));
+// Or UiAutomator:
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().text(\"Login\")"));</span>
+<span class="p">// Playwright: Chrome-based web only on device
+await page.locator('#loginBtn').click();
+await page.getByText('Login').click();</span></pre></details></td></tr>
+<tr><td>Geolocation</td><td><code>driver.setLocation(...)</code></td><td><code>newContext({ geolocation })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">driver.setLocation(new Location(37.7749, -122.4194, 0));</span>
+<span class="p">const ctx = await browser.newContext({
+  geolocation: { latitude: 37.7749, longitude: -122.4194 },
+  permissions: ['geolocation']
+});</span></pre></details></td></tr>
+<tr><td>App install</td><td><code>driver.installApp(path)</code></td><td>N/A</td><td><details><summary>▶ Show</summary><pre><span class="s">driver.installApp("/path/to/app.apk");
+driver.activateApp("com.example.app");</span>
+<span class="p">// Not applicable — Playwright doesn't install apps</span></pre></details></td></tr>
+<tr><td>App lifecycle</td><td><code>activateApp / terminateApp</code></td><td>N/A</td><td><details><summary>▶ Show</summary><pre><span class="s">driver.activateApp("com.example.app");
+driver.terminateApp("com.example.app");
+driver.runAppInBackground(Duration.ofSeconds(5));</span>
+<span class="p">// Playwright: N/A for native apps</span></pre></details></td></tr>
+</table>
+
+<!-- Section 17 -->
+<h2 id="s17">17. Advanced Mobile Gestures <span class="badge app">APP</span></h2>
+<p class="section-desc">Native gestures (swipe, pinch, rotate) are essential for testing mobile UX — Appium has full support.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Appium Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Swipe</td><td>W3C Actions / TouchAction</td><td><code>page.mouse</code> (web only)</td><td><details><summary>▶ Show</summary><pre><span class="s">// W3C Actions:
+PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+Sequence swipe = new Sequence(finger, 0);
+swipe.addAction(finger.createPointerMove(Duration.ZERO, Origin.viewport(), 500, 1500));
+swipe.addAction(finger.createPointerDown(MouseButton.LEFT.asArg()));
+swipe.addAction(finger.createPointerMove(Duration.ofMillis(500), Origin.viewport(), 500, 500));
+swipe.addAction(finger.createPointerUp(MouseButton.LEFT.asArg()));
+driver.perform(List.of(swipe));</span>
+<span class="p">// Playwright: simulate touch swipe (web/Chrome only)
+await page.mouse.move(500, 1500);
+await page.mouse.down();
+await page.mouse.move(500, 500, { steps: 10 });
+await page.mouse.up();</span></pre></details></td></tr>
+<tr><td>Pinch/Zoom</td><td>Multi-touch W3C Actions</td><td>Not supported</td><td><details><summary>▶ Show</summary><pre><span class="s">// Two-finger pinch using W3C Actions:
+PointerInput finger1 = new PointerInput(Kind.TOUCH, "finger1");
+PointerInput finger2 = new PointerInput(Kind.TOUCH, "finger2");
+// Build sequences for both fingers moving apart
+driver.perform(List.of(seq1, seq2));</span>
+<span class="p">// Playwright: no multi-touch support
+// Use page.evaluate() with Touch API for web</span></pre></details></td></tr>
+<tr><td>Long press</td><td><code>W3C pointer down + pause</code></td><td>N/A (native) / delay (web)</td><td><details><summary>▶ Show</summary><pre><span class="s">// W3C Actions with pause:
+swipe.addAction(finger.createPointerDown(LEFT.asArg()));
+swipe.addAction(new Pause(finger, Duration.ofSeconds(2)));
+swipe.addAction(finger.createPointerUp(LEFT.asArg()));</span>
+<span class="p">// Web simulation:
+await page.locator('#item').click({ delay: 2000 });</span></pre></details></td></tr>
+<tr><td>Scroll (mobile)</td><td>UiScrollable / W3C swipe</td><td>Mouse wheel (web)</td><td><details><summary>▶ Show</summary><pre><span class="s">// Android UiScrollable:
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiScrollable(new UiSelector().scrollable(true))" +
+    ".scrollTextIntoView(\"target\")"));</span>
+<span class="p">// Playwright web:
+await page.mouse.wheel(0, 500); // scroll down</span></pre></details></td></tr>
+<tr><td>Rotate device</td><td><code>driver.rotate(ScreenOrientation.LANDSCAPE)</code></td><td>Viewport resize</td><td><details><summary>▶ Show</summary><pre><span class="s">driver.rotate(ScreenOrientation.LANDSCAPE);
+driver.rotate(ScreenOrientation.PORTRAIT);</span>
+<span class="p">// Simulate rotation via viewport:
+await page.setViewportSize({ width: 844, height: 390 });</span></pre></details></td></tr>
+<tr><td>Notifications</td><td><code>driver.openNotifications()</code></td><td>N/A</td><td><details><summary>▶ Show</summary><pre><span class="s">((AndroidDriver) driver).openNotifications();
+// Find notification elements in shade</span>
+<span class="p">// Not supported in Playwright</span></pre></details></td></tr>
+<tr><td>Hybrid context</td><td><code>driver.getContextHandles()</code></td><td>N/A</td><td><details><summary>▶ Show</summary><pre><span class="s">Set&lt;String&gt; contexts = driver.getContextHandles();
+// ['NATIVE_APP', 'WEBVIEW_com.example']
+driver.context(contexts.toArray(new String[0])[1]);</span>
+<span class="p">// Playwright: only web context</span></pre></details></td></tr>
+</table>
+
+<!-- Section 18 -->
+<h2 id="s18">18. Parallel Execution &amp; Grid <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Parallel execution reduces test time. Selenium Grid distributes tests; Playwright runs workers locally.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Parallel tests</td><td>TestNG / Maven Surefire</td><td>Workers (built-in)</td><td><details><summary>▶ Show</summary><pre><span class="s">// TestNG: parallel="methods" thread-count="4"
+// Or Maven: &lt;forkCount&gt;4&lt;/forkCount&gt;</span>
+<span class="p">// playwright.config.ts:
+export default defineConfig({
+  workers: 4,  // parallel workers
+  fullyParallel: true,
+});
+// CLI: npx playwright test --workers=4</span></pre></details></td></tr>
+<tr><td>Selenium Grid</td><td><code>new RemoteWebDriver(url, caps)</code></td><td>N/A (direct browsers)</td><td><details><summary>▶ Show</summary><pre><span class="s">WebDriver driver = new RemoteWebDriver(
+    new URL("http://grid:4444/wd/hub"),
+    new ChromeOptions());</span>
+<span class="p">// Playwright doesn't need Grid — launches directly
+// For cloud: connect over CDP
+const browser = await chromium.connectOverCDP(
+  'wss://cloud-provider.com/...');</span></pre></details></td></tr>
+<tr><td>Cross-browser</td><td>Different drivers per browser</td><td>One API, 3 engines</td><td><details><summary>▶ Show</summary><pre><span class="s">WebDriver chrome = new ChromeDriver();
+WebDriver firefox = new FirefoxDriver();
+WebDriver edge = new EdgeDriver();</span>
+<span class="p">// playwright.config.ts:
+projects: [
+  { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+  { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+]</span></pre></details></td></tr>
+<tr><td>Docker</td><td>Selenium Grid Docker</td><td>Playwright Docker image</td><td><details><summary>▶ Show</summary><pre><span class="s">// docker-compose.yml with:
+// selenium/hub + selenium/node-chrome</span>
+<span class="p">// Dockerfile:
+FROM mcr.microsoft.com/playwright:v1.x-jammy
+// Or: npx playwright install --with-deps</span></pre></details></td></tr>
+<tr><td>Cloud</td><td>Remote URL + capabilities</td><td>CDP connect</td><td><details><summary>▶ Show</summary><pre><span class="s">ChromeOptions opts = new ChromeOptions();
+opts.setCapability("bstack:options", bstackCaps);
+WebDriver driver = new RemoteWebDriver(
+    new URL("https://hub-cloud.browserstack.com/wd/hub"), opts);</span>
+<span class="p">const browser = await chromium.connectOverCDP(
+  'wss://cdp.browserstack.com/playwright?caps=...'
+);</span></pre></details></td></tr>
+</table>
+
+<!-- Section 19 -->
+<h2 id="s19">19. Reporting <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Reports provide visibility into test results for the team — Playwright's HTML report and trace viewer excel here.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Built-in report</td><td>None (use frameworks)</td><td>HTML report built-in</td><td><details><summary>▶ Show</summary><pre><span class="s">// Use Allure, ExtentReports, or TestNG reports
+// No built-in HTML report</span>
+<span class="p">// Built-in:
+npx playwright test --reporter=html
+// opens report in browser automatically on failure</span></pre></details></td></tr>
+<tr><td>Allure</td><td>allure-testng / allure-junit5</td><td>allure-playwright</td><td><details><summary>▶ Show</summary><pre><span class="s">// pom.xml: io.qameta.allure:allure-testng
+// mvn test
+// allure serve target/allure-results</span>
+<span class="p">// npm install allure-playwright
+// playwright.config.ts:
+reporter: [['allure-playwright']],
+// npx allure serve allure-results</span></pre></details></td></tr>
+<tr><td>Screenshot on fail</td><td>TestNG listener / JUnit extension</td><td>Auto (configurable)</td><td><details><summary>▶ Show</summary><pre><span class="s">// TestNG ITestListener:
+@Override
+public void onTestFailure(ITestResult result) {
+    File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+    FileUtils.copyFile(src, new File("fail.png"));
+}</span>
+<span class="p">// playwright.config.ts:
+use: {
+  screenshot: 'only-on-failure',
+  video: 'retain-on-failure',
+}</span></pre></details></td></tr>
+<tr><td>Trace viewer</td><td>Not available</td><td><code>npx playwright show-trace</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// No built-in trace viewer
+// Use video/screenshots for debugging</span>
+<span class="p">// playwright.config.ts:
+use: { trace: 'on-first-retry' }
+// View: npx playwright show-trace trace.zip
+// Shows DOM, network, screenshots step-by-step</span></pre></details></td></tr>
+<tr><td>JUnit report</td><td>Surefire generates XML</td><td><code>reporter: 'junit'</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Maven Surefire auto-generates:
+// target/surefire-reports/*.xml</span>
+<span class="p">// playwright.config.ts:
+reporter: [['junit', { outputFile: 'results.xml' }]]</span></pre></details></td></tr>
+</table>
+
+<!-- Section 20 -->
+<h2 id="s20">20. Debugging <span class="badge both">BOTH</span></h2>
+<p class="section-desc">Debugging tools help identify why tests fail. Playwright's Inspector and codegen are powerful development aids.</p>
+<table>
+<tr><th>Concept</th><th>Selenium (Java)</th><th>Playwright (TypeScript)</th><th>Example</th></tr>
+<tr><td>Pause execution</td><td>Debugger breakpoint</td><td><code>await page.pause()</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Use IDE debugger breakpoints
+// Or: Thread.sleep(999999); // crude pause</span>
+<span class="p">await page.pause(); // Opens Playwright Inspector
+// Can inspect elements, step through, generate locators</span></pre></details></td></tr>
+<tr><td>Slow motion</td><td>Custom wrapper</td><td><code>launch({ slowMo: ms })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Implement custom sleep between actions</span>
+<span class="p">const browser = await chromium.launch({ slowMo: 500 });</span></pre></details></td></tr>
+<tr><td>Headed mode</td><td>Default is headed</td><td><code>launch({ headless: false })</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Selenium: headed by default
+// --headless for headless</span>
+<span class="p">// Playwright: headless by default
+const browser = await chromium.launch({ headless: false });</span></pre></details></td></tr>
+<tr><td>Console logs</td><td>Browser log capability</td><td><code>page.on('console', ...)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">LogEntries logs = driver.manage().logs().get(LogType.BROWSER);
+for (LogEntry entry : logs) {
+    System.out.println(entry.getMessage());
+}</span>
+<span class="p">page.on('console', msg =&gt; console.log(`[${msg.type()}] ${msg.text()}`));
+page.on('pageerror', err =&gt; console.log(`Error: ${err}`));</span></pre></details></td></tr>
+<tr><td>Execute JS</td><td><code>((JavascriptExecutor) driver).executeScript(js)</code></td><td><code>await page.evaluate(js)</code></td><td><details><summary>▶ Show</summary><pre><span class="s">String title = (String) ((JavascriptExecutor) driver)
+    .executeScript("return document.title");
+((JavascriptExecutor) driver).executeScript(
+    "arguments[0].style.border='2px solid red'", el);</span>
+<span class="p">const title = await page.evaluate(() =&gt; document.title);
+await page.locator('#el').evaluate(
+  el =&gt; el.style.border = '2px solid red');</span></pre></details></td></tr>
+<tr><td>Codegen / Record</td><td>Selenium IDE (extension)</td><td><code>npx playwright codegen</code></td><td><details><summary>▶ Show</summary><pre><span class="s">// Use Selenium IDE browser extension
+// Records and exports to Java/Python/etc.</span>
+<span class="p">// Record tests from terminal:
+npx playwright codegen https://example.com
+// Generates TypeScript code as you interact</span></pre></details></td></tr>
+<tr><td>Verbose logging</td><td>WebDriver logging</td><td><code>DEBUG=pw:api</code></td><td><details><summary>▶ Show</summary><pre><span class="s">System.setProperty("webdriver.chrome.verboseLogging", "true");</span>
+<span class="p">// Set env var:
+// DEBUG=pw:api npx playwright test</span></pre></details></td></tr>
+<tr><td>Retry on failure</td><td>TestNG retry analyzer</td><td>Built-in retries</td><td><details><summary>▶ Show</summary><pre><span class="s">// TestNG: implement IRetryAnalyzer
+public class Retry implements IRetryAnalyzer {
+    int count = 0;
+    public boolean retry(ITestResult result) {
+        return count++ &lt; 3;
+    }
+}</span>
+<span class="p">// playwright.config.ts:
+export default defineConfig({
+  retries: 2,  // retry failed tests up to 2 times
+});</span></pre></details></td></tr>
+</table>
+
+<p style="margin-top: 24px; text-align: center; color: #888; font-size: 11px;">
+  Selenium examples in <strong style="color:#d35400">Java</strong> &nbsp;|&nbsp;
+  Playwright examples in <strong style="color:#2471a3">TypeScript</strong><br>
+  Click ▶ Show to expand. Print with Cmd+P → Save as PDF.<br><br>
+  <a href="https://www.selenium.dev/documentation/">Selenium Docs</a> |
+  <a href="https://playwright.dev/docs/intro">Playwright Docs</a> |
+  <a href="https://appium.io/docs/en/latest/">Appium Docs</a>
+</p>
+
+<script>
+document.getElementById('toggleAll').addEventListener('change', function() {
+  const details = document.querySelectorAll('details');
+  details.forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+});
+</script>
+
+</body>
+</html>

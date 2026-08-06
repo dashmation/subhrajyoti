@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Base | Subhrajyoti Dash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Tokens ── */
+    :root {
+      --bg:          #0d1117;
+      --bg-card:     #161b22;
+      --bg-section:  #111318;
+      --border:      rgba(255,255,255,0.10);
+      --accent:      #58a6ff;
+      --accent2:     #3fb950;
+      --accent-glow: rgba(88,166,255,0.12);
+      --text:        #e6edf3;
+      --text-muted:  #a8b4bf;
+      --text-dim:    #7d8590;
+      --radius:      12px;
+      --radius-sm:   8px;
+      --transition:  0.25s ease;
+    }
+
+    /* ── Top bar ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: color var(--transition), border-color var(--transition), background var(--transition);
+    }
+    .back-link:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .header-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .header-title span { color: var(--accent); }
+
+    /* ── Hero ── */
+    .page-hero {
+      text-align: center;
+      padding: 4rem 1.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(88,166,255,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .page-hero-label {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.75rem;
+    }
+    .page-hero h1 {
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      margin-bottom: 0.75rem;
+    }
+    .page-hero p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ── Grid ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+    .kb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── Card ── */
+    .kb-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .kb-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .kb-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 24px rgba(88,166,255,0.10);
+    }
+
+    /* Card accent bar colours */
+    .kb-card:nth-child(1)::before  { background: linear-gradient(90deg, #c0392b, #2471a3); }
+    .kb-card:nth-child(2)::before  { background: linear-gradient(90deg, #d35400, #27ae60); }
+    .kb-card:nth-child(3)::before  { background: linear-gradient(90deg, #2e4053, #5dade2); }
+    .kb-card:nth-child(4)::before  { background: linear-gradient(90deg, #1b4332, #52b788); }
+    .kb-card:nth-child(5)::before  { background: linear-gradient(90deg, #0d47a1, #42a5f5); }
+    .kb-card:nth-child(6)::before  { background: linear-gradient(90deg, #326ce5, #7cb9e8); }
+    .kb-card:nth-child(7)::before  { background: linear-gradient(90deg, #d32f2f, #ff8a65); }
+    .kb-card:nth-child(8)::before  { background: linear-gradient(90deg, #6a1b9a, #ce93d8); }
+    .kb-card:nth-child(9)::before  { background: linear-gradient(90deg, #1a237e, #7c4dff); }
+    .kb-card:nth-child(10)::before { background: linear-gradient(90deg, #0d47a1, #00bcd4); }
+
+    .kb-card-icon {
+      font-size: 1.75rem;
+      line-height: 1;
+    }
+    .kb-card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .kb-card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .kb-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    .kb-tags {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .kb-tag {
+      font-size: 0.7rem;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.2rem 0.55rem;
+      border-radius: 100px;
+      background: rgba(88,166,255,0.1);
+      color: #79c0ff;
+      border: 1px solid rgba(88,166,255,0.2);
+    }
+    .kb-sections {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+    }
+    .kb-open-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 0.25rem;
+      transition: gap var(--transition);
+    }
+    .kb-card:hover .kb-open-btn { gap: 0.65rem; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+    footer a { color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .kb-grid { grid-template-columns: 1fr; }
+      .page-hero { padding: 3rem 1rem 2rem; }
+      .container { padding: 0 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <a href="../index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Home
+      </a>
+      <span class="header-title">Knowledge <span>Base</span></span>
+    </div>
+    <a href="../resume/index.html" class="back-link">
+      <i class="fas fa-user"></i> My Profile
+    </a>
+  </header>
+
+  <section class="page-hero">
+    <div class="page-hero-label">Reference Library</div>
+    <h1>Knowledge Base</h1>
+    <p>Beginner to advanced cheatsheets with collapsible examples — built for quick reference and interview prep.</p>
+  </section>
+
+  <div class="container">
+    <div class="kb-grid">
+
+      <a href="java-python-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">☕🐍🟦</div>
+        <div class="kb-card-title">Java ↔ Python ↔ TypeScript</div>
+        <div class="kb-card-desc">Comprehensive three-language mapping — data types, collections, OOP, streams, and more with side-by-side comparisons.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">Java</span>
+            <span class="kb-tag">Python</span>
+            <span class="kb-tag">TypeScript</span>
+          </div>
+          <span class="kb-sections">23 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="selenium-playwright-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">🌐🎭</div>
+        <div class="kb-card-title">Selenium ↔ Playwright</div>
+        <div class="kb-card-desc">Web & app automation — Selenium (Java) vs Playwright (TypeScript) with locators, waits, assertions, and mobile.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">Java</span>
+            <span class="kb-tag">TypeScript</span>
+          </div>
+          <span class="kb-sections">20 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="linux-commands-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">🐧💻</div>
+        <div class="kb-card-title">Linux Commands</div>
+        <div class="kb-card-desc">Complete Linux reference — files, processes, networking, permissions, shell scripting, Docker, and Git.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">Bash</span>
+          </div>
+          <span class="kb-sections">20 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="sql-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">🗄️📊</div>
+        <div class="kb-card-title">SQL</div>
+        <div class="kb-card-desc">From SELECT basics to window functions, CTEs, transactions, and query optimization.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">SQL</span>
+          </div>
+          <span class="kb-sections">14 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="docker-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">🐳📦</div>
+        <div class="kb-card-title">Docker</div>
+        <div class="kb-card-desc">Containers from basics to multi-stage builds, compose, networking, security, and optimization.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">Dockerfile</span>
+            <span class="kb-tag">CLI</span>
+          </div>
+          <span class="kb-sections">14 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="kubernetes-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">☸️🚀</div>
+        <div class="kb-card-title">Kubernetes</div>
+        <div class="kb-card-desc">Pods to production — deployments, services, RBAC, Helm, ingress, HPA, and advanced operators.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">kubectl</span>
+            <span class="kb-tag">YAML</span>
+          </div>
+          <span class="kb-sections">14 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="cicd-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">🔄⚙️</div>
+        <div class="kb-card-title">CI/CD (Jenkins + GitLab)</div>
+        <div class="kb-card-desc">Pipeline-as-code for both Jenkins (Groovy) and GitLab CI (YAML) — from basics to K8s deployments.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">Groovy</span>
+            <span class="kb-tag">YAML</span>
+          </div>
+          <span class="kb-sections">14 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="mobile-testing-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">📱🧪</div>
+        <div class="kb-card-title">Mobile Testing</div>
+        <div class="kb-card-desc">Android + iOS testing — Native, Hybrid, Flutter, React Native with Appium, Espresso, XCUITest, and Detox.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">Appium</span>
+            <span class="kb-tag">Espresso</span>
+          </div>
+          <span class="kb-sections">14 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="dsa-interview-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">🧠⚡</div>
+        <div class="kb-card-title">DSA Interview Prep</div>
+        <div class="kb-card-desc">Data Structures & Algorithms — arrays, trees, graphs, DP, backtracking with Java + Python solutions.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">Java</span>
+            <span class="kb-tag">Python</span>
+          </div>
+          <span class="kb-sections">20 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="ai-testing-cheatsheet.html" class="kb-card">
+        <div class="kb-card-icon">🤖🧪</div>
+        <div class="kb-card-title">AI & Agentic AI Testing</div>
+        <div class="kb-card-desc">AI/ML/LLM/Agent testing — RAG testing, safety, guardrails, multi-agent systems, with 55+ interview Q&A.</div>
+        <div class="kb-card-footer">
+          <div class="kb-tags">
+            <span class="kb-tag">Python</span>
+            <span class="kb-tag">LLM</span>
+          </div>
+          <span class="kb-sections">16 sections</span>
+        </div>
+        <span class="kb-open-btn">Open <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>All cheatsheets have a toggle to expand/collapse all examples. &nbsp;·&nbsp; <a href="../index.html">← Back to Home</a></p>
+  </footer>
+
+</body>
+</html>

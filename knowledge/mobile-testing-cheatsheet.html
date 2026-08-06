@@ -1,0 +1,3302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Testing Cheatsheet - Android &amp; iOS</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif; font-size: 13px; line-height: 1.6; color: #333; max-width: 1100px; margin: 0 auto; padding: 20px; background: #fafafa; }
+h1 { color: #6a1b9a; font-size: 28px; text-align: center; margin-bottom: 4px; }
+.subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 16px; }
+h2 { color: #6a1b9a; font-size: 18px; margin: 30px 0 12px 0; padding-bottom: 6px; border-bottom: 2px solid #6a1b9a; }
+h3 { color: #4a148c; font-size: 14px; margin: 16px 0 8px 0; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0 20px 0; font-size: 12px; }
+th { background: #6a1b9a; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
+td { padding: 7px 10px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f5f0fa; }
+tr:hover { background: #ede7f6; }
+.cmd { background: #1e1e1e; color: #d4d4d4; padding: 2px 6px; border-radius: 3px; font-family: 'Consolas', 'Monaco', monospace; font-size: 11.5px; }
+.cmt { color: #6a9955; }
+details { margin: 4px 0; }
+details summary { cursor: pointer; color: #6a1b9a; font-weight: 500; font-size: 12px; }
+details pre { background: #1e1e1e; color: #d4d4d4; padding: 10px 14px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; font-size: 11.5px; overflow-x: auto; margin-top: 6px; line-height: 1.5; }
+.toc { background: #f5f0fa; border: 1px solid #ce93d8; border-radius: 6px; padding: 14px 20px; margin-bottom: 24px; }
+.toc h3 { color: #6a1b9a; margin: 0 0 8px 0; font-size: 14px; }
+.toc a { color: #6a1b9a; text-decoration: none; font-size: 12.5px; }
+.toc a:hover { text-decoration: underline; }
+.toc ol { padding-left: 20px; }
+.toc li { margin: 3px 0; }
+.toggle-all { text-align: center; margin-bottom: 16px; }
+.toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+input:checked + .slider { background: #6a1b9a; }
+input:checked + .slider:before { transform: translateX(20px); }
+.section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+@media print {
+  body { font-size: 11px; padding: 10px; }
+  details[open] summary { display: none; }
+  details { open: true; }
+  details pre { border: 1px solid #ccc; }
+  .toggle-all { display: none; }
+  h2 { page-break-before: always; }
+  h2:first-of-type { page-break-before: avoid; }
+}
+</style>
+</head>
+<body>
+<h1>📱 Mobile Testing Cheatsheet</h1>
+<p class="subtitle">Android &amp; iOS — Native, Hybrid, Flutter, React Native | Beginner → Advanced</p>
+
+<div class="toggle-all">
+  <label class="switch">
+    <input type="checkbox" id="toggleAll">
+    <span class="slider"></span>
+  </label>
+  <span class="toggle-label">Expand All Examples</span>
+</div>
+
+<div class="toc">
+<h3>📑 Table of Contents</h3>
+<ol>
+<li><a href="#fundamentals">Testing Fundamentals</a></li>
+<li><a href="#android-native">Android Native Testing</a></li>
+<li><a href="#ios-native">iOS Native Testing</a></li>
+<li><a href="#appium-basics">Appium Setup &amp; Basics</a></li>
+<li><a href="#appium-advanced">Appium Advanced</a></li>
+<li><a href="#flutter">Flutter Testing</a></li>
+<li><a href="#react-native">React Native Testing</a></li>
+<li><a href="#hybrid">Hybrid App Testing</a></li>
+<li><a href="#locators">Locator Strategies</a></li>
+<li><a href="#gestures">Gestures &amp; Interactions</a></li>
+<li><a href="#devices">Device Management</a></li>
+<li><a href="#performance">Performance Testing</a></li>
+<li><a href="#cicd">CI/CD Integration</a></li>
+<li><a href="#advanced">Advanced Techniques</a></li>
+<li><a href="#ios-techniques">iOS Testing Techniques (Interview Prep)</a></li>
+</ol>
+</div>
+
+<!-- Section 1: Testing Fundamentals -->
+<h2 id="fundamentals">1. Testing Fundamentals</h2>
+<p class="section-desc">Understanding the test pyramid and mobile-specific concerns helps you invest testing effort where it matters most.</p>
+
+<h3>Test Types &amp; Test Pyramid</h3>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr><td>Unit Testing</td><td>Tests individual functions/methods in isolation. Fast, many tests at pyramid base.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// JUnit unit test example</span>
+@Test
+public void testAddition() {
+    Calculator calc = new Calculator();
+    assertEquals(5, calc.add(2, 3));
+}</pre></details></td></tr>
+<tr><td>Integration Testing</td><td>Tests interaction between components (API + DB, service layers). Middle of pyramid.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Testing API service integration</span>
+@Test
+public void testUserServiceFetchesFromApi() {
+    UserService service = new UserService(mockApi);
+    User user = service.getUser(1);
+    assertNotNull(user);
+    verify(mockApi).fetchUser(1);
+}</pre></details></td></tr>
+<tr><td>E2E Testing</td><td>Tests complete user flows through the app. Slow, fewer tests at pyramid top.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Appium E2E test</span>
+driver.findElement(By.id("username")).sendKeys("user1");
+driver.findElement(By.id("password")).sendKeys("pass123");
+driver.findElement(By.id("login_btn")).click();
+<span class="cmt">// Verify home screen loads</span>
+assertTrue(driver.findElement(By.id("welcome")).isDisplayed());</pre></details></td></tr>
+<tr><td>Manual vs Automated</td><td>Manual: exploratory, usability, ad-hoc. Automated: regression, smoke, repetitive flows.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Manual testing scenarios:</span>
+- Exploratory testing of new features
+- Usability/UX evaluation
+- Edge case discovery
+
+<span class="cmt">Automate when:</span>
+- Tests run frequently (regression)
+- Stable features with clear expected results
+- Cross-device/OS compatibility checks</pre></details></td></tr>
+<tr><td>Test Pyramid</td><td>70% unit, 20% integration, 10% E2E. Balances speed, cost, and coverage.</td><td><details><summary>▶ Show</summary><pre>        /  E2E  \        ← Slow, expensive, few
+       / Integration\    ← Medium speed, moderate
+      /    Unit Tests  \  ← Fast, cheap, many
+     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+
+<span class="cmt">Mobile-specific addition:</span>
+- Component/Widget tests (Flutter/RN)
+- Snapshot tests (visual regression)
+- Contract tests (API boundaries)</pre></details></td></tr>
+<tr><td>Mobile-Specific Concerns</td><td>Device fragmentation, OS versions, network conditions, battery, permissions.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Key mobile testing dimensions:</span>
+- Screen sizes: phone, tablet, foldable
+- OS versions: Android 10-14, iOS 15-17
+- Network: WiFi, 4G, 3G, offline
+- Permissions: camera, location, storage
+- Interruptions: calls, notifications, low battery
+- Orientation: portrait, landscape</pre></details></td></tr>
+</table>
+
+<!-- Section 2: Android Native Testing -->
+<h2 id="android-native">2. Android Native Testing</h2>
+<p class="section-desc">Android's built-in test frameworks (Espresso, UI Automator) provide fast, reliable testing without external dependencies.</p>
+
+<h3>Frameworks &amp; Tools</h3>
+<table>
+<tr><th>Tool</th><th>Description</th><th>Example</th></tr>
+<tr><td>Espresso</td><td>Google's UI testing framework for Android. Fast, runs on device/emulator. White-box testing.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Espresso test - login flow</span>
+@RunWith(AndroidJUnit4.class)
+public class LoginTest {
+    @Rule
+    public ActivityScenarioRule&lt;LoginActivity&gt; rule =
+        new ActivityScenarioRule&lt;&gt;(LoginActivity.class);
+
+    @Test
+    public void testSuccessfulLogin() {
+        <span class="cmt">// Type username</span>
+        onView(withId(R.id.username))
+            .perform(typeText("user@test.com"), closeSoftKeyboard());
+        <span class="cmt">// Type password</span>
+        onView(withId(R.id.password))
+            .perform(typeText("password123"), closeSoftKeyboard());
+        <span class="cmt">// Click login button</span>
+        onView(withId(R.id.login_btn)).perform(click());
+        <span class="cmt">// Verify home screen</span>
+        onView(withId(R.id.welcome_text))
+            .check(matches(isDisplayed()));
+    }
+}</pre></details></td></tr>
+<tr><td>UI Automator</td><td>Cross-app UI testing. Black-box, can interact with system UI, notifications, settings.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// UI Automator - cross-app test</span>
+@RunWith(AndroidJUnit4.class)
+public class NotificationTest {
+    private UiDevice device;
+
+    @Before
+    public void setup() {
+        device = UiDevice.getInstance(
+            InstrumentationRegistry.getInstrumentation());
+    }
+
+    @Test
+    public void testNotificationAppears() {
+        <span class="cmt">// Open notification shade</span>
+        device.openNotification();
+        device.wait(Until.hasObject(
+            By.text("New Message")), 5000);
+        UiObject2 notification = device.findObject(
+            By.text("New Message"));
+        assertNotNull(notification);
+        notification.click();
+    }
+}</pre></details></td></tr>
+<tr><td>JUnit 4/5</td><td>Standard unit testing for Android. Use with Mockito for mocking dependencies.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// JUnit + Mockito unit test</span>
+@RunWith(MockitoJUnitRunner.class)
+public class UserRepositoryTest {
+    @Mock private ApiService apiService;
+    @Mock private UserDao userDao;
+    private UserRepository repository;
+
+    @Before
+    public void setup() {
+        repository = new UserRepository(apiService, userDao);
+    }
+
+    @Test
+    public void testGetUser_fromCache() {
+        User cached = new User(1, "John");
+        when(userDao.getUser(1)).thenReturn(cached);
+
+        User result = repository.getUser(1);
+        assertEquals("John", result.getName());
+        verify(apiService, never()).fetchUser(anyInt());
+    }
+}</pre></details></td></tr>
+<tr><td>Robolectric</td><td>Runs Android tests on JVM (no emulator). Fast for unit/integration tests with Android framework.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Robolectric - test Activity on JVM</span>
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = 33)
+public class MainActivityTest {
+
+    @Test
+    public void testButtonClick_updatesText() {
+        ActivityController&lt;MainActivity&gt; controller =
+            Robolectric.buildActivity(MainActivity.class)
+                .create().start().resume();
+        MainActivity activity = controller.get();
+
+        Button btn = activity.findViewById(R.id.my_button);
+        TextView tv = activity.findViewById(R.id.my_text);
+
+        btn.performClick();
+        assertEquals("Clicked!", tv.getText().toString());
+    }
+}</pre></details></td></tr>
+<tr><td>Gradle Test Commands</td><td>Running tests via command line with Gradle build system.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Run unit tests</span>
+<span class="cmd">./gradlew testDebugUnitTest</span>
+
+<span class="cmt"># Run instrumented tests (requires device/emulator)</span>
+<span class="cmd">./gradlew connectedDebugAndroidTest</span>
+
+<span class="cmt"># Run specific test class</span>
+<span class="cmd">./gradlew testDebugUnitTest --tests "com.app.UserRepositoryTest"</span>
+
+<span class="cmt"># Generate test coverage report</span>
+<span class="cmd">./gradlew jacocoTestReport</span></pre></details></td></tr>
+<tr><td>AndroidX Test</td><td>Unified testing APIs: ActivityScenario, FragmentScenario, TestNavHostController.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// FragmentScenario testing</span>
+@Test
+public void testFragmentDisplaysData() {
+    Bundle args = new Bundle();
+    args.putString("userId", "123");
+
+    launchFragmentInContainer&lt;ProfileFragment&gt;(args)
+        .onFragment { fragment -&gt;
+            assertNotNull(fragment.view)
+        }
+
+    onView(withId(R.id.profile_name))
+        .check(matches(withText("John Doe")));
+}
+
+<span class="cmt">// build.gradle dependencies</span>
+androidTestImplementation 'androidx.test:runner:1.5.2'
+androidTestImplementation 'androidx.test:rules:1.5.0'
+androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'</pre></details></td></tr>
+</table>
+
+<!-- Section 3: iOS Native Testing -->
+<h2 id="ios-native">3. iOS Native Testing</h2>
+<p class="section-desc">XCTest and XCUITest are Apple's official frameworks — tightly integrated with Xcode and the fastest option for iOS.</p>
+
+<h3>XCTest &amp; XCUITest</h3>
+<table>
+<tr><th>Tool</th><th>Description</th><th>Example</th></tr>
+<tr><td>XCTest (Unit)</td><td>Apple's built-in unit testing framework. Runs in Xcode, supports assertions, async, performance.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// XCTest unit test</span>
+import XCTest
+@testable import MyApp
+
+class UserServiceTests: XCTestCase {
+    var sut: UserService!
+
+    override func setUp() {
+        super.setUp()
+        sut = UserService(api: MockAPIClient())
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
+
+    func testFetchUser_ReturnsValidUser() async throws {
+        let user = try await sut.fetchUser(id: "123")
+        XCTAssertEqual(user.name, "John Doe")
+        XCTAssertEqual(user.email, "john@test.com")
+    }
+
+    func testFetchUser_InvalidID_ThrowsError() async {
+        do {
+            _ = try await sut.fetchUser(id: "invalid")
+            XCTFail("Expected error not thrown")
+        } catch {
+            XCTAssertEqual(error as? AppError, .userNotFound)
+        }
+    }
+}</pre></details></td></tr>
+<tr><td>XCUITest (UI)</td><td>UI testing framework. Launches app in separate process, interacts via accessibility.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// XCUITest - UI automation</span>
+import XCTest
+
+class LoginUITests: XCTestCase {
+    let app = XCUIApplication()
+
+    override func setUp() {
+        continueAfterFailure = false
+        app.launchArguments = ["--uitesting"]
+        app.launch()
+    }
+
+    func testSuccessfulLogin() {
+        let emailField = app.textFields["email_field"]
+        emailField.tap()
+        emailField.typeText("user@test.com")
+
+        let passwordField = app.secureTextFields["password_field"]
+        passwordField.tap()
+        passwordField.typeText("password123")
+
+        app.buttons["login_button"].tap()
+
+        <span class="cmt">// Wait for home screen</span>
+        let welcome = app.staticTexts["Welcome"]
+        XCTAssertTrue(welcome.waitForExistence(timeout: 5))
+    }
+}</pre></details></td></tr>
+<tr><td>Test Plans</td><td>Xcode Test Plans (.xctestplan) configure test suites, environments, language, sanitizers.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Test Plan configuration (JSON)</span>
+{
+  "configurations": [
+    {
+      "name": "English",
+      "options": {
+        "language": "en",
+        "region": "US",
+        "environmentVariableEntries": [
+          { "key": "ENV", "value": "test" }
+        ]
+      }
+    },
+    {
+      "name": "Japanese",
+      "options": {
+        "language": "ja",
+        "region": "JP"
+      }
+    }
+  ],
+  "defaultOptions": {
+    "codeCoverage": true,
+    "addressSanitizer": { "enabled": true }
+  }
+}
+
+<span class="cmt"># Run test plan from CLI</span>
+<span class="cmd">xcodebuild test \
+  -project MyApp.xcodeproj \
+  -scheme MyApp \
+  -testPlan RegressionTests \
+  -destination 'platform=iOS Simulator,name=iPhone 15'</span></pre></details></td></tr>
+<tr><td>Accessibility Testing</td><td>XCUITest includes accessibility audit API. Test VoiceOver labels, traits, hints.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Accessibility testing with XCUITest</span>
+func testAccessibility_LoginScreen() throws {
+    let app = XCUIApplication()
+    app.launch()
+
+    <span class="cmt">// Check accessibility labels exist</span>
+    XCTAssertTrue(app.textFields["Email address"].exists)
+    XCTAssertTrue(app.secureTextFields["Password"].exists)
+    XCTAssertTrue(app.buttons["Sign in to your account"].exists)
+
+    <span class="cmt">// iOS 17+ accessibility audit</span>
+    try app.performAccessibilityAudit()
+}
+
+<span class="cmt">// Filter specific audit issues</span>
+func testAccessibility_Audit() throws {
+    let app = XCUIApplication()
+    app.launch()
+    try app.performAccessibilityAudit(for: [
+        .dynamicType,
+        .contrast,
+        .sufficientElementDescription
+    ])
+}</pre></details></td></tr>
+<tr><td>CLI Commands</td><td>Running iOS tests from terminal using xcodebuild.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Run all unit tests</span>
+<span class="cmd">xcodebuild test \
+  -scheme MyApp \
+  -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.0'</span>
+
+<span class="cmt"># Run specific test class</span>
+<span class="cmd">xcodebuild test \
+  -scheme MyApp \
+  -only-testing:MyAppTests/UserServiceTests \
+  -destination 'platform=iOS Simulator,name=iPhone 15'</span>
+
+<span class="cmt"># Run with code coverage</span>
+<span class="cmd">xcodebuild test \
+  -scheme MyApp \
+  -enableCodeCoverage YES \
+  -resultBundlePath TestResults.xcresult \
+  -destination 'platform=iOS Simulator,name=iPhone 15'</span>
+
+<span class="cmt"># Extract coverage report</span>
+<span class="cmd">xcrun xccov view --report TestResults.xcresult</span></pre></details></td></tr>
+</table>
+
+<!-- Section 4: Appium Setup & Basics -->
+<h2 id="appium-basics">4. Appium Setup &amp; Basics</h2>
+<p class="section-desc">Appium enables cross-platform testing with one framework — write tests once, run on both Android and iOS.</p>
+
+<h3>Installation &amp; Configuration</h3>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr><td>Install Appium 2.x</td><td>Node.js-based server. Install via npm, then add drivers separately.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Install Appium 2.x globally</span>
+<span class="cmd">npm install -g appium</span>
+
+<span class="cmt"># Install platform drivers</span>
+<span class="cmd">appium driver install uiautomator2</span>   <span class="cmt"># Android</span>
+<span class="cmd">appium driver install xcuitest</span>        <span class="cmt"># iOS</span>
+
+<span class="cmt"># Verify installation</span>
+<span class="cmd">appium driver list --installed</span>
+
+<span class="cmt"># Start Appium server</span>
+<span class="cmd">appium --port 4723 --base-path /wd/hub</span>
+
+<span class="cmt"># Check environment setup</span>
+<span class="cmd">npx appium-doctor --android</span>
+<span class="cmd">npx appium-doctor --ios</span></pre></details></td></tr>
+<tr><td>Desired Capabilities (Android)</td><td>JSON config telling Appium which device, app, and automation engine to use.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Android capabilities (W3C format)</span>
+{
+  "platformName": "Android",
+  "appium:automationName": "UiAutomator2",
+  "appium:deviceName": "Pixel_6_API_33",
+  "appium:app": "/path/to/app.apk",
+  "appium:appPackage": "com.example.myapp",
+  "appium:appActivity": ".MainActivity",
+  "appium:noReset": true,
+  "appium:autoGrantPermissions": true,
+  "appium:newCommandTimeout": 300
+}
+
+<span class="cmt">// For already-installed app (skip install)</span>
+{
+  "platformName": "Android",
+  "appium:automationName": "UiAutomator2",
+  "appium:appPackage": "com.example.myapp",
+  "appium:appActivity": ".MainActivity"
+}</pre></details></td></tr>
+<tr><td>Desired Capabilities (iOS)</td><td>iOS-specific capabilities for simulator or real device testing.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// iOS capabilities (W3C format)</span>
+{
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
+  "appium:deviceName": "iPhone 15",
+  "appium:platformVersion": "17.0",
+  "appium:app": "/path/to/MyApp.app",
+  "appium:udid": "auto",
+  "appium:xcodeOrgId": "TEAM_ID",
+  "appium:xcodeSigningId": "iPhone Developer",
+  "appium:noReset": true,
+  "appium:wdaLocalPort": 8100
+}
+
+<span class="cmt">// For real device (requires provisioning)</span>
+{
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
+  "appium:udid": "DEVICE_UDID_HERE",
+  "appium:bundleId": "com.example.myapp",
+  "appium:xcodeOrgId": "ABC123DEF",
+  "appium:xcodeSigningId": "iPhone Developer"
+}</pre></details></td></tr>
+<tr><td>Locator Strategies</td><td>Methods to find elements: ID, accessibility ID, XPath, class name, UIAutomator/predicate.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Java - Appium locator strategies</span>
+
+<span class="cmt">// Accessibility ID (cross-platform, preferred)</span>
+driver.findElement(AppiumBy.accessibilityId("login_button"));
+
+<span class="cmt">// ID (Android: resource-id)</span>
+driver.findElement(AppiumBy.id("com.app:id/username"));
+
+<span class="cmt">// XPath (slow, use as last resort)</span>
+driver.findElement(By.xpath("//android.widget.Button[@text='Login']"));
+
+<span class="cmt">// Class name</span>
+driver.findElement(By.className("android.widget.EditText"));
+
+<span class="cmt">// Android UIAutomator selector</span>
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().text(\"Login\")"));
+
+<span class="cmt">// iOS predicate string</span>
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "type == 'XCUIElementTypeButton' AND label == 'Login'"));
+
+<span class="cmt">// iOS class chain</span>
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeButton[`label == 'Login'`]"));</pre></details></td></tr>
+<tr><td>Session Setup (Java)</td><td>Creating an Appium driver session with WebDriver client.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Java client setup (Appium 2.x)</span>
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
+
+public class AppiumTest {
+    private AndroidDriver driver;
+
+    @Before
+    public void setUp() {
+        UiAutomator2Options options = new UiAutomator2Options()
+            .setDeviceName("Pixel_6")
+            .setApp("/path/to/app.apk")
+            .setAutoGrantPermissions(true);
+
+        driver = new AndroidDriver(
+            new URL("http://localhost:4723/wd/hub"), options);
+        driver.manage().timeouts()
+            .implicitlyWait(Duration.ofSeconds(10));
+    }
+
+    @After
+    public void tearDown() {
+        if (driver != null) driver.quit();
+    }
+}
+
+<span class="cmt">// Maven dependency</span>
+&lt;dependency&gt;
+    &lt;groupId&gt;io.appium&lt;/groupId&gt;
+    &lt;artifactId&gt;java-client&lt;/artifactId&gt;
+    &lt;version&gt;9.0.0&lt;/version&gt;
+&lt;/dependency&gt;</pre></details></td></tr>
+<tr><td>Session Setup (Python)</td><td>Python client for Appium with appium-python-client.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Python client setup</span>
+<span class="cmd">pip install Appium-Python-Client</span>
+
+from appium import webdriver
+from appium.options.android import UiAutomator2Options
+
+options = UiAutomator2Options()
+options.platform_name = 'Android'
+options.device_name = 'Pixel_6'
+options.app = '/path/to/app.apk'
+options.auto_grant_permissions = True
+
+driver = webdriver.Remote(
+    'http://localhost:4723/wd/hub',
+    options=options
+)
+
+<span class="cmt"># Find and interact with elements</span>
+from appium.webdriver.common.appiumby import AppiumBy
+
+email = driver.find_element(AppiumBy.ACCESSIBILITY_ID, 'email_field')
+email.send_keys('user@test.com')
+
+login_btn = driver.find_element(AppiumBy.ACCESSIBILITY_ID, 'login')
+login_btn.click()
+
+driver.quit()</pre></details></td></tr>
+</table>
+
+<!-- Section 5: Appium Advanced -->
+<h2 id="appium-advanced">5. Appium Advanced</h2>
+<p class="section-desc">Advanced Appium covers gestures, hybrid apps, and parallel execution — needed for production-grade test suites.</p>
+
+<h3>Gestures, Hybrid Apps, Parallel Execution</h3>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr><td>W3C Actions (Gestures)</td><td>Appium 2.x uses W3C Actions API for touch gestures - tap, swipe, long press, pinch.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// W3C Actions - Swipe gesture (Java)</span>
+import org.openqa.selenium.interactions.Sequence;
+import org.openqa.selenium.interactions.PointerInput;
+
+PointerInput finger = new PointerInput(
+    PointerInput.Kind.TOUCH, "finger");
+Sequence swipe = new Sequence(finger, 1);
+
+<span class="cmt">// Swipe from bottom to top</span>
+swipe.addAction(finger.createPointerMove(
+    Duration.ZERO, PointerInput.Origin.viewport(), 500, 1500));
+swipe.addAction(finger.createPointerDown(
+    PointerInput.MouseButton.LEFT.asArg()));
+swipe.addAction(finger.createPointerMove(
+    Duration.ofMillis(800), PointerInput.Origin.viewport(), 500, 300));
+swipe.addAction(finger.createPointerUp(
+    PointerInput.MouseButton.LEFT.asArg()));
+
+driver.perform(Collections.singletonList(swipe));</pre></details></td></tr>
+<tr><td>Hybrid Context Switching</td><td>Switch between NATIVE_APP and WEBVIEW contexts for hybrid apps.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Context switching for WebView</span>
+Set&lt;String&gt; contexts = driver.getContextHandles();
+<span class="cmt">// Prints: [NATIVE_APP, WEBVIEW_com.app]</span>
+System.out.println(contexts);
+
+<span class="cmt">// Switch to WebView</span>
+driver.context("WEBVIEW_com.app");
+<span class="cmt">// Now use web locators</span>
+driver.findElement(By.cssSelector("#login-form input[type='email']"))
+    .sendKeys("user@test.com");
+
+<span class="cmt">// Switch back to native</span>
+driver.context("NATIVE_APP");
+driver.findElement(AppiumBy.accessibilityId("submit")).click();
+
+<span class="cmt">// Enable WebView debugging (in app code)</span>
+<span class="cmt">// WebView.setWebContentsDebuggingEnabled(true);</span></pre></details></td></tr>
+<tr><td>Parallel Execution</td><td>Run tests on multiple devices simultaneously using TestNG or different ports.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">&lt;!-- TestNG parallel execution XML --&gt;</span>
+&lt;suite name="Parallel" parallel="tests" thread-count="2"&gt;
+  &lt;test name="Pixel6"&gt;
+    &lt;parameter name="udid" value="emulator-5554"/&gt;
+    &lt;parameter name="systemPort" value="8200"/&gt;
+    &lt;classes&gt;
+      &lt;class name="tests.LoginTest"/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+  &lt;test name="Pixel7"&gt;
+    &lt;parameter name="udid" value="emulator-5556"/&gt;
+    &lt;parameter name="systemPort" value="8201"/&gt;
+    &lt;classes&gt;
+      &lt;class name="tests.LoginTest"/&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+&lt;/suite&gt;
+
+<span class="cmt"># Start multiple Appium servers</span>
+<span class="cmd">appium --port 4723 --base-path /wd/hub</span>
+<span class="cmd">appium --port 4724 --base-path /wd/hub</span></pre></details></td></tr>
+<tr><td>Appium 2.0 Changes</td><td>Plugin architecture, W3C-only caps, driver management, breaking changes from 1.x.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Key Appium 2.0 changes:</span>
+
+<span class="cmt"># 1. Driver management (no bundled drivers)</span>
+<span class="cmd">appium driver install uiautomator2</span>
+<span class="cmd">appium driver install xcuitest</span>
+<span class="cmd">appium driver list</span>
+
+<span class="cmt"># 2. Plugin system</span>
+<span class="cmd">appium plugin install images</span>
+<span class="cmd">appium plugin install --source=npm appium-wait-plugin</span>
+<span class="cmd">appium --use-plugins=images,wait</span>
+
+<span class="cmt"># 3. Capabilities MUST use vendor prefix</span>
+<span class="cmt">// Old (1.x): "automationName": "UiAutomator2"</span>
+<span class="cmt">// New (2.x): "appium:automationName": "UiAutomator2"</span>
+
+<span class="cmt"># 4. Base path default changed</span>
+<span class="cmt">// 1.x default: /wd/hub</span>
+<span class="cmt">// 2.x default: / (empty)</span>
+<span class="cmd">appium --base-path /wd/hub</span>  <span class="cmt"># for backward compat</span></pre></details></td></tr>
+<tr><td>Waits &amp; Synchronization</td><td>Explicit waits, custom conditions, and polling for element states.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Explicit wait strategies</span>
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+<span class="cmt">// Wait for element visible</span>
+WebElement el = wait.until(
+    ExpectedConditions.visibilityOfElementLocated(
+        AppiumBy.accessibilityId("home_screen")));
+
+<span class="cmt">// Wait for element clickable</span>
+wait.until(ExpectedConditions.elementToBeClickable(
+    AppiumBy.id("com.app:id/submit_btn"))).click();
+
+<span class="cmt">// Custom wait condition</span>
+wait.until(driver -&gt; {
+    List&lt;WebElement&gt; items = driver.findElements(
+        AppiumBy.className("android.widget.TextView"));
+    return items.size() &gt; 5;
+});
+
+<span class="cmt">// Fluent wait with polling</span>
+Wait&lt;WebDriver&gt; fluentWait = new FluentWait&lt;&gt;(driver)
+    .withTimeout(Duration.ofSeconds(30))
+    .pollingEvery(Duration.ofMillis(500))
+    .ignoring(NoSuchElementException.class);</pre></details></td></tr>
+<tr><td>Page Object Model</td><td>Design pattern for maintainable test code. Separate page structure from test logic.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Page Object - LoginPage.java</span>
+public class LoginPage {
+    private AndroidDriver driver;
+
+    @AndroidFindBy(accessibility = "email_field")
+    private WebElement emailField;
+
+    @AndroidFindBy(accessibility = "password_field")
+    private WebElement passwordField;
+
+    @AndroidFindBy(accessibility = "login_button")
+    private WebElement loginButton;
+
+    public LoginPage(AndroidDriver driver) {
+        this.driver = driver;
+        PageFactory.initElements(
+            new AppiumFieldDecorator(driver), this);
+    }
+
+    public HomePage login(String email, String password) {
+        emailField.sendKeys(email);
+        passwordField.sendKeys(password);
+        loginButton.click();
+        return new HomePage(driver);
+    }
+}
+
+<span class="cmt">// Test using Page Object</span>
+@Test
+public void testLogin() {
+    LoginPage loginPage = new LoginPage(driver);
+    HomePage home = loginPage.login("user@test.com", "pass");
+    assertTrue(home.isWelcomeDisplayed());
+}</pre></details></td></tr>
+</table>
+
+<!-- Section 6: Flutter Testing -->
+<h2 id="flutter">6. Flutter Testing</h2>
+<p class="section-desc">Flutter's testing framework is built-in and fast — widget tests run without a device, making TDD practical.</p>
+
+<h3>Unit, Widget, and Integration Tests</h3>
+<table>
+<tr><th>Tool/Concept</th><th>Description</th><th>Example</th></tr>
+<tr><td>Unit Tests (flutter_test)</td><td>Test individual Dart functions and classes. Fast, no UI rendering needed.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// test/user_service_test.dart</span>
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:my_app/services/user_service.dart';
+
+class MockApi extends Mock implements ApiClient {}
+
+void main() {
+  late UserService service;
+  late MockApi mockApi;
+
+  setUp(() {
+    mockApi = MockApi();
+    service = UserService(api: mockApi);
+  });
+
+  group('UserService', () {
+    test('fetchUser returns user on success', () async {
+      when(mockApi.getUser('123'))
+          .thenAnswer((_) async =&gt; User(name: 'John'));
+
+      final user = await service.fetchUser('123');
+      expect(user.name, equals('John'));
+      verify(mockApi.getUser('123')).called(1);
+    });
+
+    test('fetchUser throws on network error', () {
+      when(mockApi.getUser(any))
+          .thenThrow(NetworkException());
+
+      expect(
+        () =&gt; service.fetchUser('123'),
+        throwsA(isA&lt;NetworkException&gt;()),
+      );
+    });
+  });
+}
+
+<span class="cmt"># Run unit tests</span>
+<span class="cmd">flutter test test/user_service_test.dart</span></pre></details></td></tr>
+<tr><td>Widget Tests</td><td>Test UI widgets in isolation. Renders widget tree, simulates interactions, verifies output.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// test/widgets/login_form_test.dart</span>
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:my_app/widgets/login_form.dart';
+
+void main() {
+  testWidgets('LoginForm shows error on empty submit',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(home: Scaffold(body: LoginForm())),
+    );
+
+    <span class="cmt">// Tap submit without filling fields</span>
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    <span class="cmt">// Verify error message appears</span>
+    expect(find.text('Email is required'), findsOneWidget);
+  });
+
+  testWidgets('LoginForm calls onLogin with credentials',
+      (WidgetTester tester) async {
+    String? capturedEmail;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: LoginForm(
+            onLogin: (email, pass) =&gt; capturedEmail = email,
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(
+      find.byKey(Key('email_field')), 'user@test.com');
+    await tester.enterText(
+      find.byKey(Key('password_field')), 'pass123');
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    expect(capturedEmail, equals('user@test.com'));
+  });
+}
+
+<span class="cmt"># Run widget tests</span>
+<span class="cmd">flutter test test/widgets/</span></pre></details></td></tr>
+<tr><td>Integration Tests (integration_test)</td><td>Full app E2E tests on real device/emulator. Uses integration_test package.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// integration_test/app_test.dart</span>
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:my_app/main.dart' as app;
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('Full login flow', (tester) async {
+    app.main();
+    await tester.pumpAndSettle();
+
+    <span class="cmt">// Enter credentials</span>
+    await tester.enterText(
+      find.byKey(Key('email_field')), 'user@test.com');
+    await tester.enterText(
+      find.byKey(Key('password_field')), 'password');
+    await tester.tap(find.text('Login'));
+    await tester.pumpAndSettle();
+
+    <span class="cmt">// Verify navigation to home</span>
+    expect(find.text('Welcome'), findsOneWidget);
+  });
+}
+
+<span class="cmt"># Run integration tests</span>
+<span class="cmd">flutter test integration_test/app_test.dart</span>
+
+<span class="cmt"># Run on specific device</span>
+<span class="cmd">flutter test integration_test/ -d emulator-5554</span></pre></details></td></tr>
+<tr><td>Patrol</td><td>Advanced Flutter integration testing. Native interactions, permission handling, notifications.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// integration_test/patrol_test.dart</span>
+import 'package:patrol/patrol.dart';
+import 'package:my_app/main.dart' as app;
+
+void main() {
+  patrolTest('Grant permission and take photo',
+    ($) async {
+      app.main();
+      await $.pumpAndSettle();
+
+      <span class="cmt">// Tap camera button</span>
+      await $(#camera_button).tap();
+
+      <span class="cmt">// Handle native permission dialog</span>
+      await $.native.grantPermissionWhenInUse();
+
+      <span class="cmt">// Interact with native camera</span>
+      await $.native.tap(Selector(text: 'Take Photo'));
+
+      <span class="cmt">// Back in Flutter context</span>
+      await $.pumpAndSettle();
+      expect($(#photo_preview), findsOneWidget);
+    },
+  );
+}
+
+<span class="cmt"># Setup patrol</span>
+<span class="cmd">dart pub global activate patrol_cli</span>
+<span class="cmd">patrol build android</span>
+<span class="cmd">patrol test</span>
+
+<span class="cmt"># pubspec.yaml</span>
+dev_dependencies:
+  patrol: ^3.0.0
+  integration_test:
+    sdk: flutter</pre></details></td></tr>
+<tr><td>Golden Tests</td><td>Snapshot/visual regression tests for Flutter widgets. Compare pixel-by-pixel.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// test/golden/button_test.dart</span>
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:my_app/widgets/custom_button.dart';
+
+void main() {
+  testWidgets('CustomButton matches golden', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CustomButton(label: 'Submit'),
+        ),
+      ),
+    );
+
+    await expectLater(
+      find.byType(CustomButton),
+      matchesGoldenFile('goldens/custom_button.png'),
+    );
+  });
+}
+
+<span class="cmt"># Generate golden files</span>
+<span class="cmd">flutter test --update-goldens</span>
+
+<span class="cmt"># Run golden tests (compare against saved)</span>
+<span class="cmd">flutter test test/golden/</span></pre></details></td></tr>
+<tr><td>Test Coverage</td><td>Generate code coverage reports for Flutter projects.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Generate coverage</span>
+<span class="cmd">flutter test --coverage</span>
+
+<span class="cmt"># View coverage report (lcov)</span>
+<span class="cmd">genhtml coverage/lcov.info -o coverage/html</span>
+<span class="cmd">open coverage/html/index.html</span>
+
+<span class="cmt"># Coverage with specific tests</span>
+<span class="cmd">flutter test --coverage test/services/</span>
+
+<span class="cmt"># Minimum coverage threshold (CI)</span>
+<span class="cmd">flutter test --coverage</span>
+<span class="cmd">lcov --summary coverage/lcov.info | grep "lines" </span>
+<span class="cmt"># Fail if below threshold in CI script</span></pre></details></td></tr>
+</table>
+
+<!-- Section 7: React Native Testing -->
+<h2 id="react-native">7. React Native Testing</h2>
+<p class="section-desc">React Native combines JavaScript testing (Jest) with native E2E tools (Detox) for full coverage.</p>
+
+<h3>Jest, RNTL, Detox, and Appium</h3>
+<table>
+<tr><th>Tool</th><th>Description</th><th>Example</th></tr>
+<tr><td>Jest (Unit Tests)</td><td>Default JS test runner for React Native. Test logic, utilities, hooks, reducers.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// __tests__/utils/formatDate.test.ts</span>
+import { formatDate, isValidEmail } from '../utils';
+
+describe('formatDate', () =&gt; {
+  it('formats ISO date to readable string', () =&gt; {
+    expect(formatDate('2024-01-15')).toBe('Jan 15, 2024');
+  });
+
+  it('returns empty string for invalid date', () =&gt; {
+    expect(formatDate('invalid')).toBe('');
+  });
+});
+
+describe('isValidEmail', () =&gt; {
+  it('returns true for valid emails', () =&gt; {
+    expect(isValidEmail('user@test.com')).toBe(true);
+  });
+
+  it('returns false for invalid emails', () =&gt; {
+    expect(isValidEmail('not-an-email')).toBe(false);
+    expect(isValidEmail('@missing.com')).toBe(false);
+  });
+});
+
+<span class="cmt"># Run tests</span>
+<span class="cmd">npx jest --coverage</span>
+<span class="cmd">npx jest --watch</span></pre></details></td></tr>
+<tr><td>React Native Testing Library</td><td>Component testing focused on user behavior. Renders components, simulates interactions.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// __tests__/components/LoginForm.test.tsx</span>
+import React from 'react';
+import { render, fireEvent, waitFor } from
+  '@testing-library/react-native';
+import LoginForm from '../../src/components/LoginForm';
+
+describe('LoginForm', () =&gt; {
+  const mockOnLogin = jest.fn();
+
+  it('shows error when submitting empty form', () =&gt; {
+    const { getByText, getByTestId } = render(
+      &lt;LoginForm onLogin={mockOnLogin} /&gt;
+    );
+
+    fireEvent.press(getByTestId('submit-button'));
+    expect(getByText('Email is required')).toBeTruthy();
+  });
+
+  it('calls onLogin with credentials', async () =&gt; {
+    const { getByTestId } = render(
+      &lt;LoginForm onLogin={mockOnLogin} /&gt;
+    );
+
+    fireEvent.changeText(
+      getByTestId('email-input'), 'user@test.com');
+    fireEvent.changeText(
+      getByTestId('password-input'), 'password123');
+    fireEvent.press(getByTestId('submit-button'));
+
+    await waitFor(() =&gt; {
+      expect(mockOnLogin).toHaveBeenCalledWith(
+        'user@test.com', 'password123'
+      );
+    });
+  });
+});
+
+<span class="cmt"># Install</span>
+<span class="cmd">npm install --save-dev @testing-library/react-native</span></pre></details></td></tr>
+<tr><td>Detox (E2E)</td><td>Gray-box E2E testing for React Native. Fast, synchronization-aware, runs on real devices.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// e2e/login.test.ts</span>
+describe('Login Flow', () =&gt; {
+  beforeAll(async () =&gt; {
+    await device.launchApp({ newInstance: true });
+  });
+
+  beforeEach(async () =&gt; {
+    await device.reloadReactNative();
+  });
+
+  it('should login successfully', async () =&gt; {
+    await element(by.id('email-input'))
+      .typeText('user@test.com');
+    await element(by.id('password-input'))
+      .typeText('password123');
+    await element(by.id('login-button')).tap();
+
+    await expect(element(by.text('Welcome')))
+      .toBeVisible();
+  });
+
+  it('should show error for invalid credentials', async () =&gt; {
+    await element(by.id('email-input'))
+      .typeText('wrong@test.com');
+    await element(by.id('password-input'))
+      .typeText('wrongpass');
+    await element(by.id('login-button')).tap();
+
+    await expect(element(by.text('Invalid credentials')))
+      .toBeVisible();
+  });
+});
+
+<span class="cmt"># Setup &amp; run Detox</span>
+<span class="cmd">npm install --save-dev detox</span>
+<span class="cmd">npx detox init</span>
+<span class="cmd">npx detox build --configuration ios.sim.debug</span>
+<span class="cmd">npx detox test --configuration ios.sim.debug</span></pre></details></td></tr>
+<tr><td>Detox Configuration</td><td>Configure Detox for multiple platforms and build configurations.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// .detoxrc.js</span>
+module.exports = {
+  testRunner: {
+    args: { $0: 'jest', config: 'e2e/jest.config.js' },
+    jest: { setupTimeout: 120000 }
+  },
+  apps: {
+    'ios.debug': {
+      type: 'ios.app',
+      binaryPath: 'ios/build/MyApp.app',
+      build: 'xcodebuild -workspace ios/MyApp.xcworkspace ' +
+        '-scheme MyApp -configuration Debug ' +
+        '-sdk iphonesimulator -derivedDataPath ios/build'
+    },
+    'android.debug': {
+      type: 'android.apk',
+      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest'
+    }
+  },
+  devices: {
+    simulator: { type: 'ios.simulator', device: { type: 'iPhone 15' } },
+    emulator: { type: 'android.emulator', device: { avdName: 'Pixel_6' } }
+  },
+  configurations: {
+    'ios.sim.debug': { device: 'simulator', app: 'ios.debug' },
+    'android.emu.debug': { device: 'emulator', app: 'android.debug' }
+  }
+};</pre></details></td></tr>
+<tr><td>E2E with Appium</td><td>Use Appium for RN apps when cross-framework testing or device farm integration needed.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Appium + React Native (accessibility IDs)</span>
+<span class="cmt">// In RN component: testID="login-button"</span>
+<span class="cmt">// Maps to: accessibility ID on both platforms</span>
+
+<span class="cmt">// Python test</span>
+from appium import webdriver
+from appium.webdriver.common.appiumby import AppiumBy
+
+<span class="cmt"># React Native elements use testID as accessibility ID</span>
+email = driver.find_element(
+    AppiumBy.ACCESSIBILITY_ID, 'email-input')
+email.send_keys('user@test.com')
+
+password = driver.find_element(
+    AppiumBy.ACCESSIBILITY_ID, 'password-input')
+password.send_keys('password123')
+
+login_btn = driver.find_element(
+    AppiumBy.ACCESSIBILITY_ID, 'login-button')
+login_btn.click()
+
+<span class="cmt"># Wait for welcome screen</span>
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+welcome = WebDriverWait(driver, 10).until(
+    EC.presence_of_element_located(
+        (AppiumBy.ACCESSIBILITY_ID, 'welcome-text'))
+)</pre></details></td></tr>
+</table>
+
+<!-- Section 8: Hybrid App Testing -->
+<h2 id="hybrid">8. Hybrid App Testing</h2>
+<p class="section-desc">Hybrid apps (Cordova, Ionic, Capacitor) need special handling for WebView context switching during tests.</p>
+
+<h3>WebView, Context Switching, Cordova/Ionic/Capacitor</h3>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr><td>WebView Handling</td><td>Hybrid apps render web content in native WebView. Must switch contexts to interact.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Enable WebView debugging (Android app code)</span>
+if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.KITKAT) {
+    WebView.setWebContentsDebuggingEnabled(true);
+}
+
+<span class="cmt">// Appium - detect and switch to WebView</span>
+<span class="cmt">// Wait for WebView to load</span>
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(d -&gt; d.getContextHandles().size() &gt; 1);
+
+<span class="cmt">// Get all contexts</span>
+Set&lt;String&gt; contexts = driver.getContextHandles();
+<span class="cmt">// Output: [NATIVE_APP, WEBVIEW_com.myapp.hybrid]</span>
+
+<span class="cmt">// Switch to WebView</span>
+for (String context : contexts) {
+    if (context.contains("WEBVIEW")) {
+        driver.context(context);
+        break;
+    }
+}
+
+<span class="cmt">// Use web locators inside WebView</span>
+driver.findElement(By.id("email")).sendKeys("user@test.com");
+driver.findElement(By.cssSelector(".btn-login")).click();
+
+<span class="cmt">// Switch back to native</span>
+driver.context("NATIVE_APP");</pre></details></td></tr>
+<tr><td>Ionic/Capacitor Testing</td><td>Ionic apps use Angular/React/Vue in WebView. Test with Cypress (web) or Appium (native).</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Cypress for Ionic (web layer testing)</span>
+<span class="cmt">// cypress/e2e/login.cy.ts</span>
+describe('Login Page', () =&gt; {
+  beforeEach(() =&gt; {
+    cy.visit('/login');
+  });
+
+  it('should login successfully', () =&gt; {
+    cy.get('ion-input[name="email"] input')
+      .type('user@test.com');
+    cy.get('ion-input[name="password"] input')
+      .type('password123');
+    cy.get('ion-button[type="submit"]').click();
+    cy.url().should('include', '/home');
+    cy.get('ion-title').should('contain', 'Welcome');
+  });
+});
+
+<span class="cmt"># Run Ionic tests</span>
+<span class="cmd">npx cypress run</span>
+
+<span class="cmt"># Capacitor - build and test on device</span>
+<span class="cmd">ionic cap build android</span>
+<span class="cmd">ionic cap run android --livereload</span></pre></details></td></tr>
+<tr><td>Cordova Testing</td><td>Cordova plugins bridge JS to native. Test plugin interfaces and WebView behavior.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Testing Cordova plugin interactions</span>
+<span class="cmt">// Appium capabilities for Cordova app</span>
+{
+  "platformName": "Android",
+  "appium:automationName": "UiAutomator2",
+  "appium:app": "/path/to/cordova-app.apk",
+  "appium:appPackage": "com.myapp.cordova",
+  "appium:appActivity": ".MainActivity",
+  "appium:chromedriverAutodownload": true,
+  "appium:autoWebview": true
+}
+
+<span class="cmt">// With autoWebview, Appium starts in WebView context</span>
+<span class="cmt">// Use web locators directly</span>
+driver.findElement(By.id("camera-btn")).click();
+
+<span class="cmt">// When native dialog appears, switch context</span>
+driver.context("NATIVE_APP");
+<span class="cmt">// Handle native permission popup</span>
+driver.findElement(AppiumBy.id(
+    "com.android.permissioncontroller:id/permission_allow_button"
+)).click();
+
+<span class="cmt">// Switch back to webview</span>
+driver.context("WEBVIEW_com.myapp.cordova");</pre></details></td></tr>
+<tr><td>ChromeDriver Management</td><td>WebView testing requires matching ChromeDriver version. Appium can auto-download.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Capabilities for ChromeDriver management</span>
+{
+  "appium:chromedriverAutodownload": true,
+  <span class="cmt">// OR specify path manually</span>
+  "appium:chromedriverExecutable": "/path/to/chromedriver",
+  <span class="cmt">// OR specify directory with multiple versions</span>
+  "appium:chromedriverExecutableDir": "/path/to/chromedrivers/",
+  <span class="cmt">// Map Chrome version to driver</span>
+  "appium:chromedriverChromeMappingFile": "/path/to/mapping.json"
+}
+
+<span class="cmt"># Check WebView Chrome version on device</span>
+<span class="cmd">adb shell dumpsys webview | grep "Current WebView package"</span>
+<span class="cmd">adb shell pm dump com.google.android.webview | grep version</span>
+
+<span class="cmt"># Download matching ChromeDriver</span>
+<span class="cmd">npx appium driver run uiautomator2 chromedriver --chrome-version 120</span></pre></details></td></tr>
+<tr><td>Multiple WebViews</td><td>Apps may have multiple WebView instances. Handle window switching within WebView context.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Handling multiple windows in WebView</span>
+driver.context("WEBVIEW_com.myapp");
+
+<span class="cmt">// Get all window handles</span>
+Set&lt;String&gt; windows = driver.getWindowHandles();
+System.out.println("Windows: " + windows.size());
+
+<span class="cmt">// Switch between windows</span>
+for (String handle : windows) {
+    driver.switchTo().window(handle);
+    String title = driver.getTitle();
+    if (title.contains("Payment")) {
+        <span class="cmt">// Found the payment WebView</span>
+        break;
+    }
+}
+
+<span class="cmt">// Interact with payment form</span>
+driver.findElement(By.id("card-number"))
+    .sendKeys("4111111111111111");
+
+<span class="cmt">// Switch back to main window</span>
+driver.switchTo().window(windows.iterator().next());</pre></details></td></tr>
+</table>
+
+<!-- Section 9: Locator Strategies -->
+<h2 id="locators">9. Locator Strategies</h2>
+<p class="section-desc">Choosing the right locator strategy is critical for stable tests — accessibility IDs are the gold standard.</p>
+
+<h3>Finding Elements on Android &amp; iOS</h3>
+<table>
+<tr><th>Strategy</th><th>Description</th><th>Example</th></tr>
+<tr><td>Accessibility ID</td><td>Cross-platform, preferred. Maps to contentDescription (Android) and accessibilityIdentifier (iOS).</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Accessibility ID - BEST PRACTICE (cross-platform)</span>
+
+<span class="cmt">// Java</span>
+driver.findElement(AppiumBy.accessibilityId("login_button"));
+
+<span class="cmt">// Python</span>
+driver.find_element(AppiumBy.ACCESSIBILITY_ID, 'login_button')
+
+<span class="cmt">// Setting in Android XML:</span>
+&lt;Button
+    android:contentDescription="login_button"
+    android:text="Login" /&gt;
+
+<span class="cmt">// Setting in iOS Swift:</span>
+button.accessibilityIdentifier = "login_button"
+
+<span class="cmt">// React Native (maps to both platforms):</span>
+&lt;Button testID="login_button" title="Login" /&gt;
+
+<span class="cmt">// Flutter:</span>
+ElevatedButton(
+  key: Key('login_button'),
+  child: Text('Login'),
+)</pre></details></td></tr>
+<tr><td>Resource ID (Android)</td><td>Android resource ID. Format: package:id/element_id. Unique within screen.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Android resource ID</span>
+driver.findElement(AppiumBy.id("com.myapp:id/username_input"));
+
+<span class="cmt">// Short form (without package, works sometimes)</span>
+driver.findElement(AppiumBy.id("username_input"));
+
+<span class="cmt">// Find by ID in Appium Inspector or via:</span>
+<span class="cmd">adb shell uiautomator dump</span>
+<span class="cmd">adb pull /sdcard/window_dump.xml</span>
+
+<span class="cmt">// Multiple elements with same class</span>
+List&lt;WebElement&gt; inputs = driver.findElements(
+    AppiumBy.id("com.myapp:id/text_input"));
+inputs.get(0).sendKeys("first field");
+inputs.get(1).sendKeys("second field");</pre></details></td></tr>
+<tr><td>UIAutomator Selector</td><td>Android-only. Powerful native selectors using UiSelector or UiScrollable.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// UIAutomator2 selectors (Android)</span>
+
+<span class="cmt">// By text</span>
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().text(\"Login\")"));
+
+<span class="cmt">// By text contains</span>
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().textContains(\"Log\")"));
+
+<span class="cmt">// By description</span>
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().description(\"Submit button\")"));
+
+<span class="cmt">// By class + index</span>
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().className(\"android.widget.EditText\").instance(1)"));
+
+<span class="cmt">// Scrollable - scroll to element</span>
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiScrollable(new UiSelector().scrollable(true))" +
+    ".scrollIntoView(new UiSelector().text(\"Terms\"))"));
+
+<span class="cmt">// Combine conditions</span>
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().className(\"android.widget.Button\")" +
+    ".enabled(true).text(\"Submit\")"));</pre></details></td></tr>
+<tr><td>iOS Predicate String</td><td>iOS-only. NSPredicate-based queries. Fast, supports complex conditions.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// iOS NSPredicate selectors</span>
+
+<span class="cmt">// By label (exact match)</span>
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "label == 'Login'"));
+
+<span class="cmt">// By label (contains)</span>
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "label CONTAINS 'Log'"));
+
+<span class="cmt">// By type and label</span>
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "type == 'XCUIElementTypeButton' AND label == 'Submit'"));
+
+<span class="cmt">// By name (accessibility identifier)</span>
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "name == 'login_button'"));
+
+<span class="cmt">// Visible and enabled</span>
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "type == 'XCUIElementTypeButton' AND visible == 1 AND enabled == 1"));
+
+<span class="cmt">// Begins with / ends with</span>
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "label BEGINSWITH 'Welcome'"));
+
+<span class="cmt">// Case-insensitive</span>
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "label ==[c] 'login'"));</pre></details></td></tr>
+<tr><td>iOS Class Chain</td><td>iOS-only. XPath-like but faster. Query element hierarchy with filters.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// iOS Class Chain selectors</span>
+
+<span class="cmt">// Direct child</span>
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeButton[`label == 'Login'`]"));
+
+<span class="cmt">// By index (1-based)</span>
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeCell[3]"));
+
+<span class="cmt">// Nested hierarchy</span>
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeTable/XCUIElementTypeCell[`name == 'item1'`]/XCUIElementTypeButton"));
+
+<span class="cmt">// Last element</span>
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeButton[-1]"));
+
+<span class="cmt">// Multiple conditions</span>
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeButton[`label CONTAINS 'Save' AND visible == 1`]"));
+
+<span class="cmt">// Descendant search (any depth)</span>
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeScrollView/**/XCUIElementTypeButton[`label == 'Add'`]"));</pre></details></td></tr>
+<tr><td>XPath</td><td>Universal but SLOW. Use as last resort. Works on both platforms but fragile.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// XPath - universal but slow (use sparingly)</span>
+
+<span class="cmt">// Android XPath</span>
+driver.findElement(By.xpath(
+    "//android.widget.Button[@text='Login']"));
+
+<span class="cmt">// Android - by resource-id</span>
+driver.findElement(By.xpath(
+    "//*[@resource-id='com.app:id/login_btn']"));
+
+<span class="cmt">// iOS XPath</span>
+driver.findElement(By.xpath(
+    "//XCUIElementTypeButton[@label='Login']"));
+
+<span class="cmt">// Relative XPath (sibling, parent)</span>
+driver.findElement(By.xpath(
+    "//android.widget.TextView[@text='Email']" +
+    "/following-sibling::android.widget.EditText"));
+
+<span class="cmt">// Contains text</span>
+driver.findElement(By.xpath(
+    "//*[contains(@text, 'Welcome')]"));
+
+<span class="cmt">⚠️ Performance ranking (fastest to slowest):</span>
+<span class="cmt">1. Accessibility ID</span>
+<span class="cmt">2. ID / Resource ID</span>
+<span class="cmt">3. iOS Predicate / Class Chain</span>
+<span class="cmt">4. Android UIAutomator</span>
+<span class="cmt">5. Class Name</span>
+<span class="cmt">6. XPath (SLOWEST - avoid in loops)</span></pre></details></td></tr>
+</table>
+
+<!-- Section 10: Gestures & Interactions -->
+<h2 id="gestures">10. Gestures &amp; Interactions</h2>
+<p class="section-desc">Mobile-specific gestures (swipe, pinch, long press) are essential for testing native UX patterns.</p>
+
+<h3>Touch Actions &amp; Multi-Touch</h3>
+<table>
+<tr><th>Gesture</th><th>Description</th><th>Example</th></tr>
+<tr><td>Tap</td><td>Single tap on element or coordinates. Most basic interaction.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Simple tap on element</span>
+driver.findElement(AppiumBy.accessibilityId("button")).click();
+
+<span class="cmt">// Tap at coordinates (W3C Actions)</span>
+PointerInput finger = new PointerInput(
+    PointerInput.Kind.TOUCH, "finger");
+Sequence tap = new Sequence(finger, 1);
+tap.addAction(finger.createPointerMove(
+    Duration.ZERO, PointerInput.Origin.viewport(), 200, 400));
+tap.addAction(finger.createPointerDown(
+    PointerInput.MouseButton.LEFT.asArg()));
+tap.addAction(finger.createPointerUp(
+    PointerInput.MouseButton.LEFT.asArg()));
+driver.perform(Collections.singletonList(tap));
+
+<span class="cmt">// Double tap</span>
+Sequence doubleTap = new Sequence(finger, 1);
+doubleTap.addAction(finger.createPointerMove(
+    Duration.ZERO, PointerInput.Origin.viewport(), 200, 400));
+doubleTap.addAction(finger.createPointerDown(0));
+doubleTap.addAction(finger.createPointerUp(0));
+doubleTap.addAction(new Pause(finger, Duration.ofMillis(50)));
+doubleTap.addAction(finger.createPointerDown(0));
+doubleTap.addAction(finger.createPointerUp(0));
+driver.perform(Collections.singletonList(doubleTap));</pre></details></td></tr>
+<tr><td>Swipe</td><td>Touch, move in direction, release. Used for scrolling, dismissing, navigating.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Swipe up (scroll down) using W3C Actions</span>
+Dimension size = driver.manage().window().getSize();
+int startX = size.width / 2;
+int startY = (int) (size.height * 0.8);
+int endY = (int) (size.height * 0.2);
+
+PointerInput finger = new PointerInput(
+    PointerInput.Kind.TOUCH, "finger");
+Sequence swipe = new Sequence(finger, 1);
+swipe.addAction(finger.createPointerMove(
+    Duration.ZERO, PointerInput.Origin.viewport(), startX, startY));
+swipe.addAction(finger.createPointerDown(
+    PointerInput.MouseButton.LEFT.asArg()));
+swipe.addAction(finger.createPointerMove(
+    Duration.ofMillis(600), PointerInput.Origin.viewport(), startX, endY));
+swipe.addAction(finger.createPointerUp(
+    PointerInput.MouseButton.LEFT.asArg()));
+driver.perform(Collections.singletonList(swipe));
+
+<span class="cmt">// Swipe left (dismiss/navigate)</span>
+int startXL = (int) (size.width * 0.8);
+int endXL = (int) (size.width * 0.2);
+int y = size.height / 2;
+<span class="cmt">// Same pattern with startXL,y → endXL,y</span></pre></details></td></tr>
+<tr><td>Scroll</td><td>Scroll within a scrollable container until element is found.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Android - UIAutomator scroll (preferred)</span>
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiScrollable(new UiSelector().scrollable(true))" +
+    ".scrollIntoView(new UiSelector().text(\"Terms and Conditions\"))"));
+
+<span class="cmt">// iOS - mobile:scroll command</span>
+driver.executeScript("mobile: scroll", ImmutableMap.of(
+    "direction", "down",
+    "predicateString", "label == 'Terms'"
+));
+
+<span class="cmt">// Generic scroll with swipe loop</span>
+public void scrollToElement(String text, int maxSwipes) {
+    for (int i = 0; i &lt; maxSwipes; i++) {
+        try {
+            driver.findElement(AppiumBy.accessibilityId(text));
+            return; <span class="cmt">// Found!</span>
+        } catch (NoSuchElementException e) {
+            performSwipeUp();
+        }
+    }
+    throw new RuntimeException("Element not found after scrolling");
+}</pre></details></td></tr>
+<tr><td>Long Press</td><td>Touch and hold for context menus, drag initiation, edit mode.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Long press using W3C Actions</span>
+WebElement element = driver.findElement(
+    AppiumBy.accessibilityId("list_item"));
+Point location = element.getLocation();
+Dimension elSize = element.getSize();
+int centerX = location.getX() + elSize.getWidth() / 2;
+int centerY = location.getY() + elSize.getHeight() / 2;
+
+PointerInput finger = new PointerInput(
+    PointerInput.Kind.TOUCH, "finger");
+Sequence longPress = new Sequence(finger, 1);
+longPress.addAction(finger.createPointerMove(
+    Duration.ZERO, PointerInput.Origin.viewport(), centerX, centerY));
+longPress.addAction(finger.createPointerDown(
+    PointerInput.MouseButton.LEFT.asArg()));
+<span class="cmt">// Hold for 2 seconds</span>
+longPress.addAction(new Pause(finger, Duration.ofSeconds(2)));
+longPress.addAction(finger.createPointerUp(
+    PointerInput.MouseButton.LEFT.asArg()));
+driver.perform(Collections.singletonList(longPress));
+
+<span class="cmt">// iOS mobile: command alternative</span>
+driver.executeScript("mobile: touchAndHold", ImmutableMap.of(
+    "elementId", element.getAttribute("id"),
+    "duration", 2.0
+));</pre></details></td></tr>
+<tr><td>Pinch &amp; Zoom</td><td>Two-finger gesture for zoom in/out. Requires two touch pointers.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Pinch to zoom - two finger gesture</span>
+Dimension size = driver.manage().window().getSize();
+int centerX = size.width / 2;
+int centerY = size.height / 2;
+
+<span class="cmt">// Finger 1: moves from center outward (top-left)</span>
+PointerInput finger1 = new PointerInput(
+    PointerInput.Kind.TOUCH, "finger1");
+Sequence zoom1 = new Sequence(finger1, 0);
+zoom1.addAction(finger1.createPointerMove(
+    Duration.ZERO, PointerInput.Origin.viewport(), centerX, centerY));
+zoom1.addAction(finger1.createPointerDown(0));
+zoom1.addAction(finger1.createPointerMove(
+    Duration.ofMillis(600), PointerInput.Origin.viewport(),
+    centerX - 200, centerY - 200));
+zoom1.addAction(finger1.createPointerUp(0));
+
+<span class="cmt">// Finger 2: moves from center outward (bottom-right)</span>
+PointerInput finger2 = new PointerInput(
+    PointerInput.Kind.TOUCH, "finger2");
+Sequence zoom2 = new Sequence(finger2, 0);
+zoom2.addAction(finger2.createPointerMove(
+    Duration.ZERO, PointerInput.Origin.viewport(), centerX, centerY));
+zoom2.addAction(finger2.createPointerDown(0));
+zoom2.addAction(finger2.createPointerMove(
+    Duration.ofMillis(600), PointerInput.Origin.viewport(),
+    centerX + 200, centerY + 200));
+zoom2.addAction(finger2.createPointerUp(0));
+
+driver.perform(Arrays.asList(zoom1, zoom2));</pre></details></td></tr>
+<tr><td>Drag &amp; Drop</td><td>Long press on source, move to destination, release. For reordering lists, moving items.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Drag and drop between elements</span>
+WebElement source = driver.findElement(
+    AppiumBy.accessibilityId("drag_item"));
+WebElement target = driver.findElement(
+    AppiumBy.accessibilityId("drop_zone"));
+
+Point srcCenter = getCenter(source);
+Point tgtCenter = getCenter(target);
+
+PointerInput finger = new PointerInput(
+    PointerInput.Kind.TOUCH, "finger");
+Sequence drag = new Sequence(finger, 1);
+<span class="cmt">// Move to source</span>
+drag.addAction(finger.createPointerMove(Duration.ZERO,
+    PointerInput.Origin.viewport(), srcCenter.x, srcCenter.y));
+<span class="cmt">// Press and hold</span>
+drag.addAction(finger.createPointerDown(0));
+drag.addAction(new Pause(finger, Duration.ofMillis(600)));
+<span class="cmt">// Drag to target</span>
+drag.addAction(finger.createPointerMove(Duration.ofMillis(800),
+    PointerInput.Origin.viewport(), tgtCenter.x, tgtCenter.y));
+<span class="cmt">// Release</span>
+drag.addAction(finger.createPointerUp(0));
+driver.perform(Collections.singletonList(drag));
+
+<span class="cmt">// iOS mobile: command</span>
+driver.executeScript("mobile: dragFromToForDuration", ImmutableMap.of(
+    "fromX", srcCenter.x, "fromY", srcCenter.y,
+    "toX", tgtCenter.x, "toY", tgtCenter.y,
+    "duration", 1.0
+));</pre></details></td></tr>
+</table>
+
+<!-- Section 11: Device Management -->
+<h2 id="devices">11. Device Management</h2>
+<p class="section-desc">Testing across real devices, emulators, and cloud farms ensures your app works for all users.</p>
+
+<h3>Emulators, Simulators, Real Devices &amp; Device Farms</h3>
+<table>
+<tr><th>Tool/Concept</th><th>Description</th><th>Example</th></tr>
+<tr><td>Android Emulators (AVD)</td><td>Android Virtual Device via Android Studio. Full system images, configurable hardware profiles.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># List available AVDs</span>
+<span class="cmd">emulator -list-avds</span>
+
+<span class="cmt"># Create AVD from command line</span>
+<span class="cmd">sdkmanager "system-images;android-34;google_apis;x86_64"</span>
+<span class="cmd">avdmanager create avd -n Pixel_6_API_34 \
+  -k "system-images;android-34;google_apis;x86_64" \
+  -d "pixel_6"</span>
+
+<span class="cmt"># Launch emulator</span>
+<span class="cmd">emulator -avd Pixel_6_API_34</span>
+<span class="cmd">emulator -avd Pixel_6_API_34 -no-window -no-audio</span>  <span class="cmt"># headless</span>
+
+<span class="cmt"># Useful ADB commands</span>
+<span class="cmd">adb devices</span>                        <span class="cmt"># List connected devices</span>
+<span class="cmd">adb -s emulator-5554 install app.apk</span>
+<span class="cmd">adb shell pm list packages | grep myapp</span>
+<span class="cmd">adb shell am start -n com.app/.MainActivity</span>
+<span class="cmd">adb logcat *:E</span>                     <span class="cmt"># Error logs only</span>
+<span class="cmd">adb shell screencap /sdcard/screen.png</span>
+<span class="cmd">adb pull /sdcard/screen.png .</span></pre></details></td></tr>
+<tr><td>iOS Simulators</td><td>Xcode simulators. Faster than real devices, no code signing needed. No hardware features.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># List available simulators</span>
+<span class="cmd">xcrun simctl list devices</span>
+
+<span class="cmt"># Create simulator</span>
+<span class="cmd">xcrun simctl create "iPhone 15 Test" \
+  "com.apple.CoreSimulator.SimDeviceType.iPhone-15" \
+  "com.apple.CoreSimulator.SimRuntime.iOS-17-0"</span>
+
+<span class="cmt"># Boot and manage</span>
+<span class="cmd">xcrun simctl boot "iPhone 15 Test"</span>
+<span class="cmd">xcrun simctl shutdown "iPhone 15 Test"</span>
+<span class="cmd">xcrun simctl erase "iPhone 15 Test"</span>   <span class="cmt"># Reset to clean state</span>
+
+<span class="cmt"># Install and launch app</span>
+<span class="cmd">xcrun simctl install booted /path/to/MyApp.app</span>
+<span class="cmd">xcrun simctl launch booted com.myapp.bundleid</span>
+
+<span class="cmt"># Screenshots and video</span>
+<span class="cmd">xcrun simctl io booted screenshot screen.png</span>
+<span class="cmd">xcrun simctl io booted recordVideo test.mp4</span>
+
+<span class="cmt"># Set location, status bar, permissions</span>
+<span class="cmd">xcrun simctl location booted set 37.7749,-122.4194</span>
+<span class="cmd">xcrun simctl privacy booted grant all com.myapp</span>
+<span class="cmd">xcrun simctl status_bar booted override --time "9:41"</span></pre></details></td></tr>
+<tr><td>Real Device Setup</td><td>More realistic testing. Requires USB/WiFi connection, provisioning (iOS), developer mode.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android real device</span>
+<span class="cmt">1. Enable Developer Options (tap Build Number 7 times)</span>
+<span class="cmt">2. Enable USB Debugging</span>
+<span class="cmt">3. Connect via USB</span>
+<span class="cmd">adb devices</span>  <span class="cmt"># Should show device serial</span>
+
+<span class="cmt"># iOS real device (requires provisioning)</span>
+<span class="cmt">1. Register device UDID in Apple Developer Portal</span>
+<span class="cmt">2. Create provisioning profile</span>
+<span class="cmt">3. Sign WebDriverAgent with your team</span>
+
+<span class="cmt"># Get iOS device UDID</span>
+<span class="cmd">xcrun xctrace list devices</span>
+<span class="cmd">idevice_id -l</span>  <span class="cmt"># via libimobiledevice</span>
+
+<span class="cmt"># Appium iOS real device capabilities</span>
+{
+  "appium:udid": "00008110-001A4D123456",
+  "appium:xcodeOrgId": "ABCDE12345",
+  "appium:xcodeSigningId": "iPhone Developer",
+  "appium:updatedWDABundleId": "com.myteam.WebDriverAgent"
+}</pre></details></td></tr>
+<tr><td>BrowserStack</td><td>Cloud device farm. 3000+ real devices. Parallel execution, video recording, logs.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// BrowserStack capabilities</span>
+{
+  "platformName": "Android",
+  "appium:automationName": "UiAutomator2",
+  "appium:app": "bs://&lt;app_hash&gt;",
+  "appium:deviceName": "Google Pixel 6",
+  "appium:platformVersion": "13.0",
+  "bstack:options": {
+    "userName": "YOUR_USERNAME",
+    "accessKey": "YOUR_ACCESS_KEY",
+    "projectName": "MyApp Tests",
+    "buildName": "Build 1.0",
+    "sessionName": "Login Tests",
+    "debug": true,
+    "networkLogs": true
+  }
+}
+
+<span class="cmt"># Upload app</span>
+<span class="cmd">curl -u "USER:KEY" \
+  -X POST "https://api-cloud.browserstack.com/app-automate/upload" \
+  -F "file=@/path/to/app.apk"</span>
+
+<span class="cmt"># Connect to BrowserStack hub</span>
+URL hubUrl = new URL(
+  "https://hub-cloud.browserstack.com/wd/hub");
+AndroidDriver driver = new AndroidDriver(hubUrl, caps);</pre></details></td></tr>
+<tr><td>Sauce Labs</td><td>Cloud testing platform. Real devices + emulators. Supports Appium, Espresso, XCUITest.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Sauce Labs capabilities</span>
+{
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
+  "appium:app": "storage:filename=MyApp.ipa",
+  "appium:deviceName": "iPhone 14",
+  "appium:platformVersion": "16",
+  "sauce:options": {
+    "username": "YOUR_USERNAME",
+    "accessKey": "YOUR_ACCESS_KEY",
+    "appiumVersion": "2.0",
+    "name": "Login Test Suite",
+    "build": "v1.2.3"
+  }
+}
+
+<span class="cmt"># Upload to Sauce storage</span>
+<span class="cmd">curl -u "$SAUCE_USERNAME:$SAUCE_ACCESS_KEY" \
+  -X POST "https://api.us-west-1.saucelabs.com/v1/storage/upload" \
+  -F "payload=@MyApp.ipa" \
+  -F "name=MyApp.ipa"</span>
+
+<span class="cmt"># Hub URL</span>
+https://ondemand.us-west-1.saucelabs.com/wd/hub</pre></details></td></tr>
+<tr><td>AWS Device Farm</td><td>AWS cloud device testing. Integrates with CI/CD. Pay per device-minute.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># AWS Device Farm CLI</span>
+
+<span class="cmt"># Create project</span>
+<span class="cmd">aws devicefarm create-project --name "MyApp Tests" --region us-west-2</span>
+
+<span class="cmt"># Upload APK</span>
+<span class="cmd">aws devicefarm create-upload \
+  --project-arn "arn:aws:devicefarm:..." \
+  --name app.apk \
+  --type ANDROID_APP</span>
+
+<span class="cmt"># Upload test package</span>
+<span class="cmd">aws devicefarm create-upload \
+  --project-arn "arn:aws:devicefarm:..." \
+  --name tests.zip \
+  --type APPIUM_JAVA_TESTNG_TEST_PACKAGE</span>
+
+<span class="cmt"># Schedule test run</span>
+<span class="cmd">aws devicefarm schedule-run \
+  --project-arn "arn:aws:devicefarm:..." \
+  --app-arn "arn:aws:devicefarm:...:upload:..." \
+  --device-pool-arn "arn:aws:devicefarm:...:devicepool:..." \
+  --test type=APPIUM_JAVA_TESTNG,testPackageArn="arn:..."</span>
+
+<span class="cmt"># Appium capabilities for Device Farm</span>
+{
+  "platformName": "Android",
+  "appium:automationName": "UiAutomator2",
+  "appium:app": "/tmp/app.apk"  <span class="cmt">// auto-mapped by Device Farm</span>
+}</pre></details></td></tr>
+</table>
+
+<!-- Section 12: Performance Testing -->
+<h2 id="performance">12. Performance Testing</h2>
+<p class="section-desc">Mobile performance (CPU, memory, battery) directly impacts user experience and app store ratings.</p>
+
+<h3>CPU, Memory, Battery, Network &amp; Stability</h3>
+<table>
+<tr><th>Tool/Concept</th><th>Description</th><th>Example</th></tr>
+<tr><td>CPU Profiling</td><td>Monitor CPU usage during test execution. Detect expensive operations and ANRs.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android CPU profiling</span>
+<span class="cmd">adb shell top -n 1 | grep com.myapp</span>
+<span class="cmd">adb shell dumpsys cpuinfo | grep com.myapp</span>
+
+<span class="cmt"># Continuous CPU monitoring (save to file)</span>
+<span class="cmd">adb shell "while true; do \
+  dumpsys cpuinfo | grep com.myapp; \
+  sleep 1; \
+done" > cpu_log.txt</span>
+
+<span class="cmt"># Android Profiler via command line</span>
+<span class="cmd">adb shell am profile start com.myapp /data/local/tmp/trace.trace</span>
+<span class="cmd">adb shell am profile stop com.myapp</span>
+<span class="cmd">adb pull /data/local/tmp/trace.trace .</span>
+
+<span class="cmt"># iOS - Instruments (command line)</span>
+<span class="cmd">xcrun xctrace record --device "iPhone 15" \
+  --template "Time Profiler" \
+  --launch com.myapp.bundleid \
+  --output cpu_trace.trace</span></pre></details></td></tr>
+<tr><td>Memory Profiling</td><td>Track memory allocation, detect leaks, monitor heap size and GC activity.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android memory commands</span>
+<span class="cmd">adb shell dumpsys meminfo com.myapp</span>
+<span class="cmd">adb shell dumpsys meminfo com.myapp | grep "TOTAL"</span>
+
+<span class="cmt"># Heap dump</span>
+<span class="cmd">adb shell am dumpheap com.myapp /data/local/tmp/heap.hprof</span>
+<span class="cmd">adb pull /data/local/tmp/heap.hprof .</span>
+
+<span class="cmt"># Monitor memory over time</span>
+<span class="cmd">adb shell dumpsys meminfo com.myapp --stat</span>
+
+<span class="cmt"># iOS memory - Instruments</span>
+<span class="cmd">xcrun xctrace record --device "iPhone 15" \
+  --template "Leaks" \
+  --launch com.myapp.bundleid \
+  --output leaks.trace</span>
+
+<span class="cmt"># iOS - check for memory warnings</span>
+<span class="cmd">xcrun simctl spawn booted log stream \
+  --predicate 'eventMessage contains "memory"' \
+  --level debug</span></pre></details></td></tr>
+<tr><td>Battery &amp; Energy</td><td>Measure power consumption, wake locks, background activity impact.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android battery stats</span>
+<span class="cmd">adb shell dumpsys batterystats --reset</span>  <span class="cmt"># Reset first</span>
+<span class="cmt"># ... run your test scenario ...</span>
+<span class="cmd">adb shell dumpsys batterystats > battery_report.txt</span>
+<span class="cmd">adb bugreport > bugreport.zip</span>
+
+<span class="cmt"># Analyze with Battery Historian</span>
+<span class="cmd">docker run -p 9999:9999 gcr.io/battery-historian/stable</span>
+<span class="cmt"># Upload bugreport.zip to http://localhost:9999</span>
+
+<span class="cmt"># Check wake locks</span>
+<span class="cmd">adb shell dumpsys power | grep "Wake Locks"</span>
+
+<span class="cmt"># iOS Energy - Instruments</span>
+<span class="cmd">xcrun xctrace record --device "iPhone 15" \
+  --template "Energy Log" \
+  --attach com.myapp.bundleid \
+  --output energy.trace \
+  --time-limit 60s</span></pre></details></td></tr>
+<tr><td>Network Profiling</td><td>Monitor HTTP requests, bandwidth, latency. Test under poor network conditions.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android network simulation</span>
+<span class="cmd">adb shell settings put global network_recommendations_enabled 0</span>
+
+<span class="cmt"># Emulator - simulate network conditions</span>
+<span class="cmd">emulator -avd Pixel6 -netdelay 3g -netspeed gsm</span>
+
+<span class="cmt"># Network stats</span>
+<span class="cmd">adb shell dumpsys netstats detail | grep com.myapp</span>
+
+<span class="cmt"># Charles Proxy setup for mobile</span>
+<span class="cmt">1. Set device proxy to computer IP:8888</span>
+<span class="cmt">2. Install Charles root cert on device</span>
+<span class="cmt">3. Enable SSL proxying for target domains</span>
+
+<span class="cmt"># iOS Network Link Conditioner</span>
+<span class="cmt">Settings → Developer → Network Link Conditioner</span>
+<span class="cmt">Profiles: 3G, Edge, High Latency DNS, Very Bad Network</span>
+
+<span class="cmt"># Appium - intercept network (with proxy)</span>
+{
+  "appium:proxyType": "manual",
+  "appium:httpProxy": "192.168.1.100:8888",
+  "appium:sslProxy": "192.168.1.100:8888"
+}</pre></details></td></tr>
+<tr><td>Monkey Testing</td><td>Random stress testing. Generates pseudo-random UI events to find crashes.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android Monkey (built-in stress testing)</span>
+<span class="cmd">adb shell monkey -p com.myapp \
+  --throttle 200 \
+  --pct-touch 40 \
+  --pct-motion 25 \
+  --pct-nav 15 \
+  --pct-syskeys 5 \
+  --ignore-crashes \
+  --ignore-timeouts \
+  -v -v 10000</span>
+
+<span class="cmt"># Explanation:</span>
+<span class="cmt"># --throttle 200: 200ms between events</span>
+<span class="cmt"># --pct-touch 40: 40% tap events</span>
+<span class="cmt"># --pct-motion 25: 25% swipe/scroll events</span>
+<span class="cmt"># 10000: total number of events</span>
+
+<span class="cmt"># Save crash logs</span>
+<span class="cmd">adb shell monkey -p com.myapp -v 5000 2>&1 | tee monkey.log</span>
+
+<span class="cmt"># iOS alternative: XCUITest random testing</span>
+func testMonkeyActions() {
+    let app = XCUIApplication()
+    app.launch()
+    for _ in 0..&lt;1000 {
+        let x = CGFloat.random(in: 0...375)
+        let y = CGFloat.random(in: 0...812)
+        app.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: x, dy: y)).tap()
+    }
+}</pre></details></td></tr>
+<tr><td>LeakCanary</td><td>Android memory leak detection library. Auto-detects leaks during development and testing.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// build.gradle - add LeakCanary</span>
+dependencies {
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+}
+
+<span class="cmt">// That's it! LeakCanary auto-installs in debug builds.</span>
+<span class="cmt">// It will show a notification when a leak is detected.</span>
+
+<span class="cmt">// For CI/automated tests - detect leaks in instrumented tests</span>
+dependencies {
+    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-instrumentation:2.12'
+}
+
+<span class="cmt">// Test rule to fail on leaks</span>
+@RunWith(AndroidJUnit4.class)
+public class LeakTest {
+    @Rule
+    public LeakAssertions leakRule = LeakAssertions.none();
+
+    @Test
+    public void testNoLeaks() {
+        ActivityScenario&lt;MainActivity&gt; scenario =
+            ActivityScenario.launch(MainActivity.class);
+        <span class="cmt">// Navigate through app</span>
+        scenario.close();
+        <span class="cmt">// LeakCanary checks for leaks after close</span>
+    }
+}
+
+<span class="cmt"># Dump leaks via ADB</span>
+<span class="cmd">adb shell am broadcast -a com.squareup.leakcanary.DUMP_HEAP</span></pre></details></td></tr>
+</table>
+
+<!-- Section 13: CI/CD Integration -->
+<h2 id="cicd">13. CI/CD Integration</h2>
+<p class="section-desc">Automating mobile builds and tests in CI/CD catches regressions early and speeds up release cycles.</p>
+
+<h3>Pipelines, Fastlane, Code Signing &amp; Distribution</h3>
+<table>
+<tr><th>Tool/Concept</th><th>Description</th><th>Example</th></tr>
+<tr><td>GitHub Actions (Android)</td><td>CI pipeline for Android: build, test, upload artifacts. Uses emulator for instrumented tests.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># .github/workflows/android.yml</span>
+name: Android CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Instrumented Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          script: ./gradlew connectedDebugAndroidTest
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: app/build/reports/tests/</pre></details></td></tr>
+<tr><td>GitHub Actions (iOS)</td><td>CI for iOS: build, test on simulator, archive. Requires macOS runner.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># .github/workflows/ios.yml</span>
+name: iOS CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app
+
+      - name: Install Dependencies
+        run: |
+          cd ios && pod install
+
+      - name: Run Tests
+        run: |
+          xcodebuild test \
+            -workspace MyApp.xcworkspace \
+            -scheme MyApp \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' \
+            -resultBundlePath TestResults.xcresult \
+            -enableCodeCoverage YES
+
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults.xcresult</pre></details></td></tr>
+<tr><td>Fastlane (Android)</td><td>Automate Android build, test, deploy. Manages signing, screenshots, Play Store upload.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># android/fastlane/Fastfile</span>
+default_platform(:android)
+
+platform :android do
+  desc "Run unit tests"
+  lane :test do
+    gradle(task: "testDebugUnitTest")
+  end
+
+  desc "Build debug APK"
+  lane :build_debug do
+    gradle(task: "assembleDebug")
+  end
+
+  desc "Build and upload to Play Store (internal)"
+  lane :deploy_internal do
+    gradle(
+      task: "bundleRelease",
+      properties: {
+        "android.injected.signing.store.file" =&gt; ENV["KEYSTORE_PATH"],
+        "android.injected.signing.store.password" =&gt; ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" =&gt; ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" =&gt; ENV["KEY_PASSWORD"]
+      }
+    )
+    upload_to_play_store(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab"
+    )
+  end
+
+  desc "Distribute via Firebase App Distribution"
+  lane :distribute do
+    gradle(task: "assembleRelease")
+    firebase_app_distribution(
+      app: "1:123456789:android:abcdef",
+      groups: "qa-team",
+      release_notes: "Latest build for QA"
+    )
+  end
+end
+
+<span class="cmt"># Run fastlane</span>
+<span class="cmd">cd android && fastlane test</span>
+<span class="cmd">cd android && fastlane deploy_internal</span></pre></details></td></tr>
+<tr><td>Fastlane (iOS)</td><td>iOS automation: certificates, provisioning, TestFlight, App Store submission.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># ios/fastlane/Fastfile</span>
+default_platform(:ios)
+
+platform :ios do
+  desc "Run tests"
+  lane :test do
+    run_tests(
+      workspace: "MyApp.xcworkspace",
+      scheme: "MyApp",
+      devices: ["iPhone 15"],
+      code_coverage: true
+    )
+  end
+
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    <span class="cmt"># Match handles code signing</span>
+    match(type: "appstore", readonly: true)
+
+    increment_build_number(
+      build_number: ENV["BUILD_NUMBER"] || latest_testflight_build_number + 1
+    )
+
+    build_app(
+      workspace: "MyApp.xcworkspace",
+      scheme: "MyApp",
+      export_method: "app-store"
+    )
+
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Manage certificates with Match"
+  lane :certs do
+    match(type: "development")
+    match(type: "appstore")
+  end
+end
+
+<span class="cmt"># Run</span>
+<span class="cmd">cd ios && fastlane test</span>
+<span class="cmd">cd ios && fastlane beta</span></pre></details></td></tr>
+<tr><td>Code Signing</td><td>Required for iOS distribution. Match (Fastlane) simplifies cert/profile management for teams.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Fastlane Match setup (team code signing)</span>
+<span class="cmd">fastlane match init</span>
+
+<span class="cmt"># Matchfile</span>
+git_url("https://github.com/org/certificates")
+storage_mode("git")
+type("appstore")
+app_identifier("com.myapp.bundleid")
+username("ci@company.com")
+
+<span class="cmt"># Generate certificates</span>
+<span class="cmd">fastlane match development</span>
+<span class="cmd">fastlane match appstore</span>
+
+<span class="cmt"># In CI - use environment variables</span>
+<span class="cmd">export MATCH_PASSWORD="encryption_password"</span>
+<span class="cmd">export MATCH_GIT_BASIC_AUTHORIZATION="base64_token"</span>
+
+<span class="cmt"># Android signing (keystore)</span>
+<span class="cmd">keytool -genkey -v -keystore release.keystore \
+  -alias myapp -keyalg RSA -keysize 2048 -validity 10000</span>
+
+<span class="cmt"># In CI: decode base64 keystore from secrets</span>
+<span class="cmd">echo "$KEYSTORE_BASE64" | base64 --decode > release.keystore</span></pre></details></td></tr>
+<tr><td>App Distribution</td><td>Distribute builds to testers: Firebase App Distribution, TestFlight, App Center.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Firebase App Distribution (CLI)</span>
+<span class="cmd">npm install -g firebase-tools</span>
+<span class="cmd">firebase login</span>
+
+<span class="cmt"># Distribute Android</span>
+<span class="cmd">firebase appdistribution:distribute app-debug.apk \
+  --app "1:123456789:android:abcdef" \
+  --groups "qa-team, dev-team" \
+  --release-notes "Build $(date +%Y%m%d) - Bug fixes"</span>
+
+<span class="cmt"># Distribute iOS</span>
+<span class="cmd">firebase appdistribution:distribute MyApp.ipa \
+  --app "1:123456789:ios:abcdef" \
+  --groups "qa-team"</span>
+
+<span class="cmt"># TestFlight (via Fastlane)</span>
+<span class="cmd">fastlane pilot upload --ipa MyApp.ipa</span>
+<span class="cmd">fastlane pilot distribute --groups "External Beta"</span>
+
+<span class="cmt"># App Center (Microsoft)</span>
+<span class="cmd">npm install -g appcenter-cli</span>
+<span class="cmd">appcenter distribute release \
+  --app "org/MyApp-Android" \
+  --file app-release.apk \
+  --group "Testers"</span></pre></details></td></tr>
+</table>
+
+<!-- Section 14: Advanced Techniques -->
+<h2 id="advanced">14. Advanced Techniques</h2>
+<p class="section-desc">Advanced techniques (visual testing, accessibility, deep links, biometrics) cover edge cases users encounter in production.</p>
+
+<h3>Visual Testing, Accessibility, Network Mocking &amp; More</h3>
+<table>
+<tr><th>Technique</th><th>Description</th><th>Example</th></tr>
+<tr><td>Visual Testing (Applitools)</td><td>AI-powered visual comparison. Detects layout shifts, missing elements, color changes.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Applitools Eyes integration with Appium</span>
+import com.applitools.eyes.appium.Eyes;
+
+Eyes eyes = new Eyes();
+eyes.setApiKey(System.getenv("APPLITOOLS_API_KEY"));
+
+try {
+    eyes.open(driver, "MyApp", "Login Screen Test");
+
+    <span class="cmt">// Capture full screen</span>
+    eyes.checkWindow("Login Page");
+
+    <span class="cmt">// Capture specific element</span>
+    eyes.checkElement(
+        driver.findElement(AppiumBy.accessibilityId("login_form")),
+        "Login Form");
+
+    <span class="cmt">// After interaction</span>
+    driver.findElement(AppiumBy.accessibilityId("login_btn")).click();
+    eyes.checkWindow("After Login");
+
+    eyes.close();
+} finally {
+    eyes.abortIfNotClosed();
+}
+
+<span class="cmt">// Percy (alternative visual testing)</span>
+<span class="cmd">npx percy exec -- npx detox test</span>
+<span class="cmt">// In Detox test:</span>
+await percy.screenshot('Login Screen');</pre></details></td></tr>
+<tr><td>Accessibility Testing</td><td>Verify app is usable by screen readers, meets WCAG guidelines, proper contrast.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Android - Accessibility Scanner programmatic check</span>
+AccessibilityValidator validator = new AccessibilityValidator();
+
+@Test
+public void testAccessibility() {
+    <span class="cmt">// Navigate to screen</span>
+    ActivityScenario&lt;MainActivity&gt; scenario =
+        ActivityScenario.launch(MainActivity.class);
+
+    scenario.onActivity(activity -&gt; {
+        View rootView = activity.getWindow().getDecorView();
+        List&lt;AccessibilityIssue&gt; issues =
+            validator.checkView(rootView);
+
+        assertTrue("Accessibility issues found: " + issues,
+            issues.isEmpty());
+    });
+}
+
+<span class="cmt">// Appium - check accessibility attributes</span>
+WebElement button = driver.findElement(AppiumBy.id("submit"));
+String contentDesc = button.getAttribute("content-desc");
+assertNotNull("Missing accessibility label", contentDesc);
+assertFalse("Label too short", contentDesc.length() &lt; 3);
+
+<span class="cmt"># Android lint check for accessibility</span>
+<span class="cmd">./gradlew lint --check Accessibility</span>
+
+<span class="cmt"># iOS accessibility audit (Xcode 15+)</span>
+<span class="cmd">xcodebuild test -scheme MyApp \
+  -testPlan AccessibilityAudit \
+  -destination 'platform=iOS Simulator,name=iPhone 15'</span></pre></details></td></tr>
+<tr><td>Network Mocking</td><td>Intercept and mock API responses for deterministic testing. No backend dependency.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Android - MockWebServer (OkHttp)</span>
+@Rule
+public MockWebServerRule server = new MockWebServerRule();
+
+@Test
+public void testApiMocking() {
+    server.enqueue(new MockResponse()
+        .setResponseCode(200)
+        .setBody("{\"user\": {\"name\": \"John\"}}")
+        .addHeader("Content-Type", "application/json"));
+
+    <span class="cmt">// Configure app to use mock server URL</span>
+    String baseUrl = server.url("/api/").toString();
+    <span class="cmt">// ... inject baseUrl into app ...</span>
+}
+
+<span class="cmt">// Appium + mitmproxy (external proxy)</span>
+<span class="cmd">mitmdump -s mock_responses.py -p 8080</span>
+
+<span class="cmt"># mock_responses.py</span>
+from mitmproxy import http
+
+def response(flow: http.HTTPFlow):
+    if "/api/users" in flow.request.url:
+        flow.response = http.Response.make(
+            200,
+            '{"users": [{"name": "Mock User"}]}',
+            {"Content-Type": "application/json"}
+        )
+
+<span class="cmt">// WireMock for more complex scenarios</span>
+<span class="cmd">docker run -p 8080:8080 wiremock/wiremock:3.3.1</span>
+<span class="cmd">curl -X POST http://localhost:8080/__admin/mappings -d '{
+  "request": { "method": "GET", "url": "/api/users" },
+  "response": { "status": 200, "jsonBody": {"name": "Mock"} }
+}'</span></pre></details></td></tr>
+<tr><td>Deep Links Testing</td><td>Test app navigation via URI schemes and Universal Links / App Links.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android - test deep links via ADB</span>
+<span class="cmd">adb shell am start -a android.intent.action.VIEW \
+  -d "myapp://product/123" com.myapp</span>
+
+<span class="cmd">adb shell am start -a android.intent.action.VIEW \
+  -d "https://www.myapp.com/product/123" com.myapp</span>
+
+<span class="cmt"># iOS - test deep links via simctl</span>
+<span class="cmd">xcrun simctl openurl booted "myapp://product/123"</span>
+<span class="cmd">xcrun simctl openurl booted "https://www.myapp.com/product/123"</span>
+
+<span class="cmt">// Appium - activate deep link</span>
+<span class="cmt">// Android</span>
+driver.get("myapp://product/123");
+<span class="cmt">// OR</span>
+((AndroidDriver) driver).executeScript("mobile: deepLink", ImmutableMap.of(
+    "url", "myapp://product/123",
+    "package", "com.myapp"
+));
+
+<span class="cmt">// iOS</span>
+((IOSDriver) driver).executeScript("mobile: deepLink", ImmutableMap.of(
+    "url", "myapp://product/123",
+    "bundleId", "com.myapp.bundleid"
+));
+
+<span class="cmt">// Verify correct screen loaded</span>
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+wait.until(ExpectedConditions.presenceOfElementLocated(
+    AppiumBy.accessibilityId("product_detail_screen")));</pre></details></td></tr>
+<tr><td>Push Notifications</td><td>Test push notification delivery, display, and tap-to-open behavior.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android - send test push via ADB</span>
+<span class="cmd">adb shell am broadcast \
+  -a com.google.android.c2dm.intent.RECEIVE \
+  -c com.myapp \
+  --es "title" "Test Notification" \
+  --es "body" "Hello from test"</span>
+
+<span class="cmt"># iOS - send test push to simulator</span>
+<span class="cmd">xcrun simctl push booted com.myapp.bundleid push.json</span>
+
+<span class="cmt"># push.json content:</span>
+{
+  "aps": {
+    "alert": {
+      "title": "Test Notification",
+      "body": "Hello from test"
+    },
+    "badge": 1,
+    "sound": "default"
+  },
+  "custom_data": { "screen": "product", "id": "123" }
+}
+
+<span class="cmt">// Appium - interact with notification</span>
+<span class="cmt">// Android: open notification shade</span>
+((AndroidDriver) driver).openNotifications();
+Thread.sleep(1000);
+driver.findElement(By.xpath(
+    "//*[contains(@text, 'Test Notification')]")).click();
+
+<span class="cmt">// iOS: access notification center</span>
+Dimension size = driver.manage().window().getSize();
+<span class="cmt">// Swipe down from top</span></pre></details></td></tr>
+<tr><td>Biometric Authentication</td><td>Test fingerprint/Face ID flows. Simulate biometric success/failure.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Android - simulate fingerprint (emulator)</span>
+<span class="cmd">adb -e emu finger touch 1</span>   <span class="cmt"># Simulate valid fingerprint</span>
+
+<span class="cmt"># iOS simulator - simulate Face ID</span>
+<span class="cmt"># First enroll: Features → Face ID → Enrolled</span>
+<span class="cmd">xcrun simctl spawn booted notifyutil -p com.apple.BiometricKit_Sim.fingerTouch.match</span>
+<span class="cmd">xcrun simctl spawn booted notifyutil -p com.apple.BiometricKit_Sim.fingerTouch.nomatch</span>
+
+<span class="cmt">// Appium - Android biometric</span>
+((AndroidDriver) driver).fingerPrint(1); <span class="cmt">// Valid finger ID</span>
+
+<span class="cmt">// Appium - iOS biometric (XCUITest driver)</span>
+<span class="cmt">// Enroll biometric</span>
+driver.executeScript("mobile: enrollBiometric", ImmutableMap.of(
+    "isEnabled", true));
+
+<span class="cmt">// Trigger match</span>
+driver.executeScript("mobile: sendBiometricMatch", ImmutableMap.of(
+    "type", "faceId",
+    "match", true));
+
+<span class="cmt">// Trigger failure</span>
+driver.executeScript("mobile: sendBiometricMatch", ImmutableMap.of(
+    "type", "faceId",
+    "match", false));
+
+<span class="cmt">// Capability needed:</span>
+{
+  "appium:allowTouchIdEnroll": true
+}</pre></details></td></tr>
+</table>
+
+<script>
+document.getElementById('toggleAll').addEventListener('change', function() {
+  const details = document.querySelectorAll('details');
+  details.forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+});
+</script>
+
+<!-- Section 15: iOS Testing Techniques (Interview Prep) -->
+<h2 id="ios-techniques">15. iOS Testing Techniques (Interview Prep)</h2>
+<p class="section-desc">Comprehensive iOS debugging, profiling, and testing techniques — from capturing system logs to network debugging, crash analysis, and advanced topics frequently asked in interviews.</p>
+
+<h3>System Logs &amp; Console Output</h3>
+<table>
+<tr><th>Technique</th><th>Description</th><th>Example</th></tr>
+<tr><td>Console.app (macOS)</td><td>Built-in macOS app to view real-time logs from connected iOS devices and simulators. Filter by process, subsystem, category.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Steps to capture logs via Console.app:</span>
+1. Connect iOS device via USB (or use Simulator)
+2. Open Console.app (Applications → Utilities → Console)
+3. Select your device in left sidebar
+4. Click "Start Streaming" to begin live capture
+5. Use search bar to filter:
+   - By process: "process:MyApp"
+   - By subsystem: "subsystem:com.mycompany.myapp"
+   - By category: "category:networking"
+   - By message: type keywords directly
+
+<span class="cmt">Filter types:</span>
+- Include/Exclude messages matching text
+- Show only errors: filter by "type:error"
+- Show faults: filter by "type:fault"
+
+<span class="cmt">Tip: Save filter as "Activity" for reuse</span></pre></details></td></tr>
+<tr><td>os_log (Unified Logging)</td><td>Apple's modern logging framework (iOS 10+). Supports levels, categories, subsystems, and privacy-safe formatting.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Swift - os_log usage in app code</span>
+import os
+
+<span class="cmt">// Define a logger with subsystem and category</span>
+let logger = Logger(
+    subsystem: "com.myapp.networking",
+    category: "requests"
+)
+
+<span class="cmt">// Log levels (ascending severity)</span>
+logger.debug("Request started: \(url)")     <span class="cmt">// Not persisted by default</span>
+logger.info("Response received: \(status)") <span class="cmt">// Persisted briefly</span>
+logger.notice("User logged in")             <span class="cmt">// Persisted</span>
+logger.error("Request failed: \(error)")    <span class="cmt">// Persisted, highlighted</span>
+logger.fault("Critical: DB corrupt")        <span class="cmt">// Persisted, stack captured</span>
+
+<span class="cmt">// Privacy-safe logging (redacts sensitive data)</span>
+logger.info("User: \(username, privacy: .private)")
+logger.info("Count: \(count, privacy: .public)")
+
+<span class="cmt">// Signpost for performance intervals</span>
+let signpostID = OSSignpostID(log: .default)
+os_signpost(.begin, log: .default, name: "NetworkCall", signpostID: signpostID)
+<span class="cmt">// ... do work ...</span>
+os_signpost(.end, log: .default, name: "NetworkCall", signpostID: signpostID)</pre></details></td></tr>
+<tr><td>xcrun simctl (Simulator logs)</td><td>CLI tool to capture logs from iOS Simulator. Supports filtering, streaming, and log archives.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Stream live logs from booted simulator</span>
+<span class="cmd">xcrun simctl spawn booted log stream --level debug</span>
+
+<span class="cmt"># Filter by process name</span>
+<span class="cmd">xcrun simctl spawn booted log stream --predicate 'process == "MyApp"'</span>
+
+<span class="cmt"># Filter by subsystem</span>
+<span class="cmd">xcrun simctl spawn booted log stream \
+  --predicate 'subsystem == "com.myapp.networking"'</span>
+
+<span class="cmt"># Show only errors and faults</span>
+<span class="cmd">xcrun simctl spawn booted log stream \
+  --predicate 'messageType == error OR messageType == fault'</span>
+
+<span class="cmt"># Collect logs to archive file</span>
+<span class="cmd">xcrun simctl spawn booted log collect --output sim_logs.logarchive</span>
+
+<span class="cmt"># View historical logs from archive</span>
+<span class="cmd">log show sim_logs.logarchive --predicate 'process == "MyApp"' \
+  --style compact --last 1h</span>
+
+<span class="cmt"># Get simulator device UDID</span>
+<span class="cmd">xcrun simctl list devices booted</span></pre></details></td></tr>
+<tr><td>idevicesyslog (Real Device)</td><td>Open-source tool (libimobiledevice) to capture syslog from real iOS devices without Xcode.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Install libimobiledevice</span>
+<span class="cmd">brew install libimobiledevice</span>
+
+<span class="cmt"># Stream all system logs from connected device</span>
+<span class="cmd">idevicesyslog</span>
+
+<span class="cmt"># Filter by process name</span>
+<span class="cmd">idevicesyslog --process MyApp</span>
+
+<span class="cmt"># Filter with match string</span>
+<span class="cmd">idevicesyslog --match "error"</span>
+
+<span class="cmt"># Target specific device (if multiple connected)</span>
+<span class="cmd">idevicesyslog -u DEVICE_UDID</span>
+
+<span class="cmt"># Save to file for later analysis</span>
+<span class="cmd">idevicesyslog --process MyApp > app_logs.txt 2>&1</span>
+
+<span class="cmt"># List connected devices</span>
+<span class="cmd">idevice_id -l</span>
+<span class="cmd">ideviceinfo -k DeviceName</span>
+
+<span class="cmt"># Alternative: cfgutil (Apple Configurator)</span>
+<span class="cmd">cfgutil syslog</span></pre></details></td></tr>
+<tr><td>Xcode Debug Console</td><td>View app's stdout/stderr, NSLog, print(), and os_log output directly in Xcode's debug area.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// In Xcode: View → Debug Area → Activate Console</span>
+// Or shortcut: Cmd + Shift + C
+
+<span class="cmt">// Swift logging methods visible in debug console:</span>
+print("Debug: \(variable)")          <span class="cmt">// stdout, debug only</span>
+NSLog("Timestamped: %@", message)    <span class="cmt">// syslog + console (legacy)</span>
+debugPrint(object)                   <span class="cmt">// detailed debug output</span>
+dump(complexObject)                  <span class="cmt">// reflection-based dump</span>
+
+<span class="cmt">// Conditional compilation for debug-only logging</span>
+#if DEBUG
+print("This only prints in debug builds")
+#endif
+
+<span class="cmt">// LLDB commands in debug console:</span>
+(lldb) po myVariable              <span class="cmt">// print object description</span>
+(lldb) p myInt                    <span class="cmt">// print value</span>
+(lldb) expr myVar = newValue      <span class="cmt">// modify variable at runtime</span>
+(lldb) bt                         <span class="cmt">// backtrace</span>
+(lldb) frame variable             <span class="cmt">// show all local variables</span>
+(lldb) thread list                <span class="cmt">// show all threads</span>
+(lldb) breakpoint set -n viewDidLoad <span class="cmt">// set breakpoint</span></pre></details></td></tr>
+<tr><td>Log Levels &amp; Best Practices</td><td>Choosing the right log level matters for filtering in production vs debug. Interview favorite topic.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Log Level Hierarchy (least → most severe):</span>
+
+┌─────────┬──────────────────────────────────┬───────────┐
+│ Level   │ Use For                          │ Persisted │
+├─────────┼──────────────────────────────────┼───────────┤
+│ debug   │ Verbose dev info, loop values    │ No        │
+│ info    │ General flow, non-critical       │ ~briefly  │
+│ notice  │ Important events (default level) │ Yes       │
+│ error   │ Recoverable errors               │ Yes       │
+│ fault   │ Critical failures, bugs          │ Yes+stack │
+└─────────┴──────────────────────────────────┴───────────┘
+
+<span class="cmt">Interview Key Points:</span>
+- os_log replaces NSLog (better performance, privacy)
+- Logs with .private redact data in release builds
+- Use signposts for measuring time intervals
+- Console.app shows ALL device logs (not just your app)
+- Log archives (.logarchive) can be shared for analysis
+- Production apps should log at .notice+ (not debug/info)</pre></details></td></tr>
+</table>
+
+<h3>Network Request Capture &amp; Debugging</h3>
+<table>
+<tr><th>Technique</th><th>Description</th><th>Example</th></tr>
+<tr><td>Charles Proxy</td><td>GUI HTTP/HTTPS proxy. Intercepts all network traffic from device. Supports SSL proxying, throttling, breakpoints, rewriting.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Setup Charles Proxy for iOS device:</span>
+
+1. Get Mac IP: System Preferences → Network → IP address
+2. On iOS device: Settings → Wi-Fi → [network] → Configure Proxy
+   - Manual, Server: Mac IP, Port: 8888
+3. Install Charles SSL cert on device:
+   - Browse to: chls.pro/ssl
+   - Install profile: Settings → General → Profiles
+   - Trust cert: Settings → General → About → Certificate Trust Settings
+
+<span class="cmt">Charles features for testing:</span>
+- Breakpoints: pause request/response, modify on-the-fly
+- Map Local: return local JSON instead of server response
+- Map Remote: redirect requests to different server
+- Throttle: simulate 3G/Edge/packet loss
+- Repeat: replay requests for testing
+- Rewrite: modify headers, body, status codes automatically
+
+<span class="cmt">Interview Tip:</span>
+- Charles requires SSL cert install for HTTPS inspection
+- App Transport Security (ATS) may need exceptions for proxy
+- Use "Recording Settings" to filter only relevant domains</pre></details></td></tr>
+<tr><td>Proxyman</td><td>Modern macOS-native proxy (alternative to Charles). Supports iOS simulator auto-capture, scripting, and certificate auto-install.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Proxyman advantages over Charles:</span>
+- Auto-installs SSL cert on simulators (one-click)
+- Native macOS UI (SwiftUI-based)
+- Built-in scripting (JavaScript) for request/response manipulation
+- Automatic iOS simulator detection
+- Map Local with drag-and-drop
+
+<span class="cmt">Setup for real device:</span>
+1. Install Proxyman on Mac
+2. Certificate → Install on iOS → Physical Device
+3. Follow QR code / URL for certificate installation
+4. Trust cert in device settings
+
+<span class="cmt">Scripting example (modify response):</span>
+function onResponse(context, url, response) {
+  if (url.includes("/api/user")) {
+    var body = JSON.parse(response.body);
+    body.isPremium = true;  // Force premium for testing
+    response.body = JSON.stringify(body);
+  }
+  return response;
+}
+
+<span class="cmt">Breakpoint: pause on specific endpoint, edit, resume</span>
+<span class="cmt">Diff: compare two captured requests side-by-side</span></pre></details></td></tr>
+<tr><td>mitmproxy (CLI)</td><td>Open-source command-line HTTP/HTTPS proxy. Scriptable with Python. Good for CI/CD and automated testing.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Install mitmproxy</span>
+<span class="cmd">brew install mitmproxy</span>
+
+<span class="cmt"># Start proxy (default port 8080)</span>
+<span class="cmd">mitmproxy</span>                <span class="cmt"># Interactive TUI</span>
+<span class="cmd">mitmweb</span>                  <span class="cmt"># Web interface at :8081</span>
+<span class="cmd">mitmdump</span>                 <span class="cmt"># Non-interactive (for scripts)</span>
+
+<span class="cmt"># Install cert on iOS: browse to mitm.it</span>
+
+<span class="cmt"># Script to log all API calls</span>
+<span class="cmd">mitmdump -s capture_script.py</span>
+
+<span class="cmt"># capture_script.py</span>
+from mitmproxy import http
+import json
+
+def request(flow: http.HTTPFlow):
+    print(f"→ {flow.request.method} {flow.request.url}")
+    if flow.request.content:
+        print(f"  Body: {flow.request.content[:200]}")
+
+def response(flow: http.HTTPFlow):
+    print(f"← {flow.response.status_code} {flow.request.url}")
+    print(f"  Time: {flow.response.timestamp_end - flow.request.timestamp_start:.2f}s")
+
+<span class="cmt"># Filter specific hosts only</span>
+<span class="cmd">mitmdump --set flow_detail=2 -w capture.flow \
+  --filter "~d api.myapp.com"</span>
+
+<span class="cmt"># Replay captured requests</span>
+<span class="cmd">mitmdump -c capture.flow</span></pre></details></td></tr>
+<tr><td>Xcode Network Instrument</td><td>Xcode Instruments includes Network profiling. Shows HTTP connections, bytes transferred, DNS lookups, TLS handshakes.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Using Xcode's Network Instrument:</span>
+
+1. Xcode → Product → Profile (Cmd+I)
+2. Choose "Network" template (or add Network instrument to custom)
+3. Click Record, use app normally
+4. Analyze:
+   - HTTP Transactions: URL, status, duration, size
+   - Connections: TCP/TLS handshake times
+   - DNS: resolution times per domain
+
+<span class="cmt">Key metrics to watch:</span>
+- Time to First Byte (TTFB)
+- Total request duration
+- Number of concurrent connections
+- DNS resolution time
+- TLS handshake overhead
+- Response payload size
+
+<span class="cmt">Interview Points:</span>
+- Network Instrument is non-intrusive (no proxy needed)
+- Works with HTTP/2 and HTTP/3
+- Can detect excessive API calls, redundant requests
+- Shows connection reuse and pipelining
+- Doesn't decrypt HTTPS content (just metadata)</pre></details></td></tr>
+<tr><td>URLProtocol Interception</td><td>Custom URLProtocol class to intercept all URLSession requests in-app. Used for mocking in tests and logging.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Custom URLProtocol for intercepting requests</span>
+class NetworkLogger: URLProtocol {
+    override class func canInit(with request: URLRequest) -> Bool {
+        <span class="cmt">// Intercept all HTTP/HTTPS requests</span>
+        guard let scheme = request.url?.scheme else { return false }
+        return ["http", "https"].contains(scheme)
+    }
+
+    override class func canonicalRequest(
+        for request: URLRequest
+    ) -> URLRequest {
+        return request
+    }
+
+    override func startLoading() {
+        <span class="cmt">// Log the request</span>
+        print("📡 \(request.httpMethod ?? "") \(request.url?.absoluteString ?? "")")
+        if let body = request.httpBody {
+            print("   Body: \(String(data: body, encoding: .utf8) ?? "")")
+        }
+
+        <span class="cmt">// Forward to actual network</span>
+        let session = URLSession(configuration: .default,
+                                  delegate: self as? URLSessionDelegate,
+                                  delegateQueue: nil)
+        let task = session.dataTask(with: request) { data, response, error in
+            if let response = response {
+                self.client?.urlProtocol(self, didReceive: response,
+                    cacheStoragePolicy: .notAllowed)
+            }
+            if let data = data {
+                self.client?.urlProtocol(self, didLoad: data)
+            }
+            self.client?.urlProtocolDidFinishLoading(self)
+        }
+        task.resume()
+    }
+
+    override func stopLoading() {}
+}
+
+<span class="cmt">// Register in AppDelegate / test setUp:</span>
+URLProtocol.registerClass(NetworkLogger.self)
+
+<span class="cmt">// For URLSession with custom config:</span>
+let config = URLSessionConfiguration.default
+config.protocolClasses = [NetworkLogger.self]
+let session = URLSession(configuration: config)</pre></details></td></tr>
+<tr><td>CFNetwork Diagnostics</td><td>Apple's hidden environment variable to log all network activity at the system level. No code changes needed.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Enable CFNetwork diagnostic logging:</span>
+
+<span class="cmt">In Xcode: Edit Scheme → Run → Arguments → Environment Variables</span>
+Add: CFNETWORK_DIAGNOSTICS = 3
+
+<span class="cmt">Levels:</span>
+- 1: Basic connection info
+- 2: + Headers
+- 3: + Body data (verbose)
+
+<span class="cmt">Output appears in Console.app / Xcode console</span>
+<span class="cmt">Shows: DNS, TLS, HTTP headers, cookies, redirects</span>
+
+<span class="cmt">Alternative environment variables:</span>
+- OS_ACTIVITY_MODE = disable    <span class="cmt"># Suppress system noise</span>
+- NSURLSessionDebugLogging = 1  <span class="cmt"># URLSession internals</span>
+- CFNETWORK_DIAGNOSTICS = 3     <span class="cmt"># Full network debug</span>
+
+<span class="cmt">Interview Tip:</span>
+- This is the FASTEST way to debug network issues
+- No proxy setup, no code changes, no certificate installation
+- Works with ALL networking frameworks (URLSession, Alamofire, etc.)
+- Only works in debug builds (not production)
+- Pair with Console.app filtering for best results</pre></details></td></tr>
+<tr><td>nscurl (ATS Diagnostics)</td><td>Apple tool to test App Transport Security (ATS) compatibility with a server endpoint.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Test if a server meets ATS requirements</span>
+<span class="cmd">/usr/bin/nscurl --ats-diagnostics https://api.myapp.com</span>
+
+<span class="cmt"># Output shows which ATS settings pass/fail:</span>
+- Default ATS Secure Connection (TLS 1.2+, forward secrecy)
+- Allow Arbitrary Loads
+- Allow Arbitrary Loads for Media
+- Specific TLS versions tested
+
+<span class="cmt"># Common ATS issues in testing:</span>
+- Server using TLS 1.0/1.1 (deprecated)
+- Self-signed certificates (dev/staging)
+- Missing forward secrecy ciphers
+
+<span class="cmt"># Info.plist exception for testing:</span>
+&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;
+&lt;dict&gt;
+    &lt;key&gt;NSExceptionDomains&lt;/key&gt;
+    &lt;dict&gt;
+        &lt;key&gt;staging.myapp.com&lt;/key&gt;
+        &lt;dict&gt;
+            &lt;key&gt;NSExceptionAllowsInsecureHTTPLoads&lt;/key&gt;
+            &lt;true/&gt;
+        &lt;/dict&gt;
+    &lt;/dict&gt;
+&lt;/dict&gt;
+
+<span class="cmt">Interview: ATS enforces HTTPS by default since iOS 9.
+Any HTTP exceptions must be justified in App Store review.</span></pre></details></td></tr>
+</table>
+
+<h3>Performance Profiling &amp; Instruments</h3>
+<table>
+<tr><th>Technique</th><th>Description</th><th>Example</th></tr>
+<tr><td>Xcode Instruments Overview</td><td>Instruments is Apple's performance analysis tool. Multiple profiling templates for CPU, memory, energy, GPU, disk, and more.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Launch Instruments:</span>
+- Xcode → Product → Profile (Cmd+I)
+- Or: open /Applications/Xcode.app/.../Instruments.app
+
+<span class="cmt">Key profiling templates:</span>
+┌──────────────────────┬───────────────────────────────────┐
+│ Template             │ Measures                          │
+├──────────────────────┼───────────────────────────────────┤
+│ Time Profiler        │ CPU usage per function/thread     │
+│ Allocations          │ Heap memory + object lifecycles   │
+│ Leaks               │ Memory leaks (retain cycles)      │
+│ Network             │ HTTP connections, bytes, DNS       │
+│ Energy Log          │ Battery drain by component        │
+│ Core Animation      │ FPS, offscreen renders, blending  │
+│ System Trace        │ Thread scheduling, syscalls        │
+│ File Activity       │ Disk reads/writes                 │
+│ Metal System Trace  │ GPU performance                   │
+│ Animation Hitches   │ Frame drops, jank (iOS 16+)       │
+└──────────────────────┴───────────────────────────────────┘
+
+<span class="cmt">Tip: Always profile on REAL DEVICE, not Simulator.
+Simulator uses Mac's CPU/RAM - not representative of iPhone.</span></pre></details></td></tr>
+<tr><td>Time Profiler</td><td>Identifies CPU hotspots — which functions consume the most CPU time. Essential for fixing sluggish UI.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Time Profiler usage:</span>
+1. Cmd+I → select "Time Profiler" → Record
+2. Use the app (reproduce slow areas)
+3. Stop recording
+4. Analyze call tree:
+   - Invert Call Tree: shows leaves first (actual work)
+   - Hide System Libraries: focus on your code
+   - Flatten Recursion: simplify recursive calls
+
+<span class="cmt">Reading results:</span>
+- "Weight" column = CPU time spent
+- "Self Weight" = time in that function (not children)
+- Heaviest stack trace → follow to find bottleneck
+
+<span class="cmt">Common issues found:</span>
+- JSON parsing on main thread
+- Image decoding blocking UI
+- Excessive layout calculations
+- Synchronous network calls (never do this!)
+
+<span class="cmt"># CLI alternative: sample a running process</span>
+<span class="cmd">sample MyApp -e -f sample_output.txt</span>
+
+<span class="cmt">Interview: "How do you find what's making the app slow?"
+→ Time Profiler → Invert Call Tree → find heaviest leaf</span></pre></details></td></tr>
+<tr><td>Allocations &amp; Leaks</td><td>Track every heap allocation. Find memory leaks (objects never deallocated) and excessive memory growth.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Allocations Instrument:</span>
+1. Cmd+I → "Allocations" template
+2. Record, navigate through app screens
+3. Use "Mark Generation" button between screens
+   - Shows objects allocated SINCE last mark
+   - If objects persist after leaving screen → possible leak
+
+<span class="cmt">Leaks Instrument:</span>
+- Automatically detects retain cycles
+- Shows leaked object type and retain count
+- Green checkmarks = no leaks; Red X = leak detected
+
+<span class="cmt">Common iOS memory leaks:</span>
+- Strong reference cycles in closures:
+  <span class="cmt">// BAD:</span>
+  viewModel.onComplete = { self.updateUI() }
+  <span class="cmt">// GOOD:</span>
+  viewModel.onComplete = { [weak self] in self?.updateUI() }
+
+- Delegate not declared as weak:
+  <span class="cmt">// BAD:</span>  var delegate: MyDelegate?
+  <span class="cmt">// GOOD:</span> weak var delegate: MyDelegate?
+
+- Timer not invalidated:
+  timer = Timer.scheduledTimer(...) <span class="cmt">// Retains target!</span>
+  timer?.invalidate() <span class="cmt">// Must call in deinit or viewWillDisappear</span>
+
+- NotificationCenter observer not removed (pre-iOS 9)
+
+<span class="cmt">Memory debugging in Xcode:</span>
+- Debug Memory Graph (Cmd+Shift+D while debugging)
+  → Visual graph showing retain cycles
+- Malloc Stack Logging: tracks allocation call stacks</pre></details></td></tr>
+<tr><td>Core Animation / FPS</td><td>Measures rendering performance — frame rate, offscreen rendering, blending layers. Key for smooth 60fps UI.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Core Animation instrument / Xcode GPU debug:</span>
+
+<span class="cmt">In Xcode: Debug → View Debugging → Rendering:</span>
+☐ Color Blended Layers      <span class="cmt"># Red = blended (slow)</span>
+☐ Color Offscreen-Rendered   <span class="cmt"># Yellow = offscreen (slow)</span>
+☐ Color Hits Green / Misses Red  <span class="cmt"># Rasterization cache</span>
+
+<span class="cmt">Target: 60 FPS (16.67ms per frame) or 120 FPS on ProMotion</span>
+
+<span class="cmt">Common causes of frame drops:</span>
+- cornerRadius + clipsToBounds (triggers offscreen render)
+  Fix: layer.cornerRadius + layer.masksToBounds with
+       layer.shouldRasterize = true
+- Transparent views over complex backgrounds
+- Large images not downsampled
+- Complex shadows without shadowPath
+  Fix: layer.shadowPath = UIBezierPath(...).cgPath
+
+<span class="cmt">// Measure FPS programmatically</span>
+let displayLink = CADisplayLink(target: self, selector: #selector(tick))
+displayLink.add(to: .main, forMode: .common)
+
+@objc func tick(link: CADisplayLink) {
+    let fps = 1.0 / (link.targetTimestamp - link.timestamp)
+    print("FPS: \(Int(fps))")
+}
+
+<span class="cmt">Interview: "How do you ensure smooth scrolling?"
+→ Profile with Core Animation, check for offscreen renders,
+  use shouldRasterize, prefetch cells, async image loading</span></pre></details></td></tr>
+<tr><td>Energy &amp; Battery Profiling</td><td>Identify battery drain causes — excessive CPU wake, GPS, networking, and background tasks.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Energy Instrument:</span>
+1. Cmd+I → "Energy Log" template (requires real device)
+2. Shows energy impact: CPU, Network, Location, GPU, Bluetooth
+
+<span class="cmt">Energy impact levels:</span>
+- Overhead (0): Idle, nothing happening
+- Low (1-3): Minimal activity
+- High (4-10): Significant drain - investigate!
+
+<span class="cmt">Common battery killers:</span>
+- Polling APIs with short intervals (use push/websockets)
+- GPS with kCLLocationAccuracyBest (use significant change)
+- Constant background execution without proper suspension
+- Keeping network connections alive unnecessarily
+- Timer firing when app is backgrounded
+
+<span class="cmt">Best practices:</span>
+- Use BGTaskScheduler for background work (iOS 13+)
+- Coalesce network requests (batch API calls)
+- Use significantLocationChange instead of continuous GPS
+- Implement proper app lifecycle handling:
+  applicationDidEnterBackground → stop timers, save state
+  applicationWillEnterForeground → resume
+
+<span class="cmt"># Xcode Organizer also shows Energy reports from users:</span>
+<span class="cmt"># Window → Organizer → Energy</span>
+
+<span class="cmt">Interview: "How to reduce battery drain?"
+→ Profile with Energy Instrument, reduce GPS accuracy,
+  batch network calls, use background fetch APIs properly</span></pre></details></td></tr>
+<tr><td>App Launch Time</td><td>Measure and optimize cold/warm launch. Apple requires launch in &lt;400ms for good user experience.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Measure launch time:</span>
+
+<span class="cmt">Method 1: Environment variable</span>
+Edit Scheme → Run → Arguments → Environment Variables
+Add: DYLD_PRINT_STATISTICS = 1
+
+<span class="cmt">Output shows:</span>
+- dylib loading time
+- rebase/binding time
+- ObjC setup time
+- initializer time
+- Total pre-main time
+
+<span class="cmt">Method 2: App Launch Instrument (Xcode 11+)</span>
+Cmd+I → "App Launch" template → Record
+
+<span class="cmt">Method 3: MetricKit (production monitoring)</span>
+class AppMetrics: NSObject, MXMetricManagerSubscriber {
+    func didReceive(_ payloads: [MXMetricPayload]) {
+        let launchMetric = payloads.first?.applicationLaunchMetrics
+        let coldLaunch = launchMetric?.histogrammedTimeToFirstDraw
+        print("P50 cold launch: \(coldLaunch?.percentile(0.5))")
+    }
+}
+
+<span class="cmt">Optimization checklist:</span>
+- Reduce dylib count (merge frameworks)
+- Defer non-critical initialization
+- Remove +load methods (use +initialize)
+- Use lazy loading for heavy resources
+- Minimize storyboard complexity
+- Pre-warm in applicationDidFinishLaunching only essentials
+
+<span class="cmt">Apple thresholds: Cold &lt; 400ms is good, &lt; 2s acceptable</span></pre></details></td></tr>
+</table>
+
+<h3>Crash Logs &amp; Diagnostics</h3>
+<table>
+<tr><th>Technique</th><th>Description</th><th>Example</th></tr>
+<tr><td>Xcode Organizer (Crashes)</td><td>View crash reports from TestFlight and App Store users. Automatically symbolicated with dSYM files.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Xcode → Window → Organizer → Crashes tab</span>
+
+<span class="cmt">Shows:</span>
+- Crash type (EXC_BAD_ACCESS, SIGABRT, etc.)
+- Affected iOS versions and devices
+- Symbolicated stack trace
+- Number of occurrences and trend
+
+<span class="cmt">Common crash types:</span>
+┌─────────────────────┬──────────────────────────────────────┐
+│ Exception           │ Meaning                              │
+├─────────────────────┼──────────────────────────────────────┤
+│ EXC_BAD_ACCESS      │ Accessing freed/null memory          │
+│ SIGABRT             │ Assertion failure / forced abort      │
+│ EXC_BREAKPOINT      │ Swift force-unwrap nil (!), fatalError│
+│ EXC_CRASH (SIGKILL) │ System killed app (memory/watchdog)  │
+│ EXC_RESOURCE        │ Exceeded resource limits (CPU/memory)│
+└─────────────────────┴──────────────────────────────────────┘
+
+<span class="cmt">For symbolication to work:</span>
+- Upload dSYM files to App Store Connect
+- Or: Xcode archives them automatically for local builds
+- bitcode builds: download dSYM from App Store Connect
+
+<span class="cmt">Interview: "How do you investigate a production crash?"
+→ Organizer for symbolicated trace → find the faulting line
+→ Reproduce locally → fix → add unit test for that case</span></pre></details></td></tr>
+<tr><td>Manual Symbolication</td><td>When automatic symbolication fails, use atos/symbolicatecrash CLI tools to decode crash addresses.</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># Method 1: atos (address to symbol)</span>
+<span class="cmd">atos -arch arm64 -o MyApp.app.dSYM/Contents/Resources/DWARF/MyApp \
+  -l 0x100000000 0x100abcdef</span>
+<span class="cmt"># Output: -[ViewController viewDidLoad] (ViewController.m:42)</span>
+
+<span class="cmt"># Method 2: symbolicatecrash script</span>
+<span class="cmd">export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"</span>
+<span class="cmd">symbolicatecrash crash_report.ips MyApp.app.dSYM > symbolicated.crash</span>
+
+<span class="cmt"># Find the symbolicatecrash script:</span>
+<span class="cmd">find /Applications/Xcode.app -name symbolicatecrash</span>
+
+<span class="cmt"># Verify dSYM matches binary (UUIDs must match):</span>
+<span class="cmd">dwarfdump --uuid MyApp.app.dSYM</span>
+<span class="cmd">dwarfdump --uuid MyApp.app/MyApp</span>
+
+<span class="cmt"># Extract crash logs from device:</span>
+<span class="cmd">idevicecrashreport -e ./crash_reports/</span>
+<span class="cmt"># Or: Xcode → Window → Devices → View Device Logs</span>
+
+<span class="cmt">Interview: "What's a dSYM?"
+→ Debug Symbol file containing function names/line numbers.
+  Required to decode memory addresses in crash logs.
+  Generated for every release build. Must be kept/uploaded.</span></pre></details></td></tr>
+<tr><td>MetricKit (Production Diagnostics)</td><td>iOS 13+ framework delivering crash reports, hang metrics, disk writes, and performance diagnostics daily.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// MetricKit setup for production monitoring</span>
+import MetricKit
+
+class AppMetricsSubscriber: NSObject, MXMetricManagerSubscriber {
+
+    func setup() {
+        MXMetricManager.shared.add(self)
+    }
+
+    <span class="cmt">// Daily aggregated metrics (iOS 13+)</span>
+    func didReceive(_ payloads: [MXMetricPayload]) {
+        for payload in payloads {
+            <span class="cmt">// Launch time</span>
+            let launch = payload.applicationLaunchMetrics
+            print("Cold launch P50: \(launch?.histogrammedTimeToFirstDraw)")
+
+            <span class="cmt">// Hang rate (main thread blocked > 250ms)</span>
+            let hangs = payload.applicationResponsivenessMetrics
+            print("Hang count: \(hangs?.histogrammedApplicationHangTime)")
+
+            <span class="cmt">// Memory peak</span>
+            let mem = payload.memoryMetrics
+            print("Peak memory: \(mem?.peakMemoryUsage)")
+        }
+    }
+
+    <span class="cmt">// Immediate crash/diagnostic reports (iOS 14+)</span>
+    func didReceive(_ payloads: [MXDiagnosticPayload]) {
+        for payload in payloads {
+            <span class="cmt">// Crash diagnostics with stack traces</span>
+            let crashes = payload.crashDiagnostics
+            <span class="cmt">// Hang diagnostics</span>
+            let hangs = payload.hangDiagnostics
+            <span class="cmt">// CPU exceptions (excessive usage)</span>
+            let cpu = payload.cpuExceptionDiagnostics
+
+            <span class="cmt">// Send to your backend for analysis</span>
+            uploadDiagnostics(crashes, hangs, cpu)
+        }
+    }
+}
+
+<span class="cmt">Interview: "How to monitor app health in production without third-party SDKs?"
+→ MetricKit: Apple's first-party solution. No privacy concerns.
+  Delivers daily metrics + immediate crash reports.</span></pre></details></td></tr>
+<tr><td>Watchdog Terminations</td><td>iOS kills apps that take too long to launch, respond, or use too much memory. No crash report generated — appears as SIGKILL.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Watchdog timeout thresholds:</span>
+┌───────────────────────┬────────────┬─────────────────────┐
+│ Scenario              │ Timeout    │ Crash Code          │
+├───────────────────────┼────────────┼─────────────────────┤
+│ App launch            │ 20 seconds │ 0x8badf00d          │
+│ App suspend           │ 5 seconds  │ 0x8badf00d          │
+│ Background task       │ 30 seconds │ 0x8badf00d          │
+│ Memory pressure       │ Immediate  │ Jetsam (0xdead10cc) │
+│ Thermal shutdown      │ Varies     │ EXC_RESOURCE        │
+└───────────────────────┴────────────┴─────────────────────┘
+
+<span class="cmt">0x8badf00d = "ate bad food" = watchdog killed your app</span>
+<span class="cmt">0xdead10cc = "dead lock" = held file lock during suspend</span>
+<span class="cmt">0xc00010ff = "cool off" = thermal event</span>
+
+<span class="cmt">How to avoid watchdog kills:</span>
+- Never do synchronous network calls in applicationDidFinishLaunching
+- Move heavy initialization to background threads
+- Use beginBackgroundTask for background work:
+  let taskID = UIApplication.shared.beginBackgroundTask {
+      <span class="cmt">// Expiration handler - clean up!</span>
+      UIApplication.shared.endBackgroundTask(taskID)
+  }
+  <span class="cmt">// ... do work ...</span>
+  UIApplication.shared.endBackgroundTask(taskID)
+
+<span class="cmt">Interview: "App is being killed in background but no crash log. Why?"
+→ Watchdog/Jetsam termination. Check device analytics for
+  .ips files. Look for 0x8badf00d or Jetsam in termination reason.</span></pre></details></td></tr>
+<tr><td>Zombie Objects</td><td>Detect use-after-free crashes (EXC_BAD_ACCESS). Zombie objects keep freed objects alive to identify the offending access.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Enable Zombie Objects:</span>
+Xcode → Edit Scheme → Run → Diagnostics → ☑ Zombie Objects
+
+<span class="cmt">What it does:</span>
+- Instead of freeing an object, it becomes a "zombie"
+- Accessing a zombie prints the object class and message
+- "message sent to deallocated instance 0x12345"
+
+<span class="cmt">Console output when zombie is accessed:</span>
+*** -[MyViewController respondsToSelector:]: message sent to
+    deallocated instance 0x7f8b3a508c70
+
+<span class="cmt">Also enable:</span>
+- Address Sanitizer (ASan): Edit Scheme → Diagnostics → ☑ Address Sanitizer
+  → Detects buffer overflows, use-after-free, stack overflow
+- Thread Sanitizer (TSan): Detects data races
+- Undefined Behavior Sanitizer (UBSan): Integer overflow, null deref
+
+<span class="cmt">Memory debugging hierarchy:</span>
+1. Zombie Objects: quick check for use-after-free
+2. Address Sanitizer: comprehensive memory errors
+3. Memory Graph: visual retain cycle detection
+4. Leaks Instrument: runtime leak detection
+
+<span class="cmt">Interview: "App crashes with EXC_BAD_ACCESS. How to debug?"
+→ Enable Zombies to identify which deallocated object was accessed.
+  Then use Address Sanitizer for full memory error detection.
+  Check for weak/unowned references and delegate lifecycle.</span></pre></details></td></tr>
+<tr><td>Device Analytics &amp; .ips Files</td><td>iOS stores diagnostic logs on-device. Can extract crash logs, energy logs, and Jetsam reports for analysis.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">On-device logs location:</span>
+Settings → Privacy → Analytics & Improvements → Analytics Data
+
+<span class="cmt">File types:</span>
+- .ips: Crash reports (symbolicate with dSYM)
+- JetsamEvent-*.ips: Memory terminations
+- log-*.ips: Spin reports (main thread hangs)
+- stacks-*.ips: Stack shots
+
+<span class="cmt"># Extract via Xcode:</span>
+Xcode → Window → Devices & Simulators → View Device Logs
+
+<span class="cmt"># Extract via CLI:</span>
+<span class="cmd">idevicecrashreport -e ./crash_logs/</span>
+
+<span class="cmt"># Extract via Finder:</span>
+Connect device → Finder → Manage Backups → ~/Library/Logs/CrashReporter
+
+<span class="cmt"># Share diagnostics with Apple (helpful for OS bugs):</span>
+Settings → Privacy → Analytics → Share with Apple
+
+<span class="cmt">Jetsam report analysis:</span>
+- "rpages" = resident pages (memory used)
+- "reason" = why killed (per-process-limit, vm-pageshortage)
+- "largestProcess" = which app was biggest memory user
+
+<span class="cmt">Interview: "User reports app closes randomly but no crash in Crashlytics"
+→ Check Jetsam reports: device ran out of memory.
+  Or watchdog killed it (0x8badf00d).
+  These don't generate standard crash reports.</span></pre></details></td></tr>
+</table>
+
+<h3>Advanced iOS Debugging &amp; Interview Topics</h3>
+<table>
+<tr><th>Technique</th><th>Description</th><th>Example</th></tr>
+<tr><td>LLDB Advanced Debugging</td><td>LLDB (Xcode's debugger) supports runtime inspection, expression evaluation, memory manipulation, and custom breakpoint actions.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Essential LLDB commands for iOS debugging:</span>
+
+<span class="cmt">// Inspect objects</span>
+(lldb) po self.view.subviews         <span class="cmt"># print object</span>
+(lldb) p self.view.frame             <span class="cmt"># print value</span>
+(lldb) expr self.view.backgroundColor = UIColor.red  <span class="cmt"># modify at runtime!</span>
+
+<span class="cmt">// Examine view hierarchy</span>
+(lldb) expr -l objc -- (void)[CATransaction flush]  <span class="cmt"># Force UI update</span>
+(lldb) po [[[UIWindow keyWindow] rootViewController] _printHierarchy]
+
+<span class="cmt">// Watchpoints (break when variable changes)</span>
+(lldb) watchpoint set variable myVar
+(lldb) watchpoint set expression -- &myStruct.field
+
+<span class="cmt">// Conditional breakpoints</span>
+(lldb) breakpoint set -n viewDidLoad -c 'self.title == "Profile"'
+
+<span class="cmt">// Symbolic breakpoints (no source needed)</span>
+(lldb) breakpoint set -n "-[UIViewController viewDidLoad]"
+(lldb) breakpoint set -r ".*networkError.*"  <span class="cmt"># Regex match</span>
+
+<span class="cmt">// Thread analysis</span>
+(lldb) thread backtrace all              <span class="cmt"># All thread stacks</span>
+(lldb) thread select 3                   <span class="cmt"># Switch to thread 3</span>
+(lldb) thread return                     <span class="cmt"># Force return from function</span>
+
+<span class="cmt">// Memory inspection</span>
+(lldb) memory read 0x12345678
+(lldb) image lookup -a 0x12345678        <span class="cmt"># Address to symbol</span>
+
+<span class="cmt">Interview: "How to debug an issue you can't reproduce?"
+→ Add symbolic breakpoints, use conditional breakpoints,
+  set watchpoints on suspect variables, log without stopping.</span></pre></details></td></tr>
+<tr><td>View Debugging &amp; Hierarchy</td><td>Xcode's 3D view debugger captures the entire view hierarchy. Identifies overlapping views, constraints issues, hidden elements.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Xcode View Debugging:</span>
+Debug → View Debugging → Capture View Hierarchy
+(Or click the "Debug View Hierarchy" button in debug bar)
+
+<span class="cmt">Features:</span>
+- 3D exploded view of all layers
+- Click any view to see its properties
+- Shows Auto Layout constraints (purple lines)
+- Identifies ambiguous layouts (orange warnings)
+- Shows hidden views and transparency
+
+<span class="cmt">// Programmatic view debugging (LLDB)</span>
+(lldb) po self.view.recursiveDescription()
+(lldb) po self.view.value(forKey: "_autolayoutTrace")
+
+<span class="cmt">// Debug constraint issues at runtime:</span>
+<span class="cmt">// Set symbolic breakpoint on:</span>
+UIViewAlertForUnsatisfiableConstraints
+
+<span class="cmt">// Print specific view's constraints:</span>
+(lldb) po myView.constraints
+(lldb) po myView.constraintsAffectingLayout(for: .horizontal)
+
+<span class="cmt">Accessibility Inspector (Xcode → Open Developer Tool):</span>
+- Shows accessibility labels, traits, frames
+- Simulates VoiceOver without enabling it
+- Audit accessibility compliance
+
+<span class="cmt">Interview: "Element is visible but tap doesn't work. How to debug?"
+→ View Hierarchy: check if another transparent view is on top.
+  Check isUserInteractionEnabled. Check hitTest implementation.
+  Verify the view is within its superview's bounds.</span></pre></details></td></tr>
+<tr><td>Network Link Conditioner</td><td>Apple developer tool to simulate network conditions (3G, Edge, packet loss, latency). Test app behavior on slow/unreliable networks.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Setup Network Link Conditioner:</span>
+
+<span class="cmt">On Mac:</span>
+1. Xcode → Open Developer Tool → Additional Developer Tools (web)
+2. Download "Hardware IO Tools for Xcode"
+3. Install NetworkLinkConditioner.prefpane
+4. System Preferences → Network Link Conditioner
+
+<span class="cmt">On iOS Device (Developer Settings):</span>
+Settings → Developer → Network Link Conditioner
+(Requires "Enable Developer Mode" on iOS 16+)
+
+<span class="cmt">Built-in profiles:</span>
+- 100% Loss: all packets dropped
+- 3G: ~400ms latency, 780kbps down
+- Edge: ~850ms latency, 240kbps down
+- DSL: ~5ms latency, 2Mbps down
+- Wi-Fi: ~1ms latency, 40Mbps down
+- Very Bad Network: 10% loss, 500ms latency
+
+<span class="cmt">Custom profile settings:</span>
+- Bandwidth (up/down in kbps)
+- Packet loss percentage
+- Delay (milliseconds)
+- DNS delay
+
+<span class="cmt">Testing scenarios:</span>
+- Does app show timeout errors gracefully?
+- Does offline mode work correctly?
+- Do images load progressively or block UI?
+- Are retry mechanisms working?
+- Does the app recover when network returns?
+
+<span class="cmt">Interview: "How do you test app behavior on slow network?"
+→ Network Link Conditioner on device, or Charles Proxy throttling.
+  Test timeouts, retries, offline mode, partial downloads.</span></pre></details></td></tr>
+<tr><td>XCTest Performance Metrics</td><td>XCTest includes built-in performance measurement APIs. Measure execution time, memory, CPU, and custom metrics with baselines.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Basic performance test</span>
+func testListPerformance() {
+    let items = generateLargeDataset()
+    measure {
+        _ = items.sorted()
+    }
+}
+
+<span class="cmt">// Custom metrics (iOS 13+)</span>
+func testScrollPerformance() throws {
+    let metrics: [XCTMetric] = [
+        XCTClockMetric(),           <span class="cmt">// Wall clock time</span>
+        XCTCPUMetric(),             <span class="cmt">// CPU time & cycles</span>
+        XCTMemoryMetric(),          <span class="cmt">// Peak memory</span>
+        XCTStorageMetric(),         <span class="cmt">// Disk writes</span>
+        XCTApplicationLaunchMetric() <span class="cmt">// App launch duration</span>
+    ]
+
+    let options = XCTMeasureOptions()
+    options.iterationCount = 5
+
+    measure(metrics: metrics, options: options) {
+        app.swipeUp()
+        app.swipeUp()
+        app.swipeUp()
+    }
+}
+
+<span class="cmt">// App launch performance test</span>
+func testAppLaunchPerformance() throws {
+    measure(metrics: [XCTApplicationLaunchMetric()]) {
+        XCUIApplication().launch()
+    }
+}
+
+<span class="cmt">// Set baselines in Xcode:</span>
+<span class="cmt">// Click the diamond icon next to measure() result</span>
+<span class="cmt">// "Set Baseline" → future runs compared to this</span>
+<span class="cmt">// Test fails if metric regresses beyond tolerance</span>
+
+<span class="cmt">Interview: "How to prevent performance regressions?"
+→ XCTest performance tests with baselines in CI.
+  Fail build if launch time or scroll FPS regresses.</span></pre></details></td></tr>
+<tr><td>Simulator vs Real Device</td><td>Understanding differences is critical for testing strategy. Simulator doesn't replicate all hardware behaviors.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">Simulator vs Real Device comparison:</span>
+
+┌────────────────────┬───────────────────┬───────────────────┐
+│ Feature            │ Simulator         │ Real Device       │
+├────────────────────┼───────────────────┼───────────────────┤
+│ CPU architecture   │ x86_64 / arm64    │ arm64 only        │
+│ Performance        │ Uses Mac hardware │ Actual iOS perf   │
+│ Camera             │ ❌ Not available   │ ✅ Available       │
+│ Push notifications │ ✅ (iOS 16+ sim)  │ ✅ Available       │
+│ Face ID/Touch ID   │ ✅ (simulated)    │ ✅ Real hardware   │
+│ GPS                │ ✅ (simulated)    │ ✅ Real GPS        │
+│ Bluetooth          │ ❌ Not available   │ ✅ Available       │
+│ Motion sensors     │ ❌ Not available   │ ✅ Accelerometer   │
+│ Cellular network   │ ❌ Uses Mac network│ ✅ Real cellular   │
+│ Memory pressure    │ ❌ No Jetsam      │ ✅ Realistic       │
+│ Thermal throttling │ ❌ No throttling   │ ✅ Real thermal    │
+│ App Store DRM      │ ❌ Not supported   │ ✅ Required        │
+│ Provisioning       │ ❌ Not needed      │ ✅ Required        │
+└────────────────────┴───────────────────┴───────────────────┘
+
+<span class="cmt">When to use Simulator:</span>
+- Unit tests (fast feedback)
+- UI layout testing across screen sizes
+- Quick smoke tests during development
+- Accessibility testing
+- Network condition simulation
+
+<span class="cmt">When to use Real Device:</span>
+- Performance profiling (ALWAYS)
+- Battery/energy testing
+- Camera/Bluetooth/NFC features
+- Final acceptance testing
+- Push notification flow
+- Memory-intensive scenarios
+
+<span class="cmt">Interview: "Can you rely solely on simulator testing?"
+→ No. Performance, memory, and hardware-dependent features
+  must be tested on real device. Simulator for rapid iteration.</span></pre></details></td></tr>
+<tr><td>SSL Pinning &amp; Security Testing</td><td>Test certificate pinning implementation, bypass techniques for testing, and verify app security posture.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">What is SSL/Certificate Pinning?</span>
+App only trusts specific certificates/public keys,
+rejecting valid but unexpected certificates (like proxy certs).
+
+<span class="cmt">Testing pinning is working:</span>
+1. Setup Charles Proxy / Proxyman
+2. Enable SSL proxying for your domain
+3. Expected result: App should FAIL to connect
+   (proves pinning rejects the proxy certificate)
+4. If requests go through → pinning is broken!
+
+<span class="cmt">Bypass pinning for testing (debug builds only):</span>
+
+<span class="cmt">Method 1: Build configuration</span>
+#if DEBUG
+<span class="cmt">// Disable pinning in debug builds</span>
+let session = URLSession(configuration: .default,
+    delegate: TrustAllCertsDelegate(), delegateQueue: nil)
+#endif
+
+<span class="cmt">Method 2: Using Frida (dynamic instrumentation)</span>
+<span class="cmd">frida -U -n MyApp -l ssl-pinning-bypass.js</span>
+
+<span class="cmt">Method 3: Using objection (Frida wrapper)</span>
+<span class="cmd">objection -g MyApp explore</span>
+... ios sslpinning disable
+
+<span class="cmt">Common pinning implementations:</span>
+- TrustKit: open-source library for iOS
+- Alamofire ServerTrustManager
+- URLSessionDelegate: challenge handler
+- NSAppTransportSecurity with pinned domains
+
+<span class="cmt">Interview: "How do you test API calls if app has SSL pinning?"
+→ Use debug build flag to disable pinning in test environments.
+  Or use Frida/objection for runtime bypass on test builds.
+  NEVER ship with pinning disabled.</span></pre></details></td></tr>
+<tr><td>XCTest Expectations &amp; Async</td><td>Testing asynchronous operations (network calls, animations, timers) requires XCTestExpectation to wait for completion.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">// Basic expectation pattern</span>
+func testAsyncNetworkCall() {
+    let expectation = expectation(description: "API call completes")
+
+    apiService.fetchUser(id: "123") { result in
+        switch result {
+        case .success(let user):
+            XCTAssertEqual(user.name, "John")
+        case .failure(let error):
+            XCTFail("Unexpected error: \(error)")
+        }
+        expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 5.0)
+}
+
+<span class="cmt">// Swift async/await (cleaner, iOS 13+)</span>
+func testAsyncAwaitCall() async throws {
+    let user = try await apiService.fetchUser(id: "123")
+    XCTAssertEqual(user.name, "John")
+}
+
+<span class="cmt">// Multiple expectations</span>
+func testParallelRequests() {
+    let exp1 = expectation(description: "Users loaded")
+    let exp2 = expectation(description: "Posts loaded")
+
+    loadUsers { exp1.fulfill() }
+    loadPosts { exp2.fulfill() }
+
+    wait(for: [exp1, exp2], timeout: 10.0, enforceOrder: false)
+}
+
+<span class="cmt">// Inverted expectation (something should NOT happen)</span>
+func testNoUnexpectedCallback() {
+    let noCallback = expectation(description: "Should not fire")
+    noCallback.isInverted = true
+
+    cancelledOperation.onComplete = { noCallback.fulfill() }
+    cancelledOperation.cancel()
+
+    waitForExpectations(timeout: 2.0) <span class="cmt">// Passes if NOT fulfilled</span>
+}
+
+<span class="cmt">// XCTWaiter for UI tests (wait for element)</span>
+let element = app.buttons["Submit"]
+let exists = element.waitForExistence(timeout: 5)
+XCTAssertTrue(exists)</pre></details></td></tr>
+<tr><td>Interview Quick Reference</td><td>Rapid-fire iOS testing Q&amp;A summary covering the most common interview questions.</td><td><details><summary>▶ Show</summary><pre><span class="cmt">━━━ TOP iOS TESTING INTERVIEW Q&A ━━━</span>
+
+<span class="cmt">Q: How to capture network logs on iOS?</span>
+A: Charles Proxy / Proxyman (HTTPS with cert install),
+   CFNetwork Diagnostics env var (quick, no setup),
+   URLProtocol subclass (in-app), mitmproxy (CI/CD)
+
+<span class="cmt">Q: How to capture system logs?</span>
+A: Console.app (GUI), xcrun simctl spawn log stream (CLI),
+   idevicesyslog (real device, no Xcode), os_log API (in code)
+
+<span class="cmt">Q: How to find memory leaks?</span>
+A: Instruments → Leaks/Allocations, Xcode Memory Graph (Cmd+Shift+D),
+   Look for retain cycles: [weak self] in closures, weak delegates
+
+<span class="cmt">Q: How to debug crashes?</span>
+A: Xcode Organizer (prod), dSYM + atos (symbolicate),
+   Enable Zombies (EXC_BAD_ACCESS), Address Sanitizer
+
+<span class="cmt">Q: How to measure app performance?</span>
+A: Instruments (Time Profiler, Core Animation), MetricKit (prod),
+   XCTest measure {} with baselines in CI
+
+<span class="cmt">Q: How to test on slow network?</span>
+A: Network Link Conditioner (device/Mac), Charles throttling,
+   Reachability API for offline mode
+
+<span class="cmt">Q: Simulator vs real device?</span>
+A: Simulator for UI/logic. Real device for performance, memory,
+   hardware features, battery. ALWAYS profile on real device.
+
+<span class="cmt">Q: What's a dSYM file?</span>
+A: Debug symbols mapping addresses to function names/lines.
+   Required for crash report symbolication. Upload to App Store.
+
+<span class="cmt">Q: What causes 0x8badf00d?</span>
+A: Watchdog killed app — main thread blocked too long during
+   launch, backgrounding, or system events.
+
+<span class="cmt">Q: How to bypass SSL pinning for testing?</span>
+A: Debug build flag, Frida/objection runtime bypass, or
+   configure test environment with pinning disabled.</span></pre></details></td></tr>
+</table>
+</body>
+</html>

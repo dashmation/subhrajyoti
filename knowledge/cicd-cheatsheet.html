@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CI/CD Cheatsheet — Jenkins &amp; GitLab CI</title>
+<style>
+:root { --header: #d32f2f; --bg: #fafafa; --code-bg: #1e1e1e; --code-fg: #d4d4d4; --border: #ddd; --jenkins: #d32f2f; --gitlab: #e24329; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #222; line-height: 1.6; padding: 2rem; max-width: 1200px; margin: auto; }
+h1 { color: var(--header); border-bottom: 3px solid var(--header); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+h2 { color: var(--header); margin: 2rem 0 1rem; padding: 0.3rem 0.6rem; border-left: 5px solid var(--header); background: #fce4ec; }
+h3 { margin: 1rem 0 0.5rem; color: #333; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0 2rem; font-size: 0.95rem; }
+th { background: var(--header); color: #fff; padding: 0.6rem; text-align: left; }
+td { border: 1px solid var(--border); padding: 0.5rem 0.6rem; vertical-align: top; }
+tr:nth-child(even) { background: #f5f5f5; }
+details { margin: 0; }
+details summary { cursor: pointer; color: var(--header); font-weight: 600; font-size: 0.85rem; }
+details pre { background: var(--code-bg); color: var(--code-fg); padding: 0.8rem; border-radius: 4px; overflow-x: auto; font-size: 0.82rem; margin-top: 0.3rem; white-space: pre; line-height: 1.5; }
+.cmd { color: #9cdcfe; }
+.cmt { color: #6a9955; font-style: italic; }
+.kw { color: #c586c0; }
+.str { color: #ce9178; }
+.label { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 0.75rem; font-weight: 700; margin-right: 4px; }
+.label-jenkins { background: #ffcdd2; color: #b71c1c; }
+.label-gitlab { background: #fff3e0; color: #e65100; }
+#toc { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.5rem; margin-bottom: 2rem; }
+#toc h3 { margin: 0 0 0.5rem; }
+#toc ol { padding-left: 1.2rem; }
+#toc li { margin: 0.3rem 0; }
+#toc a { color: var(--header); text-decoration: none; }
+#toc a:hover { text-decoration: underline; }
+@media print {
+  body { padding: 0; font-size: 0.85rem; }
+  h2 { break-before: page; }
+  details[open] summary { display: none; }
+  details { open: true; }
+  details pre { border: 1px solid #ccc; }
+  #toc { break-after: page; }
+}
+.toggle-all { text-align: center; margin-bottom: 16px; }
+.toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+input:checked + .slider { background: #4a90d9; }
+input:checked + .slider:before { transform: translateX(20px); }
+.section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+</style>
+</head>
+<body>
+<h1>CI/CD Cheatsheet — Jenkins &amp; GitLab CI</h1>
+<p><em>Beginner → Advanced | Generated 2026-08-01</em></p>
+
+<div class="toggle-all">
+  <label class="switch">
+    <input type="checkbox" id="toggleAll">
+    <span class="slider"></span>
+  </label>
+  <span class="toggle-label">Expand All Examples</span>
+</div>
+
+<nav id="toc">
+<h3>Table of Contents</h3>
+<ol>
+<li><a href="#jenkins-basics">Jenkins Basics</a></li>
+<li><a href="#jenkins-pipeline">Jenkins Pipeline (Declarative)</a></li>
+<li><a href="#jenkins-advanced">Jenkins Pipeline Advanced</a></li>
+<li><a href="#jenkins-shared-libs">Jenkins Shared Libraries &amp; Plugins</a></li>
+<li><a href="#gitlab-basics">GitLab CI Basics</a></li>
+<li><a href="#gitlab-variables">GitLab CI Variables &amp; Artifacts</a></li>
+<li><a href="#gitlab-advanced">GitLab CI Advanced</a></li>
+<li><a href="#gitlab-services">GitLab CI Services &amp; Docker-in-Docker</a></li>
+<li><a href="#common-patterns">Common Patterns (Build, Test, Deploy)</a></li>
+<li><a href="#docker-cicd">Docker in CI/CD</a></li>
+<li><a href="#kubernetes">Kubernetes Deployments from CI/CD</a></li>
+<li><a href="#secrets">Secrets Management</a></li>
+<li><a href="#notifications">Notifications &amp; Integrations</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+</ol>
+</nav>
+
+<!-- Section 1: Jenkins Basics -->
+<h2 id="jenkins-basics">1. Jenkins Basics</h2>
+<p class="section-desc">Jenkins is the most widely-used CI/CD server — understanding its job types and UI is the starting point.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Installation (Docker)</td>
+<td>Run Jenkins in a Docker container with persistent volume</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">docker run -d --name jenkins \
+  -p 8080:8080 -p 50000:50000 \
+  -v jenkins_home:/var/jenkins_home \
+  jenkins/jenkins:lts-jdk17</span>
+
+<span class="cmt"># Get initial admin password</span>
+<span class="cmd">docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword</span></pre></details></td>
+</tr>
+<tr>
+<td>Installation (Linux)</td>
+<td>Install Jenkins on Ubuntu/Debian via apt</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Add Jenkins repo key and source</span>
+<span class="cmd">curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null</span>
+
+<span class="cmd">sudo apt update && sudo apt install jenkins -y</span>
+<span class="cmd">sudo systemctl enable --now jenkins</span>
+<span class="cmt"># Access at http://localhost:8080</span></pre></details></td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>Main UI: shows jobs, build queue, executor status, manage Jenkins link</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt">Key areas:</span>
+<span class="cmd">• New Item        → Create jobs/pipelines
+• Manage Jenkins  → System config, plugins, credentials
+• Build Queue     → Pending builds
+• Build Executor  → Running builds on agents
+• Credentials     → Manage Jenkins → Credentials → System</span></pre></details></td>
+</tr>
+<tr>
+<td>Freestyle Job</td>
+<td>GUI-configured job: SCM source, build triggers, build steps, post-build actions</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Freestyle job config (conceptual):</span>
+<span class="cmd">Source Code Management:
+  Git → https://github.com/org/repo.git
+  Branch: */main
+
+Build Triggers:
+  ☑ Poll SCM: H/5 * * * *
+  ☑ GitHub hook trigger for GITScm polling
+
+Build Steps:
+  Execute shell:
+    mvn clean package -DskipTests=false
+
+Post-build Actions:
+  Archive artifacts: target/*.jar
+  Email notification on failure</span></pre></details></td>
+</tr>
+<tr>
+<td>Job Types</td>
+<td>Freestyle, Pipeline, Multi-branch Pipeline, Folder, Multi-configuration</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">Freestyle        → GUI-based, single branch, simple builds
+Pipeline         → Jenkinsfile (scripted or declarative)
+Multibranch      → Auto-discovers branches with Jenkinsfile
+Folder           → Organize jobs in namespaces
+Multi-config     → Matrix builds (deprecated, use pipeline matrix)</span></pre></details></td>
+</tr>
+<tr>
+<td>Build Triggers</td>
+<td>How builds are started: SCM poll, webhook, cron, upstream</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Cron syntax in Jenkins (with hash for load distribution)</span>
+<span class="cmd">H/15 * * * *</span>      <span class="cmt"># Every 15 mins (hashed)</span>
+<span class="cmd">H 2 * * 1-5</span>       <span class="cmt"># Weekdays ~2am</span>
+<span class="cmd">@midnight</span>          <span class="cmt"># Once a day</span>
+
+<span class="cmt"># Webhook: configure GitHub/GitLab to POST to:</span>
+<span class="cmd">http://jenkins-url/github-webhook/</span>
+<span class="cmd">http://jenkins-url/project/JOB_NAME</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 2: Jenkins Pipeline -->
+<h2 id="jenkins-pipeline">2. Jenkins Pipeline (Declarative Syntax)</h2>
+<p class="section-desc">Pipeline-as-code (Jenkinsfile) makes CI/CD reproducible, versioned, and reviewable like application code.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Basic Structure</td>
+<td>pipeline → agent → stages → stage → steps. The minimal skeleton.</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">pipeline {
+    agent any</span>
+    <span class="cmt">// Use any available executor</span>
+
+    <span class="cmd">stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh './deploy.sh'
+            }
+        }
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Agent Types</td>
+<td>Where the pipeline runs: any, none, label, docker, kubernetes</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">agent any</span>                    <span class="cmt">// Any available agent</span>
+<span class="cmd">agent none</span>                   <span class="cmt">// No global agent (set per stage)</span>
+<span class="cmd">agent { label 'linux' }</span>      <span class="cmt">// Agent with label</span>
+<span class="cmd">agent {
+    docker {
+        image 'maven:3.9-eclipse-temurin-17'
+        args '-v /root/.m2:/root/.m2'
+    }
+}</span>
+<span class="cmd">agent {
+    kubernetes {
+        yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: maven
+            image: maven:3.9-jdk-17
+            command: ['sleep', '99d']
+        '''
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Environment</td>
+<td>Set env vars for entire pipeline or specific stages</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">pipeline {
+    agent any
+    environment {
+        APP_NAME = 'my-app'
+        VERSION  = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+        CREDS    = credentials('my-secret-id')</span> <span class="cmt">// Injects USERNAME and PASSWORD</span>
+    <span class="cmd">}
+    stages {
+        stage('Print') {
+            environment {
+                STAGE_VAR = 'only-here'
+            }
+            steps {
+                sh 'echo $APP_NAME $VERSION $STAGE_VAR'
+            }
+        }
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Tools</td>
+<td>Auto-install and add to PATH: maven, jdk, gradle, nodejs</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">pipeline {
+    agent any
+    tools {
+        maven 'Maven-3.9'</span>    <span class="cmt">// Name from Global Tool Config</span>
+        <span class="cmd">jdk 'JDK-17'</span>         <span class="cmt">// Name from Global Tool Config</span>
+    <span class="cmd">}
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn --version'
+                sh 'java --version'
+            }
+        }
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Post Actions</td>
+<td>Run after stages: always, success, failure, unstable, changed, cleanup</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">pipeline {
+    agent any
+    stages {
+        stage('Test') {
+            steps { sh 'mvn test' }
+        }
+    }
+    post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'target/*.jar'
+        }
+        success {
+            echo 'Build succeeded!'
+        }
+        failure {
+            mail to: 'team@example.com',
+                 subject: "FAILED: ${env.JOB_NAME}",
+                 body: "Check ${env.BUILD_URL}"
+        }
+        cleanup {
+            cleanWs()</span> <span class="cmt">// Clean workspace</span>
+        <span class="cmd">}
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Options</td>
+<td>Pipeline-wide settings: timeout, retry, timestamps, disableConcurrentBuilds</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">pipeline {
+    agent any
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+        retry(2)
+        timestamps()
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        skipDefaultCheckout()
+    }
+    stages { ... }
+}</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 3: Jenkins Pipeline Advanced -->
+<h2 id="jenkins-advanced">3. Jenkins Pipeline Advanced</h2>
+<p class="section-desc">Advanced pipeline features handle complex workflows — conditional execution, approvals, and matrix builds.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Parallel Stages</td>
+<td>Run multiple stages concurrently to speed up pipelines</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">stage('Tests') {
+    parallel {
+        stage('Unit Tests') {
+            agent { label 'linux' }
+            steps { sh 'mvn test -Punit' }
+        }
+        stage('Integration Tests') {
+            agent { label 'linux' }
+            steps { sh 'mvn test -Pintegration' }
+        }
+        stage('Lint') {
+            agent { label 'linux' }
+            steps { sh 'mvn checkstyle:check' }
+        }
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Matrix</td>
+<td>Run stages across multiple combinations (like GitHub Actions matrix)</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">stage('Build Matrix') {
+    matrix {
+        axes {
+            axis {
+                name 'PLATFORM'
+                values 'linux', 'windows', 'mac'
+            }
+            axis {
+                name 'JDK'
+                values '17', '21'
+            }
+        }
+        excludes {
+            exclude {
+                axis { name 'PLATFORM'; values 'mac' }
+                axis { name 'JDK'; values '17' }
+            }
+        }
+        stages {
+            stage('Build') {
+                steps {
+                    echo "Building on ${PLATFORM} with JDK ${JDK}"
+                    sh './build.sh'
+                }
+            }
+        }
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>When (Conditionals)</td>
+<td>Execute stage only if condition matches: branch, env, expression, tag</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">stage('Deploy to Prod') {
+    when {
+        branch 'main'</span>               <span class="cmt">// Only on main</span>
+    <span class="cmd">}
+    steps { sh './deploy-prod.sh' }
+}
+
+stage('Deploy Staging') {
+    when {
+        anyOf {
+            branch 'develop'
+            branch 'release/*'
+        }
+    }
+    steps { sh './deploy-staging.sh' }
+}
+
+stage('Tagged Release') {
+    when {
+        tag pattern: "v\\d+\\.\\d+\\.\\d+", comparator: "REGEXP"
+    }
+    steps { sh './release.sh' }
+}
+
+stage('Skip if no changes') {
+    when {
+        changeset '**/*.java'</span>       <span class="cmt">// Only if .java files changed</span>
+    <span class="cmd">}
+    steps { sh 'mvn compile' }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Input (Manual Approval)</td>
+<td>Pause pipeline and wait for human approval before proceeding</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">stage('Approve Deploy') {
+    input {
+        message 'Deploy to production?'
+        ok 'Yes, deploy!'
+        submitter 'admin,deploy-team'
+        parameters {
+            choice(name: 'ENVIRONMENT',
+                   choices: ['staging', 'production'],
+                   description: 'Target env')
+        }
+    }
+    steps {
+        echo "Deploying to ${ENVIRONMENT}"
+        sh './deploy.sh ${ENVIRONMENT}'
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Parameters</td>
+<td>User-configurable inputs when triggering builds</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">pipeline {
+    agent any
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Branch to build')
+        choice(name: 'ENV', choices: ['dev','staging','prod'], description: 'Deploy target')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip tests?')
+        password(name: 'API_KEY', description: 'API key for deployment')
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building ${params.BRANCH} for ${params.ENV}"
+                sh "mvn clean package ${params.SKIP_TESTS ? '-DskipTests' : ''}"
+            }
+        }
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Scripted Blocks</td>
+<td>Use script {} blocks inside declarative for complex Groovy logic</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">stage('Dynamic Steps') {
+    steps {
+        script {
+            def services = ['api', 'web', 'worker']
+            for (svc in services) {
+                sh "docker build -t myrepo/${svc}:${env.BUILD_NUMBER} ./${svc}"
+            }
+            if (env.BRANCH_NAME == 'main') {
+                currentBuild.description = 'Production build'
+            }
+        }
+    }
+}</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 4: Jenkins Shared Libraries & Plugins -->
+<h2 id="jenkins-shared-libs">4. Jenkins Shared Libraries &amp; Plugins</h2>
+<p class="section-desc">Shared libraries avoid duplicating pipeline code across projects — write once, use everywhere.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Shared Library Structure</td>
+<td>Reusable code in a Git repo: vars/, src/, resources/ directories</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Shared library repo structure:</span>
+<span class="cmd">my-shared-library/
+├── vars/
+│   ├── buildJava.groovy        </span><span class="cmt"># Global var (callable as buildJava())</span><span class="cmd">
+│   ├── deployToK8s.groovy
+│   └── notifySlack.groovy
+├── src/
+│   └── com/myorg/
+│       └── Utils.groovy        </span><span class="cmt"># Class-based utilities</span><span class="cmd">
+├── resources/
+│   └── templates/
+│       └── deployment.yaml     </span><span class="cmt"># Resource files (libraryResource)</span><span class="cmd">
+└── README.md</span></pre></details></td>
+</tr>
+<tr>
+<td>Writing a Shared Step</td>
+<td>vars/buildJava.groovy defines a call() method usable as a pipeline step</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt">// vars/buildJava.groovy</span>
+<span class="cmd">def call(Map config = [:]) {
+    def jdkVersion = config.jdk ?: '17'
+    def goals = config.goals ?: 'clean package'
+
+    pipeline {
+        agent {
+            docker { image "maven:3.9-eclipse-temurin-${jdkVersion}" }
+        }
+        stages {
+            stage('Build') {
+                steps {
+                    sh "mvn ${goals} -B"
+                }
+            }
+            stage('Archive') {
+                steps {
+                    archiveArtifacts artifacts: 'target/*.jar'
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+    }
+}</span>
+
+<span class="cmt">// Usage in Jenkinsfile:</span>
+<span class="cmd">@Library('my-shared-library') _
+buildJava(jdk: '21', goals: 'clean verify')</span></pre></details></td>
+</tr>
+<tr>
+<td>Loading Libraries</td>
+<td>@Library annotation or library() step; configure in Manage Jenkins → System</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt">// Implicit load (configured globally):</span>
+<span class="cmd">@Library('my-shared-library') _</span>
+
+<span class="cmt">// Specific version/branch:</span>
+<span class="cmd">@Library('my-shared-library@v2.1.0') _</span>
+
+<span class="cmt">// Dynamic load in pipeline:</span>
+<span class="cmd">library identifier: 'my-shared-library@main',
+        retriever: modernSCM([
+            $class: 'GitSCMSource',
+            remote: 'https://github.com/org/jenkins-shared-lib.git',
+            credentialsId: 'github-token'
+        ])</span></pre></details></td>
+</tr>
+<tr>
+<td>Essential Plugins</td>
+<td>Must-have plugins for production Jenkins</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">Pipeline Plugins:
+  • pipeline-model-definition     </span><span class="cmt"># Declarative Pipeline</span><span class="cmd">
+  • workflow-aggregator            </span><span class="cmt"># Pipeline core</span><span class="cmd">
+  • pipeline-stage-view            </span><span class="cmt"># Visual stage UI</span><span class="cmd">
+
+SCM &amp; Integration:
+  • git                            </span><span class="cmt"># Git integration</span><span class="cmd">
+  • github-branch-source           </span><span class="cmt"># Multi-branch GitHub</span><span class="cmd">
+  • gitlab-plugin                  </span><span class="cmt"># GitLab hooks</span><span class="cmd">
+
+Build Tools:
+  • docker-workflow                </span><span class="cmt"># Docker in pipelines</span><span class="cmd">
+  • kubernetes                     </span><span class="cmt"># K8s dynamic agents</span><span class="cmd">
+  • maven-plugin                   </span><span class="cmt"># Maven integration</span><span class="cmd">
+
+Quality &amp; Reporting:
+  • junit                          </span><span class="cmt"># Test reports</span><span class="cmd">
+  • jacoco                         </span><span class="cmt"># Code coverage</span><span class="cmd">
+  • warnings-ng                    </span><span class="cmt"># Static analysis</span><span class="cmd">
+
+Notifications:
+  • slack                          </span><span class="cmt"># Slack notifications</span><span class="cmd">
+  • email-ext                      </span><span class="cmt"># Extended email</span><span class="cmd">
+
+Security:
+  • credentials-binding            </span><span class="cmt"># Inject credentials</span><span class="cmd">
+  • role-strategy                  </span><span class="cmt"># Role-based access</span></pre></details></td>
+</tr>
+<tr>
+<td>Plugin Management (JCasC)</td>
+<td>Jenkins Configuration as Code for reproducible setup</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># jenkins.yaml (JCasC)</span>
+<span class="cmd">jenkins:
+  systemMessage: "Managed by JCasC"
+  numExecutors: 0
+  securityRealm:
+    local:
+      allowsSignup: false
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin"
+            permissions: ["Overall/Administer"]
+
+unclassified:
+  slackNotifier:
+    teamDomain: "myteam"
+    tokenCredentialId: "slack-token"
+
+tool:
+  maven:
+    installations:
+      - name: "Maven-3.9"
+        properties:
+          - installSource:
+              installers:
+                - maven:
+                    id: "3.9.6"</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 5: GitLab CI Basics -->
+<h2 id="gitlab-basics">5. GitLab CI Basics</h2>
+<p class="section-desc">GitLab CI is tightly integrated with GitLab repos — one YAML file defines your entire pipeline.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>.gitlab-ci.yml Structure</td>
+<td>Root config file: define stages, then jobs that belong to stages</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># .gitlab-ci.yml - minimal example</span>
+<span class="cmd">stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - mvn clean compile
+
+test-job:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - mvn test
+
+deploy-job:
+  stage: deploy
+  script:
+    - ./deploy.sh
+  only:
+    - main</span></pre></details></td>
+</tr>
+<tr>
+<td>Jobs &amp; Scripts</td>
+<td>Each job has: image, stage, script (required), before_script, after_script</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">my-job:
+  image: node:20-alpine
+  stage: test
+  before_script:</span>             <span class="cmt"># Runs before main script</span>
+    <span class="cmd">- npm ci
+  script:</span>                     <span class="cmt"># Main commands (required)</span>
+    <span class="cmd">- npm run lint
+    - npm run test
+  after_script:</span>              <span class="cmt"># Always runs (even on failure)</span>
+    <span class="cmd">- echo "Cleanup done"
+  allow_failure: false</span>       <span class="cmt"># Fail pipeline if job fails</span></pre></details></td>
+</tr>
+<tr>
+<td>Stages Order</td>
+<td>Jobs in same stage run in parallel; stages run sequentially</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">stages:
+  - build
+  - test        </span><span class="cmt"># All test jobs run in parallel</span><span class="cmd">
+  - deploy
+
+unit-test:
+  stage: test
+  script: npm run test:unit
+
+integration-test:
+  stage: test
+  script: npm run test:integration
+
+lint:
+  stage: test
+  script: npm run lint</span>
+
+<span class="cmt"># ↑ All three run simultaneously in "test" stage</span></pre></details></td>
+</tr>
+<tr>
+<td>Image &amp; Tags</td>
+<td>Docker image for the job; tags select specific runners</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">default:
+  image: ubuntu:22.04</span>        <span class="cmt"># Default for all jobs</span>
+  <span class="cmd">tags:
+    - docker
+    - linux</span>
+
+<span class="cmd">build-java:
+  image: maven:3.9-eclipse-temurin-17</span>  <span class="cmt"># Override per job</span>
+  <span class="cmd">tags:
+    - large-runner</span>           <span class="cmt"># Use runner with this tag</span>
+  <span class="cmd">script:
+    - mvn package</span></pre></details></td>
+</tr>
+<tr>
+<td>Predefined Variables</td>
+<td>Auto-set variables: CI_COMMIT_SHA, CI_PIPELINE_ID, CI_JOB_NAME, etc.</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">CI_COMMIT_SHA</span>          <span class="cmt"># Full commit hash</span>
+<span class="cmd">CI_COMMIT_SHORT_SHA</span>    <span class="cmt"># First 8 chars</span>
+<span class="cmd">CI_COMMIT_BRANCH</span>       <span class="cmt"># Branch name</span>
+<span class="cmd">CI_COMMIT_TAG</span>          <span class="cmt"># Tag name (if tagged)</span>
+<span class="cmd">CI_PIPELINE_ID</span>         <span class="cmt"># Pipeline number</span>
+<span class="cmd">CI_PROJECT_NAME</span>        <span class="cmt"># Project name</span>
+<span class="cmd">CI_PROJECT_NAMESPACE</span>   <span class="cmt"># Group/user namespace</span>
+<span class="cmd">CI_REGISTRY_IMAGE</span>      <span class="cmt"># registry.gitlab.com/group/project</span>
+<span class="cmd">CI_JOB_TOKEN</span>           <span class="cmt"># Auto token for registry/API</span>
+<span class="cmd">CI_ENVIRONMENT_NAME</span>    <span class="cmt"># Environment name</span>
+<span class="cmd">GITLAB_USER_LOGIN</span>      <span class="cmt"># Who triggered</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 6: GitLab CI Variables & Artifacts -->
+<h2 id="gitlab-variables">6. GitLab CI Variables &amp; Artifacts</h2>
+<p class="section-desc">Variables externalize secrets/config. Artifacts pass build outputs between stages.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Variables (inline)</td>
+<td>Define variables at global or job level in .gitlab-ci.yml</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">variables:</span>                      <span class="cmt"># Global variables</span>
+  <span class="cmd">APP_NAME: "my-service"
+  MAVEN_OPTS: "-Xmx512m"
+  GIT_DEPTH: "5"</span>              <span class="cmt"># Shallow clone</span>
+
+<span class="cmd">build-job:
+  variables:</span>                  <span class="cmt"># Job-level override</span>
+    <span class="cmd">MAVEN_OPTS: "-Xmx1g"
+    BUILD_ENV: "ci"
+  script:
+    - echo $APP_NAME
+    - mvn package $MAVEN_OPTS</span></pre></details></td>
+</tr>
+<tr>
+<td>Variables (CI/CD Settings)</td>
+<td>Set in GitLab UI: Settings → CI/CD → Variables. Can be masked/protected.</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># In GitLab UI (Settings → CI/CD → Variables):</span>
+<span class="cmd">Key:       DOCKER_PASSWORD
+Value:     ********
+Type:      Variable
+Protected: ✓</span>   <span class="cmt"># Only on protected branches</span>
+<span class="cmd">Masked:    ✓</span>   <span class="cmt"># Hidden in job logs</span>
+<span class="cmd">Expanded:  ✓</span>   <span class="cmt"># Allow $VAR references in value</span>
+
+<span class="cmt"># File-type variable (creates a file with the content):</span>
+<span class="cmd">Key:       KUBECONFIG
+Value:     (paste kubeconfig content)
+Type:      File</span>  <span class="cmt"># $KUBECONFIG becomes a file path</span></pre></details></td>
+</tr>
+<tr>
+<td>Artifacts</td>
+<td>Pass files between jobs; stored and downloadable from UI</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">build-job:
+  stage: build
+  script:
+    - mvn package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+      - target/classes/
+    exclude:
+      - target/test-classes/
+    expire_in: 1 week</span>        <span class="cmt"># Auto-delete after 1 week</span>
+    <span class="cmd">when: on_success</span>          <span class="cmt"># or always, on_failure</span>
+
+<span class="cmd">test-job:
+  stage: test
+  dependencies:
+    - build-job</span>              <span class="cmt"># Download artifacts from build-job</span>
+  <span class="cmd">script:
+    - java -jar target/app.jar --test</span></pre></details></td>
+</tr>
+<tr>
+<td>Reports (JUnit, Coverage)</td>
+<td>Special artifact reports shown in MR UI: junit, coverage, sast, etc.</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">test-job:
+  stage: test
+  script:
+    - mvn test
+  artifacts:
+    reports:
+      junit: target/surefire-reports/TEST-*.xml</span>  <span class="cmt"># MR test summary</span>
+      <span class="cmd">coverage_report:
+        coverage_format: cobertura
+        path: target/site/cobertura/coverage.xml</span>
+  <span class="cmd">coverage: '/Total.*?(\d+\.\d+)%/'</span>  <span class="cmt"># Regex for badge</span></pre></details></td>
+</tr>
+<tr>
+<td>Cache</td>
+<td>Speed up pipelines by caching dependencies between runs</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">build-job:
+  stage: build
+  image: maven:3.9-eclipse-temurin-17
+  cache:
+    key:
+      files:
+        - pom.xml</span>            <span class="cmt"># Cache key from file hash</span>
+    <span class="cmd">paths:
+      - .m2/repository
+    policy: pull-push</span>        <span class="cmt"># pull, push, or pull-push</span>
+  <span class="cmd">variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  script:
+    - mvn package</span>
+
+<span class="cmt"># Node.js example:</span>
+<span class="cmd">  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 7: GitLab CI Advanced -->
+<h2 id="gitlab-advanced">7. GitLab CI Advanced</h2>
+<p class="section-desc">Advanced features enable DAG pipelines, dynamic matrices, and environment-specific deployments.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Rules (replacing only/except)</td>
+<td>Fine-grained control: if, changes, exists with when/allow_failure</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">deploy-prod:
+  stage: deploy
+  script: ./deploy.sh production
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual</span>                   <span class="cmt"># Manual trigger on main</span>
+      <span class="cmd">allow_failure: false
+    - if: $CI_COMMIT_TAG =~ /^v\d+/
+      when: on_success</span>              <span class="cmt"># Auto on version tags</span>
+    <span class="cmd">- when: never</span>                     <span class="cmt"># Skip otherwise</span>
+
+<span class="cmd">lint:
+  stage: test
+  script: npm run lint
+  rules:
+    - changes:</span>                      <span class="cmt"># Only if JS files changed</span>
+        <span class="cmd">- "src/**/*.{js,ts}"
+        - "package.json"
+    - exists:</span>                       <span class="cmt"># Only if eslint config exists</span>
+        <span class="cmd">- .eslintrc*</span></pre></details></td>
+</tr>
+<tr>
+<td>Needs (DAG)</td>
+<td>Skip stage ordering; job starts as soon as needed jobs finish</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">stages:
+  - build
+  - test
+  - deploy
+
+build-app:
+  stage: build
+  script: mvn package
+
+build-docs:
+  stage: build
+  script: mkdocs build
+
+test-app:
+  stage: test
+  needs: [build-app]</span>         <span class="cmt"># Starts when build-app done (not build-docs)</span>
+  <span class="cmd">script: mvn test
+
+deploy-docs:
+  stage: deploy
+  needs: [build-docs]</span>        <span class="cmt"># Doesn't wait for test-app!</span>
+  <span class="cmd">script: ./deploy-docs.sh
+
+deploy-app:
+  stage: deploy
+  needs: [test-app]
+  script: ./deploy-app.sh</span></pre></details></td>
+</tr>
+<tr>
+<td>Parallel &amp; Matrix</td>
+<td>Split job into parallel instances with variable combinations</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Simple parallel (split tests):</span>
+<span class="cmd">test:
+  stage: test
+  parallel: 4</span>                <span class="cmt"># Creates test 1/4, test 2/4, etc.</span>
+  <span class="cmd">script:
+    - ./split-tests.sh $CI_NODE_INDEX $CI_NODE_TOTAL | xargs mvn test</span>
+
+<span class="cmt"># Matrix (cross-product):</span>
+<span class="cmd">test:
+  stage: test
+  parallel:
+    matrix:
+      - PLATFORM: [linux, macos]
+        JDK: ['17', '21']
+      - PLATFORM: [windows]
+        JDK: ['21']</span>           <span class="cmt"># 2×2 + 1×1 = 5 jobs</span>
+  <span class="cmd">image: $PLATFORM-runner:latest
+  script:
+    - echo "Testing on $PLATFORM with JDK $JDK"</span></pre></details></td>
+</tr>
+<tr>
+<td>Environments</td>
+<td>Track deployments, enable review apps, and rollback</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">deploy-staging:
+  stage: deploy
+  script: ./deploy.sh staging
+  environment:
+    name: staging
+    url: https://staging.example.com
+    on_stop: stop-staging</span>    <span class="cmt"># Linked stop job</span>
+
+<span class="cmd">stop-staging:
+  stage: deploy
+  script: ./teardown.sh staging
+  environment:
+    name: staging
+    action: stop
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual</span>
+
+<span class="cmt"># Review apps (dynamic environments):</span>
+<span class="cmd">review:
+  stage: deploy
+  script: ./deploy-review.sh
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    url: https://$CI_COMMIT_REF_SLUG.review.example.com
+    auto_stop_in: 1 week
+  rules:
+    - if: $CI_MERGE_REQUEST_IID</span></pre></details></td>
+</tr>
+<tr>
+<td>extends &amp; includes</td>
+<td>Reuse config: extends for inheritance, include for multi-file</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Template job (starts with dot = hidden):</span>
+<span class="cmd">.java-base:
+  image: maven:3.9-eclipse-temurin-17
+  cache:
+    paths: [.m2/repository]
+  variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+build:
+  extends: .java-base</span>        <span class="cmt"># Inherits image, cache, variables</span>
+  <span class="cmd">stage: build
+  script: mvn compile</span>
+
+<span class="cmt"># Include from other files/repos:</span>
+<span class="cmd">include:
+  - local: ci/build.yml</span>      <span class="cmt"># Same repo</span>
+  <span class="cmd">- project: 'group/shared-ci'
+    ref: main
+    file: '/templates/java.yml'</span> <span class="cmt"># Other repo</span>
+  <span class="cmd">- remote: 'https://example.com/ci-template.yml'
+  - template: Auto-DevOps.gitlab-ci.yml</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 8: GitLab CI Services & Docker-in-Docker -->
+<h2 id="gitlab-services">8. GitLab CI Services &amp; Docker-in-Docker</h2>
+<p class="section-desc">Services spin up dependencies (databases, caches) alongside your tests. DinD enables building Docker images.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Services</td>
+<td>Sidecar containers linked to job (databases, redis, etc.)</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">integration-test:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  services:
+    - name: postgres:15
+      alias: db</span>              <span class="cmt"># Accessible as "db" hostname</span>
+      <span class="cmd">variables:
+        POSTGRES_DB: testdb
+        POSTGRES_USER: test
+        POSTGRES_PASSWORD: test123
+    - name: redis:7-alpine
+      alias: cache</span>
+  <span class="cmd">variables:
+    SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/testdb"
+    SPRING_REDIS_HOST: "cache"
+  script:
+    - mvn test -Pintegration</span></pre></details></td>
+</tr>
+<tr>
+<td>Docker-in-Docker (DinD)</td>
+<td>Build Docker images inside GitLab CI using docker:dind service</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">build-image:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_HOST: "tcp://docker:2376"
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: "/certs/client"
+  before_script:
+    - docker info
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA</span></pre></details></td>
+</tr>
+<tr>
+<td>Kaniko (No Docker daemon)</td>
+<td>Build images without privileged mode using Kaniko</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">build-image-kaniko:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.21.0-debug
+    entrypoint: [""]
+  script:
+    - |
+      /kaniko/executor
+        --context "${CI_PROJECT_DIR}"
+        --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+        --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+        --destination "${CI_REGISTRY_IMAGE}:latest"
+        --cache=true
+        --cache-repo="${CI_REGISTRY_IMAGE}/cache"
+  rules:
+    - changes:
+        - Dockerfile
+        - src/**/*</span></pre></details></td>
+</tr>
+<tr>
+<td>GitLab Container Registry</td>
+<td>Built-in registry at registry.gitlab.com; auth via CI_JOB_TOKEN</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">build-and-push:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER
+        --password-stdin $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  after_script:
+    - docker logout $CI_REGISTRY</span></pre></details></td>
+</tr>
+<tr>
+<td>Docker Compose in CI</td>
+<td>Run multi-container test environments with compose</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">e2e-tests:
+  stage: test
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - apk add --no-cache docker-compose
+  script:
+    - docker-compose -f docker-compose.test.yml up -d
+    - docker-compose -f docker-compose.test.yml run --rm tests
+  after_script:
+    - docker-compose -f docker-compose.test.yml down -v</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 9: Common Patterns -->
+<h2 id="common-patterns">9. Common Patterns (Build, Test, Deploy)</h2>
+<p class="section-desc">Standard patterns (build → test → deploy) apply across all projects — adapt these templates to your stack.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Java Maven Pipeline</td>
+<td>Standard build → test → package → deploy flow</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">pipeline {
+    agent { docker { image 'maven:3.9-eclipse-temurin-17' } }
+    stages {
+        stage('Build')   { steps { sh 'mvn compile -B' } }
+        stage('Test')    { steps { sh 'mvn test -B' } }
+        stage('Package') { steps { sh 'mvn package -DskipTests -B' } }
+        stage('Deploy')  {
+            when { branch 'main' }
+            steps { sh './deploy.sh' }
+        }
+    }
+    post { always { junit '**/surefire-reports/*.xml' } }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">stages: [build, test, package, deploy]
+
+default:
+  image: maven:3.9-eclipse-temurin-17
+  cache:
+    paths: [.m2/repository]
+  variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+build:
+  stage: build
+  script: mvn compile -B
+
+test:
+  stage: test
+  script: mvn test -B
+  artifacts:
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
+
+package:
+  stage: package
+  script: mvn package -DskipTests -B
+  artifacts:
+    paths: [target/*.jar]
+
+deploy:
+  stage: deploy
+  script: ./deploy.sh
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"</span></pre></details></td>
+</tr>
+<tr>
+<td>Node.js Pipeline</td>
+<td>Install → lint → test → build → deploy</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">pipeline {
+    agent { docker { image 'node:20-alpine' } }
+    stages {
+        stage('Install') { steps { sh 'npm ci' } }
+        stage('Quality') {
+            parallel {
+                stage('Lint') { steps { sh 'npm run lint' } }
+                stage('Test') { steps { sh 'npm test -- --coverage' } }
+            }
+        }
+        stage('Build') { steps { sh 'npm run build' } }
+        stage('Deploy') {
+            when { branch 'main' }
+            steps { sh 'npm run deploy' }
+        }
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">stages: [install, quality, build, deploy]
+default:
+  image: node:20-alpine
+  cache:
+    key: { files: [package-lock.json] }
+    paths: [node_modules/]
+
+install:
+  stage: install
+  script: npm ci
+
+lint:
+  stage: quality
+  needs: [install]
+  script: npm run lint
+
+test:
+  stage: quality
+  needs: [install]
+  script: npm test -- --coverage
+  coverage: '/Statements.*?(\d+\.\d+)%/'
+
+build:
+  stage: build
+  needs: [lint, test]
+  script: npm run build
+  artifacts:
+    paths: [dist/]
+
+deploy:
+  stage: deploy
+  needs: [build]
+  script: npm run deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"</span></pre></details></td>
+</tr>
+<tr>
+<td>Python Pipeline</td>
+<td>Install deps → lint → test → build wheel → publish</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">pipeline {
+    agent { docker { image 'python:3.12-slim' } }
+    stages {
+        stage('Setup') {
+            steps {
+                sh 'pip install -e ".[dev]"'
+            }
+        }
+        stage('Quality') {
+            parallel {
+                stage('Lint')  { steps { sh 'ruff check .' } }
+                stage('Type')  { steps { sh 'mypy src/' } }
+                stage('Test')  { steps { sh 'pytest --junitxml=report.xml' } }
+            }
+        }
+        stage('Build') { steps { sh 'python -m build' } }
+    }
+    post { always { junit 'report.xml' } }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">stages: [setup, quality, build]
+default:
+  image: python:3.12-slim
+  cache:
+    paths: [.venv/]
+
+setup:
+  stage: setup
+  script:
+    - python -m venv .venv
+    - source .venv/bin/activate
+    - pip install -e ".[dev]"
+
+lint:
+  stage: quality
+  script: ruff check .
+
+test:
+  stage: quality
+  script: pytest --junitxml=report.xml --cov=src
+  artifacts:
+    reports:
+      junit: report.xml
+
+build:
+  stage: build
+  script: python -m build
+  artifacts:
+    paths: [dist/]</span></pre></details></td>
+</tr>
+<tr>
+<td>Monorepo Pattern</td>
+<td>Only build/test what changed using path filters</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Services') {
+    parallel {
+        stage('API') {
+            when { changeset 'services/api/**' }
+            steps { dir('services/api') { sh 'make build test' } }
+        }
+        stage('Web') {
+            when { changeset 'services/web/**' }
+            steps { dir('services/web') { sh 'npm run build' } }
+        }
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">build-api:
+  stage: build
+  script: make -C services/api build
+  rules:
+    - changes: [services/api/**/*]
+
+build-web:
+  stage: build
+  script: npm --prefix services/web run build
+  rules:
+    - changes: [services/web/**/*]</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 10: Docker in CI/CD -->
+<h2 id="docker-cicd">10. Docker in CI/CD</h2>
+<p class="section-desc">Building and pushing Docker images in CI ensures consistent, tested artifacts reach production.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Build &amp; Push Image</td>
+<td>Build Docker image, tag with commit SHA + latest, push to registry</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">pipeline {
+    agent any
+    environment {
+        REGISTRY = 'registry.example.com'
+        IMAGE    = "${REGISTRY}/myorg/myapp"
+        CREDS    = credentials('docker-registry-creds')
+    }
+    stages {
+        stage('Build Image') {
+            steps {
+                sh """
+                    docker build \
+                      --build-arg VERSION=${env.BUILD_NUMBER} \
+                      -t ${IMAGE}:${env.GIT_COMMIT.take(8)} \
+                      -t ${IMAGE}:latest .
+                """
+            }
+        }
+        stage('Push') {
+            steps {
+                sh "echo ${CREDS_PSW} | docker login ${REGISTRY} -u ${CREDS_USR} --password-stdin"
+                sh "docker push ${IMAGE}:${env.GIT_COMMIT.take(8)}"
+                sh "docker push ${IMAGE}:latest"
+            }
+        }
+    }
+    post { always { sh "docker logout ${REGISTRY}" } }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">build-image:
+  stage: build
+  image: docker:24
+  services: [docker:24-dind]
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    IMAGE: $CI_REGISTRY_IMAGE
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  script:
+    - docker build --build-arg VERSION=$CI_PIPELINE_IID
+        -t $IMAGE:$CI_COMMIT_SHORT_SHA
+        -t $IMAGE:latest .
+    - docker push $IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $IMAGE:latest</span></pre></details></td>
+</tr>
+<tr>
+<td>Multi-stage Dockerfile</td>
+<td>Optimize image size: build in one stage, copy artifacts to slim runtime</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Dockerfile (Java example)</span>
+<span class="cmd">FROM maven:3.9-eclipse-temurin-17 AS builder
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+COPY src ./src
+RUN mvn package -DskipTests -B
+
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=builder /app/target/app.jar ./app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]</span>
+
+<span class="cmt"># Dockerfile (Node.js example)</span>
+<span class="cmd">FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+EXPOSE 3000
+CMD ["node", "dist/server.js"]</span></pre></details></td>
+</tr>
+<tr>
+<td>Image Scanning</td>
+<td>Scan built images for vulnerabilities before pushing</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Scan') {
+    steps {
+        sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL ${IMAGE}:${TAG}'
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">scan-image:
+  stage: test
+  image: aquasec/trivy:latest
+  services: [docker:24-dind]
+  script:
+    - trivy image --exit-code 1 --severity HIGH,CRITICAL
+        $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  allow_failure: true</span>  <span class="cmt"># Don't block pipeline</span></pre></details></td>
+</tr>
+<tr>
+<td>Docker Layer Caching</td>
+<td>Speed up builds by reusing layers from previous builds</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-gitlab">GitLab</span>
+<span class="cmd">build-cached:
+  stage: build
+  image: docker:24
+  services: [docker:24-dind]
+  script:</span>
+    <span class="cmt"># Pull previous image to use as cache source</span>
+    <span class="cmd">- docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build
+        --cache-from $CI_REGISTRY_IMAGE:latest
+        --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+        --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest</span>
+
+<span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Build with Cache') {
+    steps {
+        sh """
+            docker pull ${IMAGE}:latest || true
+            docker build --cache-from ${IMAGE}:latest \
+              -t ${IMAGE}:${TAG} -t ${IMAGE}:latest .
+            docker push ${IMAGE}:${TAG}
+            docker push ${IMAGE}:latest
+        """
+    }
+}</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 11: Kubernetes Deployments from CI/CD -->
+<h2 id="kubernetes">11. Kubernetes Deployments from CI/CD</h2>
+<p class="section-desc">Deploying to Kubernetes from CI/CD automates the release process — from code push to running in production.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>kubectl Deploy</td>
+<td>Apply manifests or update image in existing deployment</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Deploy to K8s') {
+    environment {
+        KUBECONFIG = credentials('kubeconfig-prod')
+    }
+    steps {
+        sh """
+            kubectl set image deployment/myapp \
+              myapp=${IMAGE}:${TAG} \
+              --namespace=production
+            kubectl rollout status deployment/myapp \
+              --namespace=production --timeout=120s
+        """
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">deploy-k8s:
+  stage: deploy
+  image: bitnami/kubectl:1.28
+  script:
+    - kubectl config use-context $KUBE_CONTEXT
+    - kubectl set image deployment/myapp
+        myapp=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+        --namespace=production
+    - kubectl rollout status deployment/myapp
+        --namespace=production --timeout=120s
+  environment:
+    name: production
+    url: https://app.example.com</span></pre></details></td>
+</tr>
+<tr>
+<td>Helm Deploy</td>
+<td>Use Helm charts for templated K8s deployments</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Helm Deploy') {
+    agent { docker { image 'alpine/helm:3.14' } }
+    environment { KUBECONFIG = credentials('kubeconfig-prod') }
+    steps {
+        sh """
+            helm upgrade --install myapp ./charts/myapp \
+              --namespace production \
+              --set image.tag=${env.GIT_COMMIT.take(8)} \
+              --set image.repository=${IMAGE} \
+              --values charts/myapp/values-prod.yaml \
+              --wait --timeout 5m
+        """
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">helm-deploy:
+  stage: deploy
+  image: alpine/helm:3.14
+  script:
+    - helm upgrade --install myapp ./charts/myapp
+        --namespace production
+        --set image.tag=$CI_COMMIT_SHORT_SHA
+        --set image.repository=$CI_REGISTRY_IMAGE
+        --values charts/myapp/values-prod.yaml
+        --wait --timeout 5m
+  environment:
+    name: production
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual</span></pre></details></td>
+</tr>
+<tr>
+<td>Kustomize Deploy</td>
+<td>Patch-based K8s config management without templates</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-gitlab">GitLab</span>
+<span class="cmd">deploy-kustomize:
+  stage: deploy
+  image: bitnami/kubectl:1.28
+  script:
+    - cd k8s/overlays/production
+    - kustomize edit set image myapp=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - kubectl apply -k .
+    - kubectl rollout status deployment/myapp -n production</span>
+
+<span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Kustomize Deploy') {
+    steps {
+        dir('k8s/overlays/production') {
+            sh """
+                kustomize edit set image myapp=${IMAGE}:${TAG}
+                kubectl apply -k .
+                kubectl rollout status deployment/myapp -n production
+            """
+        }
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>ArgoCD GitOps</td>
+<td>CI updates Git repo; ArgoCD syncs to cluster automatically</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-gitlab">GitLab</span>
+<span class="cmd">update-gitops:
+  stage: deploy
+  image: alpine/git
+  variables:
+    GITOPS_REPO: "https://oauth2:${GITOPS_TOKEN}@gitlab.com/org/gitops-config.git"
+  script:
+    - git clone $GITOPS_REPO config
+    - cd config/apps/myapp/overlays/production
+    - kustomize edit set image myapp=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - git add .
+    - git commit -m "Deploy myapp $CI_COMMIT_SHORT_SHA"
+    - git push
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"</span>
+
+<span class="cmt"># ArgoCD detects change and syncs automatically</span></pre></details></td>
+</tr>
+<tr>
+<td>Rollback Strategy</td>
+<td>Auto-rollback on failed deployment health checks</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Deploy with Rollback') {
+    steps {
+        script {
+            try {
+                sh "kubectl set image deployment/myapp myapp=${IMAGE}:${TAG} -n prod"
+                sh "kubectl rollout status deployment/myapp -n prod --timeout=120s"
+            } catch (err) {
+                echo "Deploy failed, rolling back..."
+                sh "kubectl rollout undo deployment/myapp -n prod"
+                sh "kubectl rollout status deployment/myapp -n prod --timeout=60s"
+                error("Deployment failed and was rolled back")
+            }
+        }
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">deploy:
+  stage: deploy
+  script:
+    - kubectl set image deployment/myapp myapp=$IMAGE:$TAG -n prod
+    - |
+      if ! kubectl rollout status deployment/myapp -n prod --timeout=120s; then
+        echo "Rolling back..."
+        kubectl rollout undo deployment/myapp -n prod
+        exit 1
+      fi</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 12: Secrets Management -->
+<h2 id="secrets">12. Secrets Management</h2>
+<p class="section-desc">Secrets (API keys, passwords) must never be in code. Use CI/CD-native secret stores or external vaults.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Jenkins Credentials</td>
+<td>Store secrets in Jenkins credential store; bind with credentials() helper</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">pipeline {
+    agent any
+    environment {</span>
+        <span class="cmt">// Username+Password credential → _USR and _PSW vars</span>
+        <span class="cmd">DOCKER_CREDS = credentials('docker-hub-creds')</span>
+        <span class="cmt">// Secret text</span>
+        <span class="cmd">API_TOKEN = credentials('api-token-id')</span>
+        <span class="cmt">// Secret file → path to temp file</span>
+        <span class="cmd">KUBECONFIG = credentials('kubeconfig-file')</span>
+    <span class="cmd">}
+    stages {
+        stage('Use Secrets') {
+            steps {
+                sh 'echo $DOCKER_CREDS_USR'</span>   <span class="cmt">// username</span>
+                <span class="cmd">sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'</span>
+                <span class="cmd">sh 'curl -H "Authorization: Bearer $API_TOKEN" https://api.example.com'</span>
+            <span class="cmd">}
+        }
+    }
+}</span>
+
+<span class="cmt">// withCredentials block (more granular):</span>
+<span class="cmd">withCredentials([
+    usernamePassword(credentialsId: 'my-creds',
+                     usernameVariable: 'USER',
+                     passwordVariable: 'PASS'),
+    string(credentialsId: 'slack-webhook', variable: 'WEBHOOK_URL'),
+    file(credentialsId: 'service-account', variable: 'SA_KEY')
+]) {
+    sh 'gcloud auth activate-service-account --key-file=$SA_KEY'
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>GitLab CI Variables (Secrets)</td>
+<td>Project/Group variables: masked, protected, environment-scoped</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Configure in Settings → CI/CD → Variables</span>
+<span class="cmd">Key:            AWS_SECRET_ACCESS_KEY
+Value:          ****
+Protected:      ✓</span>  <span class="cmt"># Only on protected branches/tags</span>
+<span class="cmd">Masked:         ✓</span>  <span class="cmt"># Replaced with [MASKED] in logs</span>
+<span class="cmd">Environment:    production</span> <span class="cmt"># Only in production env jobs</span>
+
+<span class="cmt"># File-type variable (useful for certs, kubeconfigs):</span>
+<span class="cmd">Key:     GOOGLE_APPLICATION_CREDENTIALS
+Type:    File</span>    <span class="cmt"># Variable value = path to temp file with content</span>
+
+<span class="cmt"># Usage in job:</span>
+<span class="cmd">deploy:
+  script:
+    - echo "Key is at $GOOGLE_APPLICATION_CREDENTIALS"
+    - gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS</span></pre></details></td>
+</tr>
+<tr>
+<td>HashiCorp Vault Integration</td>
+<td>Pull secrets dynamically from Vault at pipeline runtime</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Deploy with Vault Secrets') {
+    steps {
+        withVault(configuration: [
+            vaultUrl: 'https://vault.example.com',
+            vaultCredentialId: 'vault-approle'
+        ], vaultSecrets: [
+            [path: 'secret/data/myapp/prod', secretValues: [
+                [envVar: 'DB_PASSWORD', vaultKey: 'db_password'],
+                [envVar: 'API_KEY', vaultKey: 'api_key']
+            ]]
+        ]) {
+            sh './deploy.sh'
+        }
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">deploy:
+  stage: deploy
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: https://vault.example.com
+  secrets:
+    DB_PASSWORD:
+      vault: myapp/prod/db_password@secret
+      token: $VAULT_ID_TOKEN
+    API_KEY:
+      vault: myapp/prod/api_key@secret
+      token: $VAULT_ID_TOKEN
+  script:
+    - echo "DB_PASSWORD and API_KEY are injected as env vars"
+    - ./deploy.sh</span></pre></details></td>
+</tr>
+<tr>
+<td>AWS Secrets Manager</td>
+<td>Fetch secrets from AWS at build time</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Fetch AWS Secrets') {
+    steps {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
+                          credentialsId: 'aws-prod']]) {
+            script {
+                def secret = sh(script: """
+                    aws secretsmanager get-secret-value \
+                      --secret-id myapp/prod \
+                      --query SecretString --output text
+                """, returnStdout: true).trim()
+                env.DB_URL = readJSON(text: secret).db_url
+            }
+        }
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">deploy:
+  image: amazon/aws-cli:2
+  script:
+    - export SECRET=$(aws secretsmanager get-secret-value
+        --secret-id myapp/prod --query SecretString --output text)
+    - export DB_URL=$(echo $SECRET | jq -r .db_url)
+    - ./deploy.sh</span></pre></details></td>
+</tr>
+<tr>
+<td>Credential Rotation</td>
+<td>Best practices for rotating secrets without downtime</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Strategy: Blue/Green secret rotation</span>
+<span class="cmd">1. Create new credential version in Vault/Secrets Manager
+2. Update CI/CD variable to point to new version
+3. Deploy application (reads new secret)
+4. Verify application works with new secret
+5. Revoke old secret after grace period</span>
+
+<span class="cmt"># Jenkins: use Folder-level credentials for inheritance</span>
+<span class="cmd">Manage Jenkins → Credentials → System → Global credentials
+  OR
+Folder → Credentials → Folder (scoped to jobs in folder)</span>
+
+<span class="cmt"># GitLab: Group-level variables cascade to all projects</span>
+<span class="cmd">Group → Settings → CI/CD → Variables
+  ↓ inherited by all projects in group</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 13: Notifications & Integrations -->
+<h2 id="notifications">13. Notifications &amp; Integrations</h2>
+<p class="section-desc">Notifications keep the team informed of pipeline status — catch failures early, celebrate successes.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Slack Notifications</td>
+<td>Send build status to Slack channels</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">post {
+    success {
+        slackSend(
+            channel: '#deployments',
+            color: 'good',
+            message: "✅ *${env.JOB_NAME}* #${env.BUILD_NUMBER} succeeded\n${env.BUILD_URL}"
+        )
+    }
+    failure {
+        slackSend(
+            channel: '#deployments',
+            color: 'danger',
+            message: "❌ *${env.JOB_NAME}* #${env.BUILD_NUMBER} failed\n${env.BUILD_URL}"
+        )
+    }
+}</span>
+
+<span class="cmt">// Or via shared library:</span>
+<span class="cmd">// vars/notifySlack.groovy
+def call(String status = 'SUCCESS') {
+    def color = status == 'SUCCESS' ? 'good' : 'danger'
+    def emoji = status == 'SUCCESS' ? '✅' : '❌'
+    slackSend(channel: '#ci', color: color,
+              message: "${emoji} ${env.JOB_NAME} #${env.BUILD_NUMBER}: ${status}")
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">notify-slack:
+  stage: .post
+  image: curlimages/curl:latest
+  script:
+    - |
+      curl -X POST "$SLACK_WEBHOOK_URL" \
+        -H 'Content-Type: application/json' \
+        -d "{
+          \"text\": \"Pipeline $CI_PIPELINE_ID: $CI_JOB_STATUS\",
+          \"blocks\": [{
+            \"type\": \"section\",
+            \"text\": {
+              \"type\": \"mrkdwn\",
+              \"text\": \"*$CI_PROJECT_NAME* pipeline <$CI_PIPELINE_URL|#$CI_PIPELINE_IID>: $CI_JOB_STATUS\"
+            }
+          }]
+        }"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: always</span></pre></details></td>
+</tr>
+<tr>
+<td>Email Notifications</td>
+<td>Send email on build status changes</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">post {
+    failure {
+        emailext(
+            to: 'team@example.com',
+            subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+                &lt;p&gt;Build failed: &lt;a href="${env.BUILD_URL}"&gt;${env.JOB_NAME} #${env.BUILD_NUMBER}&lt;/a&gt;&lt;/p&gt;
+                &lt;p&gt;Branch: ${env.BRANCH_NAME}&lt;/p&gt;
+                &lt;p&gt;Changes: ${currentBuild.changeSets.collect { it.items.collect { it.msg } }.flatten().join(', ')}&lt;/p&gt;
+            """,
+            mimeType: 'text/html'
+        )
+    }
+    changed {</span> <span class="cmt">// Status changed (e.g., fixed after failure)</span>
+        <span class="cmd">emailext(to: 'team@example.com',
+                 subject: "FIXED: ${env.JOB_NAME}",
+                 body: "Build is back to normal!")
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmt"># GitLab sends emails by default on pipeline failure
+# Configure in: Settings → Integrations → Pipeline emails
+# Or project Settings → CI/CD → General pipelines → Email</span></pre></details></td>
+</tr>
+<tr>
+<td>Webhooks (Generic)</td>
+<td>POST build status to any HTTP endpoint</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">post {
+    always {
+        script {
+            def payload = [
+                job: env.JOB_NAME,
+                build: env.BUILD_NUMBER,
+                status: currentBuild.currentResult,
+                url: env.BUILD_URL,
+                branch: env.BRANCH_NAME,
+                commit: env.GIT_COMMIT
+            ]
+            httpRequest(
+                url: 'https://hooks.example.com/ci-status',
+                httpMode: 'POST',
+                contentType: 'APPLICATION_JSON',
+                requestBody: groovy.json.JsonOutput.toJson(payload)
+            )
+        }
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">webhook-notify:
+  stage: .post
+  image: curlimages/curl:latest
+  script:
+    - |
+      curl -X POST "https://hooks.example.com/ci-status" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"project\": \"$CI_PROJECT_NAME\",
+          \"pipeline\": \"$CI_PIPELINE_ID\",
+          \"status\": \"$CI_JOB_STATUS\",
+          \"branch\": \"$CI_COMMIT_BRANCH\",
+          \"url\": \"$CI_PIPELINE_URL\"
+        }"
+  when: always</span></pre></details></td>
+</tr>
+<tr>
+<td>Microsoft Teams</td>
+<td>Send pipeline notifications to Teams channels via webhook</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">post {
+    failure {
+        office365ConnectorSend(
+            webhookUrl: "${env.TEAMS_WEBHOOK}",
+            status: 'Failed',
+            message: "Build ${env.JOB_NAME} #${env.BUILD_NUMBER} failed"
+        )
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">teams-notify:
+  stage: .post
+  script:
+    - |
+      curl -X POST "$TEAMS_WEBHOOK_URL" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"@type\": \"MessageCard\",
+          \"themeColor\": \"d32f2f\",
+          \"summary\": \"Pipeline $CI_PIPELINE_IID\",
+          \"sections\": [{
+            \"activityTitle\": \"Pipeline #$CI_PIPELINE_IID $CI_JOB_STATUS\",
+            \"facts\": [
+              {\"name\": \"Project\", \"value\": \"$CI_PROJECT_NAME\"},
+              {\"name\": \"Branch\", \"value\": \"$CI_COMMIT_BRANCH\"}
+            ]
+          }]
+        }"
+  when: always</span></pre></details></td>
+</tr>
+<tr>
+<td>GitHub Status Checks</td>
+<td>Report Jenkins/GitLab build status back to GitHub PRs</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmt">// With GitHub plugin — automatic for multibranch pipelines</span>
+<span class="cmd">pipeline {
+    options { githubProjectProperty(projectUrlStr: 'https://github.com/org/repo') }
+    stages {
+        stage('Build') {
+            steps {
+                githubNotify status: 'PENDING', description: 'Building...'
+                sh 'mvn build'
+            }
+        }
+    }
+    post {
+        success { githubNotify status: 'SUCCESS' }
+        failure { githubNotify status: 'FAILURE' }
+    }
+}</span></pre></details></td>
+</tr>
+</table>
+
+<!-- Section 14: Best Practices -->
+<h2 id="best-practices">14. Best Practices</h2>
+<p class="section-desc">Best practices make pipelines fast, reliable, and maintainable — caching, fail-fast, and security scanning.</p>
+<table>
+<tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+<tr>
+<td>Caching Strategy</td>
+<td>Cache dependencies to avoid re-downloading every build</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">pipeline {
+    agent { docker {
+        image 'maven:3.9-eclipse-temurin-17'
+        args '-v maven-cache:/root/.m2'</span>  <span class="cmt">// Named Docker volume</span>
+    <span class="cmd">} }
+    stages {
+        stage('Build') { steps { sh 'mvn package -B' } }
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">default:
+  cache:
+    - key:
+        files: [pom.xml]</span>          <span class="cmt"># Key from file hash — busts on change</span>
+      <span class="cmd">paths: [.m2/repository]
+      policy: pull-push
+    - key: $CI_COMMIT_REF_SLUG</span>    <span class="cmt"># Branch-specific cache</span>
+      <span class="cmd">paths: [target/]
+      policy: pull</span>               <span class="cmt"># Read-only in most jobs</span>
+
+<span class="cmt"># Cache warming job (runs only on default branch):</span>
+<span class="cmd">warm-cache:
+  stage: .pre
+  script: mvn dependency:go-offline -B
+  cache:
+    key: { files: [pom.xml] }
+    paths: [.m2/repository]
+    policy: push</span>                 <span class="cmt"># Only writes cache</span>
+  <span class="cmd">rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH</span></pre></details></td>
+</tr>
+<tr>
+<td>Fail Fast</td>
+<td>Stop pipeline early on first failure; parallelize independent checks</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Quality Gates') {
+    failFast true</span>               <span class="cmt">// Kill all parallel if one fails</span>
+    <span class="cmd">parallel {
+        stage('Lint')  { steps { sh 'npm run lint' } }
+        stage('Types') { steps { sh 'npm run typecheck' } }
+        stage('Test')  { steps { sh 'npm test' } }
+    }
+}</span>
+
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">workflow:
+  auto_cancel:
+    on_new_commit: interruptible</span> <span class="cmt"># Cancel running if new push</span>
+
+<span class="cmd">lint:
+  stage: test
+  interruptible: true</span>          <span class="cmt"># Can be cancelled</span>
+  <span class="cmd">script: npm run lint
+
+test:
+  stage: test
+  interruptible: true
+  script: npm test
+  allow_failure: false</span>         <span class="cmt"># Default: blocks pipeline</span></pre></details></td>
+</tr>
+<tr>
+<td>Artifact Management</td>
+<td>Keep builds lean; expire artifacts; use external storage for large files</td>
+<td><details><summary>▶ Show</summary><pre><span class="label label-gitlab">GitLab</span>
+<span class="cmd">build:
+  artifacts:
+    paths: [dist/]
+    expire_in: 3 days</span>          <span class="cmt"># Don't keep forever</span>
+    <span class="cmd">when: on_success</span>            <span class="cmt"># Only on success</span>
+
+<span class="cmt"># For large artifacts, upload to S3/GCS instead:</span>
+<span class="cmd">  after_script:
+    - aws s3 cp dist/ s3://builds/$CI_PIPELINE_ID/ --recursive</span>
+
+<span class="label label-jenkins">Jenkins</span>
+<span class="cmd">options {
+    buildDiscarder(logRotator(
+        numToKeepStr: '10',</span>     <span class="cmt">// Keep last 10 builds</span>
+        <span class="cmd">artifactNumToKeepStr: '5'</span> <span class="cmt">// Keep artifacts from last 5</span>
+    <span class="cmd">))
+}
+post {
+    success {
+        archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+        s3Upload(bucket: 'ci-artifacts', path: "builds/${env.BUILD_NUMBER}/")
+    }
+}</span></pre></details></td>
+</tr>
+<tr>
+<td>Rollback Strategies</td>
+<td>Quick recovery from failed deployments</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Strategy 1: K8s rollback</span>
+<span class="cmd">kubectl rollout undo deployment/myapp -n production</span>
+
+<span class="cmt"># Strategy 2: Redeploy previous good image</span>
+<span class="label label-jenkins">Jenkins</span>
+<span class="cmd">stage('Rollback') {
+    when { expression { params.ROLLBACK == true } }
+    steps {
+        script {
+            def previousTag = sh(script: """
+                kubectl get deployment myapp -n prod \
+                  -o jsonpath='{.metadata.annotations.previous-tag}'
+            """, returnStdout: true).trim()
+            sh "kubectl set image deployment/myapp myapp=${IMAGE}:${previousTag} -n prod"
+        }
+    }
+}</span>
+
+<span class="cmt"># Strategy 3: Blue/Green deployment</span>
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">deploy-green:
+  script:
+    - kubectl apply -f k8s/green-deployment.yaml
+    - kubectl rollout status deployment/myapp-green
+    - kubectl patch service myapp -p '{"spec":{"selector":{"version":"green"}}}'
+  environment:
+    name: production
+    on_stop: rollback-to-blue
+
+rollback-to-blue:
+  script:
+    - kubectl patch service myapp -p '{"spec":{"selector":{"version":"blue"}}}'
+  environment:
+    name: production
+    action: stop
+  when: manual</span></pre></details></td>
+</tr>
+<tr>
+<td>Pipeline as Code</td>
+<td>Version control your CI config; review changes via MR/PR</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmt"># Best practices for pipeline maintenance:</span>
+<span class="cmd">1. Store Jenkinsfile / .gitlab-ci.yml in repo root
+2. Use shared libraries / includes for common patterns
+3. Pin versions (images, tools, plugins)
+4. Keep pipelines under 10 minutes (cache + parallel)
+5. Use branch protection rules for CI config changes
+6. Template repetitive jobs (extends / YAML anchors)
+7. Document required variables and secrets
+8. Test pipeline changes in feature branches first</span>
+
+<span class="cmt"># YAML anchors for DRY config:</span>
+<span class="cmd">.deploy-template: &amp;deploy
+  image: bitnami/kubectl:1.28
+  before_script:
+    - kubectl config use-context $KUBE_CONTEXT
+
+deploy-staging:
+  &lt;&lt;: *deploy
+  script: kubectl apply -f k8s/staging/
+  environment: { name: staging }
+
+deploy-production:
+  &lt;&lt;: *deploy
+  script: kubectl apply -f k8s/production/
+  environment: { name: production }
+  when: manual</span></pre></details></td>
+</tr>
+<tr>
+<td>Security Best Practices</td>
+<td>Harden your CI/CD pipelines against supply chain attacks</td>
+<td><details><summary>▶ Show</summary><pre><span class="cmd">1. Pin image digests (not just tags):
+   image: maven@sha256:abc123...</span>  <span class="cmt"># Immutable</span>
+
+<span class="cmd">2. Scan dependencies:
+   - npm audit / mvn dependency-check:check / pip-audit
+
+3. Sign artifacts:
+   - cosign sign --key cosign.key $IMAGE:$TAG
+
+4. Least-privilege runners:
+   - Don't run as root
+   - Limit network access
+   - Use short-lived credentials
+
+5. Protected branches/environments:
+   - Require approval for production deploys
+   - Restrict who can merge to main
+
+6. Audit trail:
+   - Log who triggered deploys
+   - Track which image/commit is in each env
+
+7. SAST/DAST in pipeline:</span>
+<span class="label label-gitlab">GitLab</span>
+<span class="cmd">include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Container-Scanning.gitlab-ci.yml</span></pre></details></td>
+</tr>
+</table>
+
+<footer style="margin-top:3rem; padding:1rem 0; border-top:1px solid #ddd; color:#666; font-size:0.85rem;">
+<p>CI/CD Cheatsheet — Jenkins &amp; GitLab CI | Generated 2026-08-01 | For reference use</p>
+</footer>
+
+<script>
+document.getElementById('toggleAll').addEventListener('change', function() {
+  const details = document.querySelectorAll('details');
+  details.forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+});
+</script>
+
+</body>
+</html>

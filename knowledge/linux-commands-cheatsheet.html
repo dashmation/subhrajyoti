@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux Commands Cheatsheet</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #1a1a1a;
+    padding: 24px 30px;
+    background: #fff;
+  }
+  h1 { text-align: center; font-size: 26px; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #555; margin-bottom: 24px; font-size: 13px; }
+  h2 {
+    font-size: 15px;
+    margin: 24px 0 8px 0;
+    padding: 5px 10px;
+    background: #2e4053;
+    color: #fff;
+    border-radius: 4px;
+  }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 12px; }
+  th { background: #34495e; color: #fff; font-weight: 600; text-align: left; padding: 6px 8px; }
+  td { padding: 4px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  tr:hover { background: #edf2f7; }
+  td:first-child { font-weight: 600; color: #2e4053; width: 16%; white-space: nowrap; }
+  td:nth-child(2) { width: 40%; }
+  td:nth-child(3) { width: 44%; }
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    font-size: 11px;
+    background: #f0f0f0;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #c0392b;
+  }
+  details { margin: 0; }
+  details summary {
+    cursor: pointer; font-size: 10px; color: #7f8c8d;
+    user-select: none; padding: 1px 0;
+  }
+  details summary:hover { color: #2e4053; }
+  details[open] summary { color: #2e4053; font-weight: 500; }
+  details pre {
+    margin: 4px 0 0 0; padding: 5px 8px; border-radius: 4px;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 10.5px; line-height: 1.5; overflow-x: auto;
+    white-space: pre; background: #1e1e1e; color: #d4d4d4;
+    border: 1px solid #333;
+  }
+  details pre .cmd { color: #4ec9b0; }
+  details pre .cmt { color: #6a9955; }
+  .toc { columns: 4; margin-bottom: 20px; padding: 10px; background: #f4f6f9; border-radius: 5px; }
+  .toc a { display: block; padding: 2px 0; color: #2e4053; text-decoration: none; font-size: 12px; }
+  .toc a:hover { text-decoration: underline; }
+  @media print {
+    body { padding: 8px 12px; font-size: 10px; }
+    details[open] pre { break-inside: avoid; }
+    h2 { break-after: avoid; }
+    tr { break-inside: avoid; }
+  }
+  .toggle-all { text-align: center; margin-bottom: 16px; }
+  .toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+  input:checked + .slider { background: #4a90d9; }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Linux Commands Cheatsheet</h1>
+<p class="subtitle">Comprehensive reference — click ▶ to expand examples</p>
+
+<div class="toggle-all">
+  <label class="switch">
+    <input type="checkbox" id="toggleAll">
+    <span class="slider"></span>
+  </label>
+  <span class="toggle-label">Expand All Examples</span>
+</div>
+
+<div class="toc">
+  <a href="#s1">1. File Operations</a>
+  <a href="#s2">2. Directory Operations</a>
+  <a href="#s3">3. Permissions</a>
+  <a href="#s4">4. Text Processing</a>
+  <a href="#s5">5. Search &amp; Find</a>
+  <a href="#s6">6. Process Management</a>
+  <a href="#s7">7. System Information</a>
+  <a href="#s8">8. Networking</a>
+  <a href="#s9">9. Disk &amp; Storage</a>
+  <a href="#s10">10. Archive &amp; Compression</a>
+  <a href="#s11">11. User Management</a>
+  <a href="#s12">12. Package Management</a>
+  <a href="#s13">13. Services &amp; Systemd</a>
+  <a href="#s14">14. SSH &amp; Remote</a>
+  <a href="#s15">15. Cron &amp; Scheduling</a>
+  <a href="#s16">16. Shell &amp; Scripting</a>
+  <a href="#s17">17. Git</a>
+  <a href="#s18">18. Docker</a>
+  <a href="#s19">19. Logs &amp; Monitoring</a>
+  <a href="#s20">20. Misc / Useful</a>
+</div>
+
+<!-- Section 1 -->
+<h2 id="s1">1. File Operations</h2>
+<p class="section-desc">File operations are the most basic Linux skill — creating, copying, moving, and inspecting files you work with daily.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>ls</td><td>List directory contents</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ls</span>           <span class="cmt"># list files</span>
+<span class="cmd">ls -la</span>       <span class="cmt"># long format + hidden</span>
+<span class="cmd">ls -lh</span>       <span class="cmt"># human-readable sizes</span>
+<span class="cmd">ls -ltr</span>      <span class="cmt"># sort by time (oldest first)</span>
+<span class="cmd">ls *.txt</span>     <span class="cmt"># list only .txt files</span></pre></details></td></tr>
+<tr><td>cp</td><td>Copy files/directories</td><td><details><summary>▶ Show</summary><pre><span class="cmd">cp file.txt backup.txt</span>       <span class="cmt"># copy file</span>
+<span class="cmd">cp -r dir1/ dir2/</span>            <span class="cmt"># copy directory recursively</span>
+<span class="cmd">cp -p file.txt dest/</span>         <span class="cmt"># preserve permissions</span>
+<span class="cmd">cp -i file.txt dest/</span>         <span class="cmt"># prompt before overwrite</span></pre></details></td></tr>
+<tr><td>mv</td><td>Move/rename files</td><td><details><summary>▶ Show</summary><pre><span class="cmd">mv old.txt new.txt</span>           <span class="cmt"># rename</span>
+<span class="cmd">mv file.txt /tmp/</span>            <span class="cmt"># move to directory</span>
+<span class="cmd">mv -i src dest</span>               <span class="cmt"># prompt before overwrite</span></pre></details></td></tr>
+<tr><td>rm</td><td>Remove files/directories</td><td><details><summary>▶ Show</summary><pre><span class="cmd">rm file.txt</span>                  <span class="cmt"># remove file</span>
+<span class="cmd">rm -r dir/</span>                   <span class="cmt"># remove directory recursively</span>
+<span class="cmd">rm -f file.txt</span>               <span class="cmt"># force remove (no prompt)</span>
+<span class="cmd">rm -rf dir/</span>                  <span class="cmt"># force remove dir (DANGEROUS)</span></pre></details></td></tr>
+<tr><td>touch</td><td>Create empty file / update timestamp</td><td><details><summary>▶ Show</summary><pre><span class="cmd">touch newfile.txt</span>            <span class="cmt"># create empty file</span>
+<span class="cmd">touch -t 202401011200 f.txt</span> <span class="cmt"># set specific timestamp</span></pre></details></td></tr>
+<tr><td>cat</td><td>Display file contents</td><td><details><summary>▶ Show</summary><pre><span class="cmd">cat file.txt</span>                 <span class="cmt"># display entire file</span>
+<span class="cmd">cat -n file.txt</span>              <span class="cmt"># with line numbers</span>
+<span class="cmd">cat f1.txt f2.txt > combined.txt</span> <span class="cmt"># concatenate</span></pre></details></td></tr>
+<tr><td>head / tail</td><td>Show beginning/end of file</td><td><details><summary>▶ Show</summary><pre><span class="cmd">head -20 file.txt</span>            <span class="cmt"># first 20 lines</span>
+<span class="cmd">tail -20 file.txt</span>            <span class="cmt"># last 20 lines</span>
+<span class="cmd">tail -f /var/log/syslog</span>      <span class="cmt"># follow (live updates)</span>
+<span class="cmd">tail -f -n 100 app.log</span>      <span class="cmt"># follow last 100 lines</span></pre></details></td></tr>
+<tr><td>ln</td><td>Create links</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ln -s /path/to/file link_name</span>  <span class="cmt"># symbolic link</span>
+<span class="cmd">ln file.txt hardlink.txt</span>       <span class="cmt"># hard link</span>
+<span class="cmd">readlink -f link_name</span>          <span class="cmt"># resolve symlink path</span></pre></details></td></tr>
+<tr><td>file</td><td>Determine file type</td><td><details><summary>▶ Show</summary><pre><span class="cmd">file image.png</span>               <span class="cmt"># → PNG image data</span>
+<span class="cmd">file script.sh</span>               <span class="cmt"># → Bourne-Again shell script</span></pre></details></td></tr>
+<tr><td>stat</td><td>Display file details</td><td><details><summary>▶ Show</summary><pre><span class="cmd">stat file.txt</span>                <span class="cmt"># size, permissions, timestamps</span></pre></details></td></tr>
+<tr><td>wc</td><td>Word/line/byte count</td><td><details><summary>▶ Show</summary><pre><span class="cmd">wc file.txt</span>                  <span class="cmt"># lines, words, bytes</span>
+<span class="cmd">wc -l file.txt</span>               <span class="cmt"># line count only</span>
+<span class="cmd">wc -w file.txt</span>               <span class="cmt"># word count only</span></pre></details></td></tr>
+<tr><td>diff</td><td>Compare files</td><td><details><summary>▶ Show</summary><pre><span class="cmd">diff file1.txt file2.txt</span>     <span class="cmt"># show differences</span>
+<span class="cmd">diff -u f1.txt f2.txt</span>        <span class="cmt"># unified format</span>
+<span class="cmd">diff -r dir1/ dir2/</span>          <span class="cmt"># compare directories</span></pre></details></td></tr>
+</table>
+<!-- Section 2 -->
+<h2 id="s2">2. Directory Operations</h2>
+<p class="section-desc">Navigating and organizing directories is essential for working efficiently in the terminal.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>pwd</td><td>Print working directory</td><td><details><summary>▶ Show</summary><pre><span class="cmd">pwd</span>                          <span class="cmt"># /home/user/projects</span></pre></details></td></tr>
+<tr><td>cd</td><td>Change directory</td><td><details><summary>▶ Show</summary><pre><span class="cmd">cd /var/log</span>                  <span class="cmt"># absolute path</span>
+<span class="cmd">cd ../</span>                       <span class="cmt"># parent directory</span>
+<span class="cmd">cd ~</span>                         <span class="cmt"># home directory</span>
+<span class="cmd">cd -</span>                         <span class="cmt"># previous directory</span></pre></details></td></tr>
+<tr><td>mkdir</td><td>Create directories</td><td><details><summary>▶ Show</summary><pre><span class="cmd">mkdir mydir</span>                  <span class="cmt"># create single dir</span>
+<span class="cmd">mkdir -p a/b/c</span>               <span class="cmt"># create nested dirs</span>
+<span class="cmd">mkdir -m 755 mydir</span>           <span class="cmt"># create with permissions</span></pre></details></td></tr>
+<tr><td>rmdir</td><td>Remove empty directory</td><td><details><summary>▶ Show</summary><pre><span class="cmd">rmdir emptydir</span>               <span class="cmt"># only works if empty</span>
+<span class="cmd">rm -r nonemptydir/</span>           <span class="cmt"># remove non-empty</span></pre></details></td></tr>
+<tr><td>tree</td><td>Display directory tree</td><td><details><summary>▶ Show</summary><pre><span class="cmd">tree</span>                         <span class="cmt"># full tree from current dir</span>
+<span class="cmd">tree -L 2</span>                    <span class="cmt"># limit depth to 2</span>
+<span class="cmd">tree -d</span>                      <span class="cmt"># directories only</span>
+<span class="cmd">tree -I node_modules</span>         <span class="cmt"># ignore pattern</span></pre></details></td></tr>
+<tr><td>basename / dirname</td><td>Extract name / path parts</td><td><details><summary>▶ Show</summary><pre><span class="cmd">basename /home/user/file.txt</span>  <span class="cmt"># → file.txt</span>
+<span class="cmd">dirname /home/user/file.txt</span>   <span class="cmt"># → /home/user</span></pre></details></td></tr>
+<tr><td>realpath</td><td>Resolve absolute path</td><td><details><summary>▶ Show</summary><pre><span class="cmd">realpath ./relative/path</span>     <span class="cmt"># → /full/absolute/path</span></pre></details></td></tr>
+</table>
+
+<!-- Section 3 -->
+<h2 id="s3">3. File Permissions &amp; Ownership</h2>
+<p class="section-desc">Permissions control who can read, write, or execute files — critical for security and shared systems.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>chmod</td><td>Change file permissions</td><td><details><summary>▶ Show</summary><pre><span class="cmd">chmod 755 script.sh</span>          <span class="cmt"># rwxr-xr-x</span>
+<span class="cmd">chmod 644 file.txt</span>           <span class="cmt"># rw-r--r--</span>
+<span class="cmd">chmod +x script.sh</span>           <span class="cmt"># add execute permission</span>
+<span class="cmd">chmod -w file.txt</span>            <span class="cmt"># remove write permission</span>
+<span class="cmd">chmod u+x,g+r file</span>          <span class="cmt"># user+exec, group+read</span>
+<span class="cmd">chmod -R 755 dir/</span>            <span class="cmt"># recursive</span></pre></details></td></tr>
+<tr><td>chown</td><td>Change file owner</td><td><details><summary>▶ Show</summary><pre><span class="cmd">chown user file.txt</span>          <span class="cmt"># change owner</span>
+<span class="cmd">chown user:group file.txt</span>    <span class="cmt"># change owner and group</span>
+<span class="cmd">chown -R user:group dir/</span>     <span class="cmt"># recursive</span></pre></details></td></tr>
+<tr><td>chgrp</td><td>Change group ownership</td><td><details><summary>▶ Show</summary><pre><span class="cmd">chgrp devteam file.txt</span>       <span class="cmt"># change group</span>
+<span class="cmd">chgrp -R devteam project/</span>    <span class="cmt"># recursive</span></pre></details></td></tr>
+<tr><td>umask</td><td>Set default permissions</td><td><details><summary>▶ Show</summary><pre><span class="cmd">umask</span>                        <span class="cmt"># show current (e.g. 022)</span>
+<span class="cmd">umask 077</span>                    <span class="cmt"># new files: owner only</span></pre></details></td></tr>
+<tr><td>getfacl / setfacl</td><td>Access control lists</td><td><details><summary>▶ Show</summary><pre><span class="cmd">getfacl file.txt</span>             <span class="cmt"># view ACLs</span>
+<span class="cmd">setfacl -m u:bob:rw file.txt</span> <span class="cmt"># give bob read+write</span></pre></details></td></tr>
+</table>
+
+<!-- Section 4 -->
+<h2 id="s4">4. Text Processing</h2>
+<p class="section-desc">Text processing tools (grep, sed, awk) are Linux superpowers — they transform and extract data from files and streams.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>grep</td><td>Search text patterns</td><td><details><summary>▶ Show</summary><pre><span class="cmd">grep "error" log.txt</span>         <span class="cmt"># find lines with "error"</span>
+<span class="cmd">grep -i "error" log.txt</span>      <span class="cmt"># case-insensitive</span>
+<span class="cmd">grep -r "TODO" src/</span>          <span class="cmt"># recursive search</span>
+<span class="cmd">grep -n "func" *.py</span>          <span class="cmt"># with line numbers</span>
+<span class="cmd">grep -c "error" log.txt</span>      <span class="cmt"># count matches</span>
+<span class="cmd">grep -v "debug" log.txt</span>      <span class="cmt"># invert (exclude)</span>
+<span class="cmd">grep -E "err|warn" log.txt</span>   <span class="cmt"># extended regex (OR)</span>
+<span class="cmd">grep -l "main" *.java</span>        <span class="cmt"># files containing match</span></pre></details></td></tr>
+<tr><td>sed</td><td>Stream editor (find/replace)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sed 's/old/new/' file.txt</span>         <span class="cmt"># replace first per line</span>
+<span class="cmd">sed 's/old/new/g' file.txt</span>        <span class="cmt"># replace all</span>
+<span class="cmd">sed -i 's/old/new/g' file.txt</span>     <span class="cmt"># in-place edit</span>
+<span class="cmd">sed -n '5,10p' file.txt</span>           <span class="cmt"># print lines 5-10</span>
+<span class="cmd">sed '/^#/d' file.txt</span>              <span class="cmt"># delete comment lines</span>
+<span class="cmd">sed -i '3d' file.txt</span>              <span class="cmt"># delete line 3</span></pre></details></td></tr>
+<tr><td>awk</td><td>Pattern processing language</td><td><details><summary>▶ Show</summary><pre><span class="cmd">awk '{print $1}' file.txt</span>         <span class="cmt"># print first column</span>
+<span class="cmd">awk -F',' '{print $2}' data.csv</span>   <span class="cmt"># CSV 2nd column</span>
+<span class="cmd">awk '/error/ {print}' log.txt</span>     <span class="cmt"># lines matching pattern</span>
+<span class="cmd">awk '{sum+=$1} END {print sum}'</span>   <span class="cmt"># sum first column</span>
+<span class="cmd">awk 'NR==5,NR==10' file.txt</span>       <span class="cmt"># lines 5 to 10</span></pre></details></td></tr>
+<tr><td>sort</td><td>Sort lines</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sort file.txt</span>                <span class="cmt"># alphabetical sort</span>
+<span class="cmd">sort -n file.txt</span>             <span class="cmt"># numeric sort</span>
+<span class="cmd">sort -r file.txt</span>             <span class="cmt"># reverse sort</span>
+<span class="cmd">sort -k2 file.txt</span>            <span class="cmt"># sort by 2nd column</span>
+<span class="cmd">sort -u file.txt</span>             <span class="cmt"># sort + unique</span></pre></details></td></tr>
+<tr><td>uniq</td><td>Filter duplicates</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sort file | uniq</span>             <span class="cmt"># remove duplicates</span>
+<span class="cmd">sort file | uniq -c</span>          <span class="cmt"># count occurrences</span>
+<span class="cmd">sort file | uniq -d</span>          <span class="cmt"># show only duplicates</span></pre></details></td></tr>
+<tr><td>cut</td><td>Extract columns/fields</td><td><details><summary>▶ Show</summary><pre><span class="cmd">cut -d',' -f1,3 data.csv</span>     <span class="cmt"># fields 1 and 3</span>
+<span class="cmd">cut -c1-10 file.txt</span>          <span class="cmt"># first 10 characters</span>
+<span class="cmd">cut -d':' -f1 /etc/passwd</span>    <span class="cmt"># usernames</span></pre></details></td></tr>
+<tr><td>tr</td><td>Translate/delete characters</td><td><details><summary>▶ Show</summary><pre><span class="cmd">echo "hello" | tr 'a-z' 'A-Z'</span>   <span class="cmt"># → HELLO</span>
+<span class="cmd">echo "hello" | tr -d 'l'</span>         <span class="cmt"># → heo</span>
+<span class="cmd">tr -s ' ' < file.txt</span>             <span class="cmt"># squeeze spaces</span></pre></details></td></tr>
+<tr><td>tee</td><td>Read stdin, write to file + stdout</td><td><details><summary>▶ Show</summary><pre><span class="cmd">echo "log" | tee output.txt</span>      <span class="cmt"># write + display</span>
+<span class="cmd">cmd | tee -a log.txt</span>             <span class="cmt"># append to file</span></pre></details></td></tr>
+<tr><td>xargs</td><td>Build commands from stdin</td><td><details><summary>▶ Show</summary><pre><span class="cmd">find . -name "*.tmp" | xargs rm</span>  <span class="cmt"># delete found files</span>
+<span class="cmd">cat urls.txt | xargs curl</span>        <span class="cmt"># curl each URL</span>
+<span class="cmd">find . -name "*.py" | xargs grep "import"</span></pre></details></td></tr>
+</table>
+
+<!-- Section 5 -->
+<h2 id="s5">5. Search &amp; Find</h2>
+<p class="section-desc">Finding files and commands quickly saves time — use find for criteria-based search, locate for speed.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>find</td><td>Search files by criteria</td><td><details><summary>▶ Show</summary><pre><span class="cmd">find . -name "*.txt"</span>              <span class="cmt"># by name</span>
+<span class="cmd">find . -iname "*.jpg"</span>             <span class="cmt"># case-insensitive</span>
+<span class="cmd">find /var -size +100M</span>             <span class="cmt"># files > 100MB</span>
+<span class="cmd">find . -mtime -7</span>                  <span class="cmt"># modified in last 7 days</span>
+<span class="cmd">find . -type d</span>                    <span class="cmt"># directories only</span>
+<span class="cmd">find . -type f -empty</span>             <span class="cmt"># empty files</span>
+<span class="cmd">find . -perm 755</span>                  <span class="cmt"># by permissions</span>
+<span class="cmd">find . -user bob</span>                  <span class="cmt"># by owner</span>
+<span class="cmd">find . -name "*.log" -delete</span>      <span class="cmt"># find and delete</span>
+<span class="cmd">find . -name "*.sh" -exec chmod +x {} \;</span></pre></details></td></tr>
+<tr><td>locate</td><td>Fast file search (indexed)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">locate filename.txt</span>          <span class="cmt"># fast search</span>
+<span class="cmd">sudo updatedb</span>                <span class="cmt"># update index</span></pre></details></td></tr>
+<tr><td>which</td><td>Find command location</td><td><details><summary>▶ Show</summary><pre><span class="cmd">which python3</span>                <span class="cmt"># → /usr/bin/python3</span>
+<span class="cmd">which -a java</span>                <span class="cmt"># all locations</span></pre></details></td></tr>
+<tr><td>whereis</td><td>Find binary, source, man pages</td><td><details><summary>▶ Show</summary><pre><span class="cmd">whereis nginx</span>                <span class="cmt"># binary + man + source</span></pre></details></td></tr>
+<tr><td>type</td><td>Describe a command</td><td><details><summary>▶ Show</summary><pre><span class="cmd">type ls</span>                      <span class="cmt"># → ls is aliased to...</span>
+<span class="cmd">type cd</span>                      <span class="cmt"># → cd is a shell builtin</span></pre></details></td></tr>
+</table>
+
+<!-- Section 6 -->
+<h2 id="s6">6. Process Management</h2>
+<p class="section-desc">Process management lets you monitor, control, and troubleshoot running programs.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>ps</td><td>List processes</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ps</span>                           <span class="cmt"># current shell processes</span>
+<span class="cmd">ps aux</span>                       <span class="cmt"># all processes (BSD style)</span>
+<span class="cmd">ps -ef</span>                       <span class="cmt"># all processes (POSIX)</span>
+<span class="cmd">ps aux | grep nginx</span>          <span class="cmt"># find specific process</span>
+<span class="cmd">ps -u username</span>               <span class="cmt"># processes by user</span></pre></details></td></tr>
+<tr><td>top / htop</td><td>Real-time process monitor</td><td><details><summary>▶ Show</summary><pre><span class="cmd">top</span>                          <span class="cmt"># live process view</span>
+<span class="cmd">htop</span>                         <span class="cmt"># interactive (better UI)</span>
+<span class="cmd">top -p 1234</span>                  <span class="cmt"># monitor specific PID</span></pre></details></td></tr>
+<tr><td>kill</td><td>Send signal to process</td><td><details><summary>▶ Show</summary><pre><span class="cmd">kill 1234</span>                    <span class="cmt"># send SIGTERM (graceful)</span>
+<span class="cmd">kill -9 1234</span>                 <span class="cmt"># send SIGKILL (force)</span>
+<span class="cmd">kill -HUP 1234</span>               <span class="cmt"># reload config</span>
+<span class="cmd">killall nginx</span>                <span class="cmt"># kill by name</span>
+<span class="cmd">pkill -f "python app.py"</span>     <span class="cmt"># kill by pattern</span></pre></details></td></tr>
+<tr><td>bg / fg / jobs</td><td>Job control</td><td><details><summary>▶ Show</summary><pre><span class="cmd">Ctrl+Z</span>                       <span class="cmt"># suspend current process</span>
+<span class="cmd">bg</span>                           <span class="cmt"># resume in background</span>
+<span class="cmd">fg</span>                           <span class="cmt"># bring to foreground</span>
+<span class="cmd">jobs</span>                         <span class="cmt"># list background jobs</span>
+<span class="cmd">command &amp;</span>                    <span class="cmt"># start in background</span></pre></details></td></tr>
+<tr><td>nohup</td><td>Run command immune to hangups</td><td><details><summary>▶ Show</summary><pre><span class="cmd">nohup ./script.sh &amp;</span>          <span class="cmt"># survives logout</span>
+<span class="cmd">nohup cmd > out.log 2>&1 &amp;</span>  <span class="cmt"># with output redirect</span></pre></details></td></tr>
+<tr><td>nice / renice</td><td>Set process priority</td><td><details><summary>▶ Show</summary><pre><span class="cmd">nice -n 10 ./heavy-task.sh</span>   <span class="cmt"># start with low priority</span>
+<span class="cmd">renice -n 5 -p 1234</span>         <span class="cmt"># change running process</span></pre></details></td></tr>
+<tr><td>lsof</td><td>List open files/ports</td><td><details><summary>▶ Show</summary><pre><span class="cmd">lsof -i :8080</span>                <span class="cmt"># who's using port 8080</span>
+<span class="cmd">lsof -u username</span>             <span class="cmt"># files opened by user</span>
+<span class="cmd">lsof -p 1234</span>                 <span class="cmt"># files opened by PID</span></pre></details></td></tr>
+<tr><td>wait</td><td>Wait for process to finish</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sleep 10 &amp; wait $!</span>           <span class="cmt"># wait for background job</span></pre></details></td></tr>
+</table>
+
+<!-- Section 7 -->
+<h2 id="s7">7. System Information</h2>
+<p class="section-desc">System info commands help you understand resource usage, hardware, and diagnose performance issues.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>uname</td><td>System/kernel info</td><td><details><summary>▶ Show</summary><pre><span class="cmd">uname -a</span>                     <span class="cmt"># all system info</span>
+<span class="cmd">uname -r</span>                     <span class="cmt"># kernel version</span>
+<span class="cmd">uname -m</span>                     <span class="cmt"># architecture (x86_64)</span></pre></details></td></tr>
+<tr><td>hostname</td><td>Show/set hostname</td><td><details><summary>▶ Show</summary><pre><span class="cmd">hostname</span>                     <span class="cmt"># show hostname</span>
+<span class="cmd">hostname -I</span>                  <span class="cmt"># show IP addresses</span></pre></details></td></tr>
+<tr><td>uptime</td><td>System uptime and load</td><td><details><summary>▶ Show</summary><pre><span class="cmd">uptime</span>                       <span class="cmt"># uptime + load average</span></pre></details></td></tr>
+<tr><td>free</td><td>Memory usage</td><td><details><summary>▶ Show</summary><pre><span class="cmd">free -h</span>                      <span class="cmt"># human-readable</span>
+<span class="cmd">free -m</span>                      <span class="cmt"># in megabytes</span></pre></details></td></tr>
+<tr><td>df</td><td>Disk space usage</td><td><details><summary>▶ Show</summary><pre><span class="cmd">df -h</span>                        <span class="cmt"># human-readable</span>
+<span class="cmd">df -h /home</span>                  <span class="cmt"># specific mount</span></pre></details></td></tr>
+<tr><td>du</td><td>Directory space usage</td><td><details><summary>▶ Show</summary><pre><span class="cmd">du -sh dir/</span>                  <span class="cmt"># total size of dir</span>
+<span class="cmd">du -sh *</span>                     <span class="cmt"># size of each item</span>
+<span class="cmd">du -h --max-depth=1</span>          <span class="cmt"># one level deep</span>
+<span class="cmd">du -sh * | sort -rh | head</span>   <span class="cmt"># largest items</span></pre></details></td></tr>
+<tr><td>lscpu</td><td>CPU information</td><td><details><summary>▶ Show</summary><pre><span class="cmd">lscpu</span>                        <span class="cmt"># CPU architecture details</span>
+<span class="cmd">nproc</span>                        <span class="cmt"># number of cores</span></pre></details></td></tr>
+<tr><td>lsblk</td><td>List block devices</td><td><details><summary>▶ Show</summary><pre><span class="cmd">lsblk</span>                        <span class="cmt"># disks and partitions</span>
+<span class="cmd">lsblk -f</span>                     <span class="cmt"># with filesystem info</span></pre></details></td></tr>
+<tr><td>dmesg</td><td>Kernel messages</td><td><details><summary>▶ Show</summary><pre><span class="cmd">dmesg | tail -20</span>             <span class="cmt"># recent kernel messages</span>
+<span class="cmd">dmesg -T</span>                     <span class="cmt"># with timestamps</span></pre></details></td></tr>
+<tr><td>env / printenv</td><td>Environment variables</td><td><details><summary>▶ Show</summary><pre><span class="cmd">env</span>                          <span class="cmt"># all variables</span>
+<span class="cmd">printenv HOME</span>                <span class="cmt"># specific variable</span>
+<span class="cmd">echo $PATH</span>                   <span class="cmt"># print PATH</span></pre></details></td></tr>
+</table>
+
+<!-- Section 8 -->
+<h2 id="s8">8. Networking</h2>
+<p class="section-desc">Networking commands let you test connectivity, transfer files, and troubleshoot network issues.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>ping</td><td>Test connectivity</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ping google.com</span>              <span class="cmt"># continuous ping</span>
+<span class="cmd">ping -c 4 google.com</span>         <span class="cmt"># 4 pings only</span></pre></details></td></tr>
+<tr><td>curl</td><td>Transfer data from/to URLs</td><td><details><summary>▶ Show</summary><pre><span class="cmd">curl https://api.example.com</span>          <span class="cmt"># GET request</span>
+<span class="cmd">curl -o file.zip URL</span>                  <span class="cmt"># download to file</span>
+<span class="cmd">curl -X POST -d '{"a":1}' URL</span>         <span class="cmt"># POST JSON</span>
+<span class="cmd">curl -H "Authorization: Bearer tok" URL</span> <span class="cmt"># with header</span>
+<span class="cmd">curl -I URL</span>                            <span class="cmt"># headers only</span>
+<span class="cmd">curl -s URL | jq .</span>                    <span class="cmt"># silent + format JSON</span></pre></details></td></tr>
+<tr><td>wget</td><td>Download files</td><td><details><summary>▶ Show</summary><pre><span class="cmd">wget https://example.com/file.tar.gz</span>  <span class="cmt"># download</span>
+<span class="cmd">wget -q -O - URL</span>                      <span class="cmt"># output to stdout</span>
+<span class="cmd">wget -r -l 2 URL</span>                      <span class="cmt"># recursive, depth 2</span></pre></details></td></tr>
+<tr><td>ss / netstat</td><td>Socket/network statistics</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ss -tuln</span>                     <span class="cmt"># listening ports</span>
+<span class="cmd">ss -tp</span>                       <span class="cmt"># connections with process</span>
+<span class="cmd">netstat -tuln</span>                <span class="cmt"># (older alternative)</span></pre></details></td></tr>
+<tr><td>ip</td><td>Network interface config</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ip addr</span>                      <span class="cmt"># show IP addresses</span>
+<span class="cmd">ip link</span>                      <span class="cmt"># show interfaces</span>
+<span class="cmd">ip route</span>                     <span class="cmt"># show routing table</span>
+<span class="cmd">ip addr add 10.0.0.1/24 dev eth0</span></pre></details></td></tr>
+<tr><td>ifconfig</td><td>Interface config (legacy)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ifconfig</span>                     <span class="cmt"># show all interfaces</span>
+<span class="cmd">ifconfig eth0</span>                <span class="cmt"># specific interface</span></pre></details></td></tr>
+<tr><td>nslookup / dig</td><td>DNS lookup</td><td><details><summary>▶ Show</summary><pre><span class="cmd">nslookup google.com</span>          <span class="cmt"># DNS query</span>
+<span class="cmd">dig google.com</span>               <span class="cmt"># detailed DNS</span>
+<span class="cmd">dig +short google.com A</span>      <span class="cmt"># just the IP</span></pre></details></td></tr>
+<tr><td>traceroute</td><td>Trace network path</td><td><details><summary>▶ Show</summary><pre><span class="cmd">traceroute google.com</span>        <span class="cmt"># show route hops</span>
+<span class="cmd">tracepath google.com</span>         <span class="cmt"># alternative</span></pre></details></td></tr>
+<tr><td>scp</td><td>Secure copy over SSH</td><td><details><summary>▶ Show</summary><pre><span class="cmd">scp file.txt user@host:/path/</span>         <span class="cmt"># upload</span>
+<span class="cmd">scp user@host:/path/file.txt .</span>        <span class="cmt"># download</span>
+<span class="cmd">scp -r dir/ user@host:/path/</span>          <span class="cmt"># recursive</span></pre></details></td></tr>
+<tr><td>rsync</td><td>Efficient file sync</td><td><details><summary>▶ Show</summary><pre><span class="cmd">rsync -avz src/ dest/</span>                 <span class="cmt"># local sync</span>
+<span class="cmd">rsync -avz src/ user@host:/dest/</span>      <span class="cmt"># remote sync</span>
+<span class="cmd">rsync -avz --delete src/ dest/</span>        <span class="cmt"># mirror (delete extra)</span>
+<span class="cmd">rsync -avz --exclude='*.log' src/ dest/</span></pre></details></td></tr>
+</table>
+
+<!-- Section 9 -->
+<h2 id="s9">9. Disk &amp; Storage</h2>
+<p class="section-desc">Disk management handles partitions, filesystems, and storage monitoring to prevent outages.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>mount / umount</td><td>Mount/unmount filesystems</td><td><details><summary>▶ Show</summary><pre><span class="cmd">mount /dev/sdb1 /mnt/usb</span>     <span class="cmt"># mount device</span>
+<span class="cmd">umount /mnt/usb</span>              <span class="cmt"># unmount</span>
+<span class="cmd">mount | grep sdb</span>             <span class="cmt"># check if mounted</span></pre></details></td></tr>
+<tr><td>fdisk</td><td>Partition management</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo fdisk -l</span>                <span class="cmt"># list all partitions</span>
+<span class="cmd">sudo fdisk /dev/sdb</span>          <span class="cmt"># interactive partitioning</span></pre></details></td></tr>
+<tr><td>mkfs</td><td>Create filesystem</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo mkfs.ext4 /dev/sdb1</span>     <span class="cmt"># format as ext4</span>
+<span class="cmd">sudo mkfs.xfs /dev/sdb1</span>      <span class="cmt"># format as XFS</span></pre></details></td></tr>
+<tr><td>dd</td><td>Low-level copy/convert</td><td><details><summary>▶ Show</summary><pre><span class="cmd">dd if=/dev/sda of=backup.img bs=4M</span>   <span class="cmt"># disk image</span>
+<span class="cmd">dd if=/dev/zero of=test bs=1M count=100</span> <span class="cmt"># create 100MB file</span></pre></details></td></tr>
+<tr><td>ncdu</td><td>Interactive disk usage</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ncdu /</span>                       <span class="cmt"># navigate disk usage</span>
+<span class="cmd">ncdu /home</span>                   <span class="cmt"># specific directory</span></pre></details></td></tr>
+</table>
+
+<!-- Section 10 -->
+<h2 id="s10">10. Archive &amp; Compression</h2>
+<p class="section-desc">Archiving saves space and bundles files for transfer — essential for backups and deployments.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>tar</td><td>Archive files</td><td><details><summary>▶ Show</summary><pre><span class="cmd">tar -czf archive.tar.gz dir/</span>      <span class="cmt"># create gzip archive</span>
+<span class="cmd">tar -xzf archive.tar.gz</span>           <span class="cmt"># extract gzip</span>
+<span class="cmd">tar -xzf archive.tar.gz -C /dest/</span> <span class="cmt"># extract to dir</span>
+<span class="cmd">tar -cjf archive.tar.bz2 dir/</span>     <span class="cmt"># create bzip2 archive</span>
+<span class="cmd">tar -xjf archive.tar.bz2</span>          <span class="cmt"># extract bzip2</span>
+<span class="cmd">tar -tf archive.tar.gz</span>            <span class="cmt"># list contents</span></pre></details></td></tr>
+<tr><td>gzip / gunzip</td><td>Compress/decompress</td><td><details><summary>▶ Show</summary><pre><span class="cmd">gzip file.txt</span>                <span class="cmt"># → file.txt.gz</span>
+<span class="cmd">gunzip file.txt.gz</span>           <span class="cmt"># decompress</span>
+<span class="cmd">gzip -k file.txt</span>             <span class="cmt"># keep original</span></pre></details></td></tr>
+<tr><td>zip / unzip</td><td>ZIP archive</td><td><details><summary>▶ Show</summary><pre><span class="cmd">zip archive.zip file1 file2</span>       <span class="cmt"># create zip</span>
+<span class="cmd">zip -r archive.zip dir/</span>           <span class="cmt"># recursive</span>
+<span class="cmd">unzip archive.zip</span>                 <span class="cmt"># extract</span>
+<span class="cmd">unzip archive.zip -d /dest/</span>       <span class="cmt"># extract to dir</span>
+<span class="cmd">unzip -l archive.zip</span>              <span class="cmt"># list contents</span></pre></details></td></tr>
+<tr><td>bzip2 / xz</td><td>Other compression formats</td><td><details><summary>▶ Show</summary><pre><span class="cmd">bzip2 file.txt</span>               <span class="cmt"># → file.txt.bz2</span>
+<span class="cmd">xz file.txt</span>                  <span class="cmt"># → file.txt.xz (best ratio)</span>
+<span class="cmd">unxz file.txt.xz</span>             <span class="cmt"># decompress</span></pre></details></td></tr>
+</table>
+
+<!-- Section 11 -->
+<h2 id="s11">11. User Management</h2>
+<p class="section-desc">User management controls access to the system — who can log in and what they can do.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>useradd / adduser</td><td>Create user</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo useradd -m bob</span>              <span class="cmt"># create with home dir</span>
+<span class="cmd">sudo useradd -m -s /bin/bash bob</span> <span class="cmt"># with shell</span>
+<span class="cmd">sudo adduser bob</span>                 <span class="cmt"># interactive (Debian)</span></pre></details></td></tr>
+<tr><td>userdel</td><td>Delete user</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo userdel bob</span>             <span class="cmt"># remove user</span>
+<span class="cmd">sudo userdel -r bob</span>          <span class="cmt"># remove + home dir</span></pre></details></td></tr>
+<tr><td>usermod</td><td>Modify user</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo usermod -aG docker bob</span>  <span class="cmt"># add to group</span>
+<span class="cmd">sudo usermod -s /bin/zsh bob</span> <span class="cmt"># change shell</span>
+<span class="cmd">sudo usermod -L bob</span>          <span class="cmt"># lock account</span></pre></details></td></tr>
+<tr><td>passwd</td><td>Change password</td><td><details><summary>▶ Show</summary><pre><span class="cmd">passwd</span>                       <span class="cmt"># change own password</span>
+<span class="cmd">sudo passwd bob</span>              <span class="cmt"># change bob's password</span></pre></details></td></tr>
+<tr><td>groups / id</td><td>Show user groups/info</td><td><details><summary>▶ Show</summary><pre><span class="cmd">groups</span>                       <span class="cmt"># current user's groups</span>
+<span class="cmd">groups bob</span>                   <span class="cmt"># bob's groups</span>
+<span class="cmd">id</span>                           <span class="cmt"># uid, gid, groups</span>
+<span class="cmd">id bob</span>                       <span class="cmt"># bob's info</span></pre></details></td></tr>
+<tr><td>groupadd / groupdel</td><td>Manage groups</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo groupadd devteam</span>        <span class="cmt"># create group</span>
+<span class="cmd">sudo groupdel devteam</span>        <span class="cmt"># delete group</span></pre></details></td></tr>
+<tr><td>su / sudo</td><td>Switch user / run as root</td><td><details><summary>▶ Show</summary><pre><span class="cmd">su - bob</span>                     <span class="cmt"># switch to bob</span>
+<span class="cmd">sudo command</span>                 <span class="cmt"># run as root</span>
+<span class="cmd">sudo -u bob command</span>          <span class="cmt"># run as bob</span>
+<span class="cmd">sudo -i</span>                      <span class="cmt"># root shell</span></pre></details></td></tr>
+<tr><td>who / w / last</td><td>Logged in users</td><td><details><summary>▶ Show</summary><pre><span class="cmd">who</span>                          <span class="cmt"># currently logged in</span>
+<span class="cmd">w</span>                            <span class="cmt"># who + what they're doing</span>
+<span class="cmd">last</span>                         <span class="cmt"># login history</span>
+<span class="cmd">last -n 10</span>                   <span class="cmt"># last 10 logins</span></pre></details></td></tr>
+</table>
+
+<!-- Section 12 -->
+<h2 id="s12">12. Package Management</h2>
+<p class="section-desc">Package managers install, update, and remove software — the primary way to manage applications on Linux.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>apt (Debian/Ubuntu)</td><td>Package manager</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo apt update</span>              <span class="cmt"># update package list</span>
+<span class="cmd">sudo apt upgrade</span>             <span class="cmt"># upgrade all packages</span>
+<span class="cmd">sudo apt install nginx</span>       <span class="cmt"># install package</span>
+<span class="cmd">sudo apt remove nginx</span>        <span class="cmt"># remove package</span>
+<span class="cmd">sudo apt purge nginx</span>         <span class="cmt"># remove + config</span>
+<span class="cmd">apt search keyword</span>           <span class="cmt"># search packages</span>
+<span class="cmd">apt list --installed</span>         <span class="cmt"># list installed</span>
+<span class="cmd">sudo apt autoremove</span>          <span class="cmt"># remove unused deps</span></pre></details></td></tr>
+<tr><td>yum / dnf (RHEL/Fedora)</td><td>Package manager</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo dnf install nginx</span>       <span class="cmt"># install</span>
+<span class="cmd">sudo dnf update</span>              <span class="cmt"># update all</span>
+<span class="cmd">sudo dnf remove nginx</span>        <span class="cmt"># remove</span>
+<span class="cmd">dnf search keyword</span>           <span class="cmt"># search</span>
+<span class="cmd">dnf list installed</span>           <span class="cmt"># list installed</span></pre></details></td></tr>
+<tr><td>snap</td><td>Snap packages</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo snap install code --classic</span> <span class="cmt"># install VS Code</span>
+<span class="cmd">snap list</span>                        <span class="cmt"># list installed</span>
+<span class="cmd">sudo snap remove code</span>           <span class="cmt"># remove</span></pre></details></td></tr>
+<tr><td>dpkg</td><td>Low-level .deb manager</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo dpkg -i package.deb</span>     <span class="cmt"># install .deb</span>
+<span class="cmd">dpkg -l | grep nginx</span>         <span class="cmt"># check if installed</span>
+<span class="cmd">dpkg -L nginx</span>                <span class="cmt"># list package files</span></pre></details></td></tr>
+</table>
+
+<!-- Section 13 -->
+<h2 id="s13">13. Services &amp; Systemd</h2>
+<p class="section-desc">Services are background processes (web servers, databases). Systemd manages their lifecycle.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>systemctl</td><td>Manage services</td><td><details><summary>▶ Show</summary><pre><span class="cmd">systemctl start nginx</span>        <span class="cmt"># start service</span>
+<span class="cmd">systemctl stop nginx</span>         <span class="cmt"># stop service</span>
+<span class="cmd">systemctl restart nginx</span>      <span class="cmt"># restart</span>
+<span class="cmd">systemctl reload nginx</span>       <span class="cmt"># reload config</span>
+<span class="cmd">systemctl status nginx</span>       <span class="cmt"># check status</span>
+<span class="cmd">systemctl enable nginx</span>       <span class="cmt"># start on boot</span>
+<span class="cmd">systemctl disable nginx</span>      <span class="cmt"># don't start on boot</span>
+<span class="cmd">systemctl is-active nginx</span>    <span class="cmt"># check if running</span>
+<span class="cmd">systemctl list-units --type=service</span> <span class="cmt"># all services</span></pre></details></td></tr>
+<tr><td>journalctl</td><td>View systemd logs</td><td><details><summary>▶ Show</summary><pre><span class="cmd">journalctl -u nginx</span>          <span class="cmt"># logs for service</span>
+<span class="cmd">journalctl -u nginx -f</span>       <span class="cmt"># follow live</span>
+<span class="cmd">journalctl --since "1 hour ago"</span>
+<span class="cmd">journalctl -b</span>                <span class="cmt"># since last boot</span>
+<span class="cmd">journalctl -p err</span>            <span class="cmt"># only errors</span></pre></details></td></tr>
+<tr><td>service (legacy)</td><td>Older service management</td><td><details><summary>▶ Show</summary><pre><span class="cmd">service nginx start</span>          <span class="cmt"># start</span>
+<span class="cmd">service nginx status</span>         <span class="cmt"># status</span>
+<span class="cmd">service --status-all</span>         <span class="cmt"># all services</span></pre></details></td></tr>
+</table>
+
+<!-- Section 14 -->
+<h2 id="s14">14. SSH &amp; Remote</h2>
+<p class="section-desc">SSH enables secure remote access — the primary way to manage servers and transfer files.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>ssh</td><td>Secure shell connection</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ssh user@hostname</span>            <span class="cmt"># connect</span>
+<span class="cmd">ssh -p 2222 user@host</span>        <span class="cmt"># custom port</span>
+<span class="cmd">ssh -i key.pem user@host</span>     <span class="cmt"># with key file</span>
+<span class="cmd">ssh user@host "ls /var"</span>      <span class="cmt"># run remote command</span></pre></details></td></tr>
+<tr><td>ssh-keygen</td><td>Generate SSH keys</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ssh-keygen -t ed25519 -C "email@x.com"</span> <span class="cmt"># generate key</span>
+<span class="cmd">ssh-keygen -t rsa -b 4096</span>              <span class="cmt"># RSA 4096-bit</span></pre></details></td></tr>
+<tr><td>ssh-copy-id</td><td>Copy public key to server</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ssh-copy-id user@hostname</span>    <span class="cmt"># enable key-based login</span></pre></details></td></tr>
+<tr><td>ssh config</td><td>SSH client configuration</td><td><details><summary>▶ Show</summary><pre><span class="cmt"># ~/.ssh/config</span>
+Host myserver
+    HostName 192.168.1.100
+    User admin
+    Port 2222
+    IdentityFile ~/.ssh/mykey
+<span class="cmd">ssh myserver</span>                 <span class="cmt"># use alias</span></pre></details></td></tr>
+<tr><td>ssh tunnel</td><td>Port forwarding</td><td><details><summary>▶ Show</summary><pre><span class="cmd">ssh -L 8080:localhost:80 user@host</span>  <span class="cmt"># local forward</span>
+<span class="cmd">ssh -R 8080:localhost:80 user@host</span>  <span class="cmt"># remote forward</span>
+<span class="cmd">ssh -D 1080 user@host</span>              <span class="cmt"># SOCKS proxy</span></pre></details></td></tr>
+<tr><td>scp</td><td>Secure copy</td><td><details><summary>▶ Show</summary><pre><span class="cmd">scp local.txt user@host:/remote/path/</span> <span class="cmt"># upload</span>
+<span class="cmd">scp user@host:/remote/file.txt .</span>      <span class="cmt"># download</span>
+<span class="cmd">scp -r dir/ user@host:/path/</span>          <span class="cmt"># directory</span></pre></details></td></tr>
+<tr><td>sftp</td><td>Secure FTP</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sftp user@host</span>               <span class="cmt"># connect</span>
+<span class="cmt"># then: put localfile, get remotefile, ls, cd</span></pre></details></td></tr>
+</table>
+
+<!-- Section 15 -->
+<h2 id="s15">15. Cron &amp; Scheduling</h2>
+<p class="section-desc">Scheduled tasks automate recurring work — backups, reports, cleanup, monitoring.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>crontab</td><td>Schedule recurring tasks</td><td><details><summary>▶ Show</summary><pre><span class="cmd">crontab -e</span>                   <span class="cmt"># edit cron jobs</span>
+<span class="cmd">crontab -l</span>                   <span class="cmt"># list cron jobs</span>
+<span class="cmd">crontab -r</span>                   <span class="cmt"># remove all jobs</span>
+
+<span class="cmt"># Cron format: min hour day month weekday command</span>
+<span class="cmt"># ┌───── min (0-59)</span>
+<span class="cmt"># │ ┌───── hour (0-23)</span>
+<span class="cmt"># │ │ ┌───── day (1-31)</span>
+<span class="cmt"># │ │ │ ┌───── month (1-12)</span>
+<span class="cmt"># │ │ │ │ ┌───── weekday (0-6, Sun=0)</span>
+<span class="cmd">*/5 * * * * /path/script.sh</span>  <span class="cmt"># every 5 minutes</span>
+<span class="cmd">0 2 * * * /backup.sh</span>         <span class="cmt"># daily at 2 AM</span>
+<span class="cmd">0 0 * * 0 /weekly.sh</span>         <span class="cmt"># every Sunday midnight</span>
+<span class="cmd">0 9 1 * * /monthly.sh</span>        <span class="cmt"># 1st of month at 9 AM</span></pre></details></td></tr>
+<tr><td>at</td><td>Schedule one-time task</td><td><details><summary>▶ Show</summary><pre><span class="cmd">at 2:00 AM tomorrow</span>          <span class="cmt"># schedule command</span>
+<span class="cmd">echo "cmd" | at now + 5 minutes</span>
+<span class="cmd">atq</span>                          <span class="cmt"># list pending jobs</span>
+<span class="cmd">atrm 3</span>                       <span class="cmt"># remove job #3</span></pre></details></td></tr>
+<tr><td>systemd timer</td><td>Modern alternative to cron</td><td><details><summary>▶ Show</summary><pre><span class="cmd">systemctl list-timers</span>        <span class="cmt"># list all timers</span>
+<span class="cmd">systemctl status myapp.timer</span> <span class="cmt"># timer status</span></pre></details></td></tr>
+</table>
+
+<!-- Section 16 -->
+<h2 id="s16">16. Shell &amp; Scripting</h2>
+<p class="section-desc">Shell scripting automates repetitive tasks by combining commands into reusable scripts.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>echo / printf</td><td>Print output</td><td><details><summary>▶ Show</summary><pre><span class="cmd">echo "Hello $USER"</span>           <span class="cmt"># variable expansion</span>
+<span class="cmd">echo -n "no newline"</span>         <span class="cmt"># suppress newline</span>
+<span class="cmd">printf "%-10s %d\n" "age" 25</span> <span class="cmt"># formatted output</span></pre></details></td></tr>
+<tr><td>export</td><td>Set environment variable</td><td><details><summary>▶ Show</summary><pre><span class="cmd">export PATH="$PATH:/usr/local/bin"</span>
+<span class="cmd">export MY_VAR="value"</span>        <span class="cmt"># set for child processes</span></pre></details></td></tr>
+<tr><td>source / .</td><td>Execute file in current shell</td><td><details><summary>▶ Show</summary><pre><span class="cmd">source ~/.bashrc</span>             <span class="cmt"># reload config</span>
+<span class="cmd">. .env</span>                       <span class="cmt"># load env file</span></pre></details></td></tr>
+<tr><td>alias</td><td>Create command shortcuts</td><td><details><summary>▶ Show</summary><pre><span class="cmd">alias ll='ls -la'</span>            <span class="cmt"># create alias</span>
+<span class="cmd">alias gs='git status'</span>
+<span class="cmd">unalias ll</span>                   <span class="cmt"># remove alias</span>
+<span class="cmd">alias</span>                        <span class="cmt"># list all aliases</span></pre></details></td></tr>
+<tr><td>Pipes &amp; Redirects</td><td>I/O redirection</td><td><details><summary>▶ Show</summary><pre><span class="cmd">cmd > file.txt</span>               <span class="cmt"># stdout to file (overwrite)</span>
+<span class="cmd">cmd >> file.txt</span>              <span class="cmt"># stdout append</span>
+<span class="cmd">cmd 2> err.log</span>               <span class="cmt"># stderr to file</span>
+<span class="cmd">cmd > out.log 2>&1</span>           <span class="cmt"># stdout+stderr to file</span>
+<span class="cmd">cmd1 | cmd2</span>                  <span class="cmt"># pipe stdout to next cmd</span>
+<span class="cmd">cmd < input.txt</span>              <span class="cmt"># stdin from file</span></pre></details></td></tr>
+<tr><td>test / [ ]</td><td>Conditional expressions</td><td><details><summary>▶ Show</summary><pre><span class="cmd">[ -f file.txt ] && echo "exists"</span>  <span class="cmt"># file exists</span>
+<span class="cmd">[ -d dir ] && echo "is dir"</span>       <span class="cmt"># is directory</span>
+<span class="cmd">[ -z "$VAR" ] && echo "empty"</span>     <span class="cmt"># var is empty</span>
+<span class="cmd">[ "$a" = "$b" ]</span>                   <span class="cmt"># string equality</span>
+<span class="cmd">[ $x -gt 5 ]</span>                      <span class="cmt"># numeric comparison</span></pre></details></td></tr>
+<tr><td>if / for / while</td><td>Control flow</td><td><details><summary>▶ Show</summary><pre><span class="cmd">if [ -f file ]; then echo "yes"; fi</span>
+<span class="cmd">for i in 1 2 3; do echo $i; done</span>
+<span class="cmd">for f in *.txt; do wc -l "$f"; done</span>
+<span class="cmd">while read line; do echo "$line"; done < file.txt</span></pre></details></td></tr>
+<tr><td>functions</td><td>Shell functions</td><td><details><summary>▶ Show</summary><pre><span class="cmd">greet() { echo "Hello, $1!"; }</span>
+<span class="cmd">greet "World"</span>                <span class="cmt"># → Hello, World!</span></pre></details></td></tr>
+<tr><td>history</td><td>Command history</td><td><details><summary>▶ Show</summary><pre><span class="cmd">history</span>                      <span class="cmt"># show history</span>
+<span class="cmd">history | grep ssh</span>           <span class="cmt"># search history</span>
+<span class="cmd">!!</span>                           <span class="cmt"># repeat last command</span>
+<span class="cmd">!42</span>                          <span class="cmt"># repeat command #42</span>
+<span class="cmd">Ctrl+R</span>                       <span class="cmt"># reverse search</span></pre></details></td></tr>
+</table>
+
+<!-- Section 17 -->
+<h2 id="s17">17. Git</h2>
+<p class="section-desc">Git tracks code changes and enables collaboration — essential for any development workflow.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>git init / clone</td><td>Initialize / clone repo</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git init</span>                     <span class="cmt"># new repo</span>
+<span class="cmd">git clone URL</span>                <span class="cmt"># clone existing</span>
+<span class="cmd">git clone --depth 1 URL</span>      <span class="cmt"># shallow clone</span></pre></details></td></tr>
+<tr><td>git status / diff</td><td>Check state</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git status</span>                   <span class="cmt"># working tree status</span>
+<span class="cmd">git diff</span>                     <span class="cmt"># unstaged changes</span>
+<span class="cmd">git diff --staged</span>            <span class="cmt"># staged changes</span></pre></details></td></tr>
+<tr><td>git add / commit</td><td>Stage and commit</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git add file.txt</span>             <span class="cmt"># stage file</span>
+<span class="cmd">git add .</span>                    <span class="cmt"># stage all</span>
+<span class="cmd">git commit -m "message"</span>      <span class="cmt"># commit</span>
+<span class="cmd">git commit -am "msg"</span>         <span class="cmt"># add + commit tracked</span></pre></details></td></tr>
+<tr><td>git branch</td><td>Branch management</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git branch</span>                   <span class="cmt"># list branches</span>
+<span class="cmd">git branch feature</span>           <span class="cmt"># create branch</span>
+<span class="cmd">git checkout -b feature</span>      <span class="cmt"># create + switch</span>
+<span class="cmd">git branch -d feature</span>        <span class="cmt"># delete branch</span></pre></details></td></tr>
+<tr><td>git merge / rebase</td><td>Integrate branches</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git merge feature</span>            <span class="cmt"># merge into current</span>
+<span class="cmd">git rebase main</span>              <span class="cmt"># rebase onto main</span></pre></details></td></tr>
+<tr><td>git push / pull</td><td>Remote operations</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git push origin main</span>         <span class="cmt"># push to remote</span>
+<span class="cmd">git pull origin main</span>         <span class="cmt"># fetch + merge</span>
+<span class="cmd">git fetch</span>                    <span class="cmt"># fetch without merge</span>
+<span class="cmd">git push -u origin feature</span>   <span class="cmt"># push new branch</span></pre></details></td></tr>
+<tr><td>git log</td><td>View history</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git log --oneline</span>            <span class="cmt"># compact log</span>
+<span class="cmd">git log --graph --oneline</span>    <span class="cmt"># with graph</span>
+<span class="cmd">git log -5</span>                   <span class="cmt"># last 5 commits</span>
+<span class="cmd">git log --author="bob"</span>       <span class="cmt"># by author</span></pre></details></td></tr>
+<tr><td>git stash</td><td>Temporarily save changes</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git stash</span>                    <span class="cmt"># save work</span>
+<span class="cmd">git stash pop</span>                <span class="cmt"># restore + remove</span>
+<span class="cmd">git stash list</span>               <span class="cmt"># list stashes</span></pre></details></td></tr>
+<tr><td>git reset</td><td>Undo changes</td><td><details><summary>▶ Show</summary><pre><span class="cmd">git reset HEAD file.txt</span>      <span class="cmt"># unstage</span>
+<span class="cmd">git reset --soft HEAD~1</span>      <span class="cmt"># undo last commit (keep changes)</span>
+<span class="cmd">git reset --hard HEAD~1</span>      <span class="cmt"># undo + discard (DANGEROUS)</span></pre></details></td></tr>
+</table>
+
+<!-- Section 18 -->
+<h2 id="s18">18. Docker</h2>
+<p class="section-desc">Docker packages applications with their dependencies — ensuring consistency across development, testing, and production.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>docker run</td><td>Run container</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker run nginx</span>                     <span class="cmt"># run image</span>
+<span class="cmd">docker run -d nginx</span>                  <span class="cmt"># detached (background)</span>
+<span class="cmd">docker run -p 8080:80 nginx</span>          <span class="cmt"># port mapping</span>
+<span class="cmd">docker run -it ubuntu bash</span>           <span class="cmt"># interactive shell</span>
+<span class="cmd">docker run --rm alpine echo hi</span>       <span class="cmt"># auto-remove after exit</span>
+<span class="cmd">docker run -v /host:/container img</span>   <span class="cmt"># mount volume</span>
+<span class="cmd">docker run --name myapp -d img</span>       <span class="cmt"># named container</span></pre></details></td></tr>
+<tr><td>docker ps</td><td>List containers</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker ps</span>                    <span class="cmt"># running containers</span>
+<span class="cmd">docker ps -a</span>                 <span class="cmt"># all (including stopped)</span></pre></details></td></tr>
+<tr><td>docker images</td><td>List images</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker images</span>                <span class="cmt"># list local images</span>
+<span class="cmd">docker rmi image_id</span>          <span class="cmt"># remove image</span></pre></details></td></tr>
+<tr><td>docker build</td><td>Build image from Dockerfile</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker build -t myapp:1.0 .</span>  <span class="cmt"># build with tag</span>
+<span class="cmd">docker build --no-cache -t app .</span></pre></details></td></tr>
+<tr><td>docker stop / rm</td><td>Stop/remove containers</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker stop container_id</span>     <span class="cmt"># graceful stop</span>
+<span class="cmd">docker rm container_id</span>       <span class="cmt"># remove stopped</span>
+<span class="cmd">docker rm -f container_id</span>    <span class="cmt"># force remove</span></pre></details></td></tr>
+<tr><td>docker exec</td><td>Run command in container</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker exec -it myapp bash</span>   <span class="cmt"># shell into container</span>
+<span class="cmd">docker exec myapp cat /etc/hosts</span></pre></details></td></tr>
+<tr><td>docker logs</td><td>Container logs</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker logs myapp</span>            <span class="cmt"># show logs</span>
+<span class="cmd">docker logs -f myapp</span>         <span class="cmt"># follow logs</span>
+<span class="cmd">docker logs --tail 50 myapp</span>  <span class="cmt"># last 50 lines</span></pre></details></td></tr>
+<tr><td>docker-compose</td><td>Multi-container apps</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker compose up -d</span>         <span class="cmt"># start services</span>
+<span class="cmd">docker compose down</span>          <span class="cmt"># stop + remove</span>
+<span class="cmd">docker compose logs -f</span>       <span class="cmt"># follow all logs</span>
+<span class="cmd">docker compose ps</span>            <span class="cmt"># service status</span></pre></details></td></tr>
+<tr><td>docker system</td><td>System management</td><td><details><summary>▶ Show</summary><pre><span class="cmd">docker system df</span>             <span class="cmt"># disk usage</span>
+<span class="cmd">docker system prune</span>          <span class="cmt"># clean unused data</span>
+<span class="cmd">docker system prune -a</span>       <span class="cmt"># aggressive clean</span></pre></details></td></tr>
+</table>
+
+<!-- Section 19 -->
+<h2 id="s19">19. Logs &amp; Monitoring</h2>
+<p class="section-desc">Log analysis and monitoring help you detect and diagnose issues before they impact users.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>tail -f</td><td>Follow log in real-time</td><td><details><summary>▶ Show</summary><pre><span class="cmd">tail -f /var/log/syslog</span>      <span class="cmt"># follow system log</span>
+<span class="cmd">tail -f app.log | grep ERROR</span> <span class="cmt"># filter live</span></pre></details></td></tr>
+<tr><td>journalctl</td><td>Systemd journal</td><td><details><summary>▶ Show</summary><pre><span class="cmd">journalctl -xe</span>               <span class="cmt"># recent with explanations</span>
+<span class="cmd">journalctl -u nginx --since today</span>
+<span class="cmd">journalctl -p err -b</span>         <span class="cmt"># errors since boot</span></pre></details></td></tr>
+<tr><td>dmesg</td><td>Kernel ring buffer</td><td><details><summary>▶ Show</summary><pre><span class="cmd">dmesg -T | tail -30</span>          <span class="cmt"># recent with timestamps</span>
+<span class="cmd">dmesg | grep -i error</span>        <span class="cmt"># kernel errors</span></pre></details></td></tr>
+<tr><td>vmstat</td><td>Virtual memory stats</td><td><details><summary>▶ Show</summary><pre><span class="cmd">vmstat 1 5</span>                   <span class="cmt"># every 1s, 5 times</span></pre></details></td></tr>
+<tr><td>iostat</td><td>I/O statistics</td><td><details><summary>▶ Show</summary><pre><span class="cmd">iostat -x 1</span>                  <span class="cmt"># extended, every 1s</span></pre></details></td></tr>
+<tr><td>sar</td><td>System activity reporter</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sar -u 1 5</span>                   <span class="cmt"># CPU usage, 5 samples</span>
+<span class="cmd">sar -r 1 5</span>                   <span class="cmt"># memory usage</span></pre></details></td></tr>
+<tr><td>watch</td><td>Repeat command periodically</td><td><details><summary>▶ Show</summary><pre><span class="cmd">watch -n 2 'df -h'</span>           <span class="cmt"># every 2 seconds</span>
+<span class="cmd">watch -d 'free -h'</span>           <span class="cmt"># highlight changes</span></pre></details></td></tr>
+<tr><td>strace</td><td>Trace system calls</td><td><details><summary>▶ Show</summary><pre><span class="cmd">strace ls</span>                    <span class="cmt"># trace ls syscalls</span>
+<span class="cmd">strace -p 1234</span>               <span class="cmt"># attach to running PID</span>
+<span class="cmd">strace -e open ls</span>            <span class="cmt"># only open() calls</span></pre></details></td></tr>
+</table>
+
+<!-- Section 20 -->
+<h2 id="s20">20. Miscellaneous / Useful</h2>
+<p class="section-desc">These utilities round out your toolkit — from terminal multiplexers to JSON processing and system management.</p>
+<table>
+<tr><th>Command</th><th>Description</th><th>Example</th></tr>
+<tr><td>man / --help</td><td>Manual pages</td><td><details><summary>▶ Show</summary><pre><span class="cmd">man ls</span>                       <span class="cmt"># manual for ls</span>
+<span class="cmd">man -k keyword</span>               <span class="cmt"># search manuals</span>
+<span class="cmd">ls --help</span>                    <span class="cmt"># quick help</span></pre></details></td></tr>
+<tr><td>date</td><td>Display/set date</td><td><details><summary>▶ Show</summary><pre><span class="cmd">date</span>                         <span class="cmt"># current date/time</span>
+<span class="cmd">date +"%Y-%m-%d %H:%M:%S"</span>   <span class="cmt"># formatted</span>
+<span class="cmd">date -d "2 days ago"</span>         <span class="cmt"># relative date</span></pre></details></td></tr>
+<tr><td>cal</td><td>Calendar</td><td><details><summary>▶ Show</summary><pre><span class="cmd">cal</span>                          <span class="cmt"># current month</span>
+<span class="cmd">cal 2024</span>                     <span class="cmt"># full year</span></pre></details></td></tr>
+<tr><td>bc</td><td>Calculator</td><td><details><summary>▶ Show</summary><pre><span class="cmd">echo "2^10" | bc</span>             <span class="cmt"># → 1024</span>
+<span class="cmd">echo "scale=2; 10/3" | bc</span>    <span class="cmt"># → 3.33</span></pre></details></td></tr>
+<tr><td>screen / tmux</td><td>Terminal multiplexer</td><td><details><summary>▶ Show</summary><pre><span class="cmd">tmux</span>                         <span class="cmt"># new session</span>
+<span class="cmd">tmux new -s mysession</span>        <span class="cmt"># named session</span>
+<span class="cmd">tmux ls</span>                      <span class="cmt"># list sessions</span>
+<span class="cmd">tmux attach -t mysession</span>     <span class="cmt"># reattach</span>
+<span class="cmt"># Ctrl+B, D = detach</span>
+<span class="cmt"># Ctrl+B, % = split vertical</span>
+<span class="cmt"># Ctrl+B, " = split horizontal</span></pre></details></td></tr>
+<tr><td>xclip / pbcopy</td><td>Clipboard</td><td><details><summary>▶ Show</summary><pre><span class="cmd">echo "text" | xclip -sel clipboard</span>   <span class="cmt"># Linux</span>
+<span class="cmd">echo "text" | pbcopy</span>                 <span class="cmt"># macOS</span>
+<span class="cmd">cat file | xclip -sel clipboard</span>      <span class="cmt"># file to clipboard</span></pre></details></td></tr>
+<tr><td>yes</td><td>Repeat string</td><td><details><summary>▶ Show</summary><pre><span class="cmd">yes | apt install pkg</span>        <span class="cmt"># auto-yes prompts</span>
+<span class="cmd">yes "hello" | head -5</span>        <span class="cmt"># repeat 5 times</span></pre></details></td></tr>
+<tr><td>time</td><td>Measure execution time</td><td><details><summary>▶ Show</summary><pre><span class="cmd">time ls -R /</span>                 <span class="cmt"># real/user/sys time</span>
+<span class="cmd">time ./script.sh</span>             <span class="cmt"># measure script</span></pre></details></td></tr>
+<tr><td>shutdown / reboot</td><td>Power management</td><td><details><summary>▶ Show</summary><pre><span class="cmd">sudo shutdown -h now</span>         <span class="cmt"># shutdown immediately</span>
+<span class="cmd">sudo shutdown -h +10</span>         <span class="cmt"># in 10 minutes</span>
+<span class="cmd">sudo reboot</span>                  <span class="cmt"># reboot</span></pre></details></td></tr>
+<tr><td>cmp / md5sum / sha256sum</td><td>File integrity</td><td><details><summary>▶ Show</summary><pre><span class="cmd">md5sum file.iso</span>              <span class="cmt"># MD5 hash</span>
+<span class="cmd">sha256sum file.iso</span>           <span class="cmt"># SHA-256 hash</span>
+<span class="cmd">cmp file1 file2</span>              <span class="cmt"># byte-by-byte compare</span></pre></details></td></tr>
+<tr><td>jq</td><td>JSON processor</td><td><details><summary>▶ Show</summary><pre><span class="cmd">cat data.json | jq '.'</span>           <span class="cmt"># pretty print</span>
+<span class="cmd">cat data.json | jq '.name'</span>       <span class="cmt"># extract field</span>
+<span class="cmd">cat data.json | jq '.items[]'</span>    <span class="cmt"># iterate array</span>
+<span class="cmd">curl -s URL | jq '.results[0]'</span>   <span class="cmt"># API + jq</span></pre></details></td></tr>
+</table>
+
+<p style="margin-top: 24px; text-align: center; color: #888; font-size: 11px;">
+  Click ▶ Show to expand examples. Print with Cmd+P → Save as PDF.<br>
+  <a href="https://man7.org/linux/man-pages/">Linux Man Pages</a> |
+  <a href="https://tldr.sh/">TLDR Pages</a> |
+  <a href="https://explainshell.com/">ExplainShell</a>
+</p>
+
+<script>
+document.getElementById('toggleAll').addEventListener('change', function() {
+  const details = document.querySelectorAll('details');
+  details.forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+});
+</script>
+
+</body>
+</html>

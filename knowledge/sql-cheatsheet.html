@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Cheatsheet</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #1a1a1a;
+    padding: 24px 30px;
+    background: #fff;
+  }
+  h1 { text-align: center; font-size: 26px; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #555; margin-bottom: 24px; font-size: 13px; }
+  h2 {
+    font-size: 15px;
+    margin: 24px 0 8px 0;
+    padding: 5px 10px;
+    background: #1b4332;
+    color: #fff;
+    border-radius: 4px;
+  }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 12px; }
+  th { background: #2d6a4f; color: #fff; font-weight: 600; text-align: left; padding: 6px 8px; }
+  td { padding: 4px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  tr:hover { background: #edf2f7; }
+  td:first-child { font-weight: 600; color: #1b4332; width: 18%; white-space: nowrap; }
+  td:nth-child(2) { width: 38%; }
+  td:nth-child(3) { width: 44%; }
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    font-size: 11px;
+    background: #f0f0f0;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #1b4332;
+  }
+  details { margin: 0; }
+  details summary {
+    cursor: pointer; font-size: 10px; color: #7f8c8d;
+    user-select: none; padding: 1px 0;
+  }
+  details summary:hover { color: #1b4332; }
+  details[open] summary { color: #1b4332; font-weight: 500; }
+  details pre {
+    margin: 4px 0 0 0; padding: 5px 8px; border-radius: 4px;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 10.5px; line-height: 1.5; overflow-x: auto;
+    white-space: pre; background: #1e1e1e; color: #d4d4d4;
+    border: 1px solid #333;
+  }
+  details pre .cmd { color: #4ec9b0; }
+  details pre .cmt { color: #6a9955; }
+  .toc { columns: 3; margin-bottom: 20px; padding: 10px; background: #f4f6f9; border-radius: 5px; }
+  .toc a { display: block; padding: 2px 0; color: #1b4332; text-decoration: none; font-size: 12px; }
+  .toc a:hover { text-decoration: underline; }
+  @media print {
+    body { padding: 8px 12px; font-size: 10px; }
+    details[open] pre { break-inside: avoid; }
+    h2 { break-after: avoid; }
+    tr { break-inside: avoid; }
+    .toc { columns: 4; }
+  }
+  .toggle-all { text-align: center; margin-bottom: 16px; }
+  .toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+  input:checked + .slider { background: #4a90d9; }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>SQL Cheatsheet</h1>
+<p class="subtitle">Beginner to Advanced — click ▶ to expand examples</p>
+
+<div class="toggle-all">
+  <label class="switch">
+    <input type="checkbox" id="toggleAll">
+    <span class="slider"></span>
+  </label>
+  <span class="toggle-label">Expand All Examples</span>
+</div>
+
+<div class="toc">
+  <a href="#s1">1. Basics</a>
+  <a href="#s2">2. Filtering</a>
+  <a href="#s3">3. Aggregation</a>
+  <a href="#s4">4. Joins</a>
+  <a href="#s5">5. Subqueries</a>
+  <a href="#s6">6. Data Manipulation</a>
+  <a href="#s7">7. Data Definition</a>
+  <a href="#s8">8. Constraints &amp; Indexes</a>
+  <a href="#s9">9. Views &amp; Procedures</a>
+  <a href="#s10">10. Window Functions</a>
+  <a href="#s11">11. CTEs &amp; Recursive Queries</a>
+  <a href="#s12">12. Transactions</a>
+  <a href="#s13">13. Performance</a>
+  <a href="#s14">14. Advanced</a>
+</div>
+
+<!-- Section 1 -->
+<h2 id="s1">1. Basics (SELECT, WHERE, ORDER BY, LIMIT)</h2>
+<p class="section-desc">SELECT is the foundation of SQL — retrieving and shaping data from tables is what you'll do 90% of the time.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>SELECT</td><td>Retrieve columns from a table</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> first_name, last_name
+<span class="cmd">FROM</span> employees;
+
+<span class="cmd">SELECT *</span> <span class="cmd">FROM</span> employees;  <span class="cmt">-- all columns</span>
+
+<span class="cmd">SELECT DISTINCT</span> department
+<span class="cmd">FROM</span> employees;  <span class="cmt">-- unique values only</span></pre></details></td></tr>
+<tr><td>AS (Alias)</td><td>Rename columns or tables in output</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> first_name <span class="cmd">AS</span> fname,
+       salary * 12 <span class="cmd">AS</span> annual_salary
+<span class="cmd">FROM</span> employees <span class="cmd">AS</span> e;  <span class="cmt">-- table alias</span></pre></details></td></tr>
+<tr><td>WHERE</td><td>Filter rows based on conditions</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department = 'Engineering';
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> salary > 50000;
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> hire_date >= '2023-01-01';</pre></details></td></tr>
+<tr><td>ORDER BY</td><td>Sort results (ASC default, DESC for reverse)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">ORDER BY</span> salary <span class="cmd">DESC</span>;  <span class="cmt">-- highest first</span>
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">ORDER BY</span> department <span class="cmd">ASC</span>, salary <span class="cmd">DESC</span>;  <span class="cmt">-- multi-col</span>
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">ORDER BY</span> 2;  <span class="cmt">-- by column position</span></pre></details></td></tr>
+<tr><td>LIMIT / OFFSET</td><td>Restrict number of rows returned</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">LIMIT</span> 10;  <span class="cmt">-- first 10 rows</span>
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">LIMIT</span> 10 <span class="cmd">OFFSET</span> 20;  <span class="cmt">-- skip 20, get next 10</span>
+
+<span class="cmt">-- SQL Server syntax:</span>
+<span class="cmd">SELECT TOP</span> 10 * <span class="cmd">FROM</span> employees;
+
+<span class="cmt">-- Oracle syntax:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">FETCH FIRST</span> 10 <span class="cmd">ROWS ONLY</span>;</pre></details></td></tr>
+<tr><td>CASE WHEN</td><td>Conditional logic in queries</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> first_name,
+  <span class="cmd">CASE</span>
+    <span class="cmd">WHEN</span> salary > 100000 <span class="cmd">THEN</span> 'High'
+    <span class="cmd">WHEN</span> salary > 50000  <span class="cmd">THEN</span> 'Mid'
+    <span class="cmd">ELSE</span> 'Low'
+  <span class="cmd">END AS</span> salary_band
+<span class="cmd">FROM</span> employees;</pre></details></td></tr>
+<tr><td>COALESCE / NULLIF</td><td>Handle NULL values</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT COALESCE</span>(phone, email, 'N/A') <span class="cmd">AS</span> contact
+<span class="cmd">FROM</span> employees;  <span class="cmt">-- first non-null value</span>
+
+<span class="cmd">SELECT NULLIF</span>(bonus, 0) <span class="cmd">AS</span> bonus
+<span class="cmd">FROM</span> employees;  <span class="cmt">-- returns NULL if bonus = 0</span></pre></details></td></tr>
+</table>
+
+<!-- Section 2 -->
+<h2 id="s2">2. Filtering (AND/OR, IN, BETWEEN, LIKE, IS NULL)</h2>
+<p class="section-desc">Filtering narrows results to exactly what you need — essential for performance and relevance.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>AND / OR</td><td>Combine multiple conditions</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department = 'Sales'
+  <span class="cmd">AND</span> salary > 60000;
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department = 'Sales'
+  <span class="cmd">OR</span> department = 'Marketing';
+
+<span class="cmt">-- Use parentheses for precedence:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> (dept = 'Sales' <span class="cmd">OR</span> dept = 'HR')
+  <span class="cmd">AND</span> salary > 50000;</pre></details></td></tr>
+<tr><td>IN</td><td>Match against a list of values</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department <span class="cmd">IN</span> ('Sales', 'Marketing', 'HR');
+
+<span class="cmt">-- NOT IN:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department <span class="cmd">NOT IN</span> ('IT', 'Finance');
+
+<span class="cmt">-- IN with subquery:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> dept_id <span class="cmd">IN</span> (
+  <span class="cmd">SELECT</span> id <span class="cmd">FROM</span> departments <span class="cmd">WHERE</span> active = 1
+);</pre></details></td></tr>
+<tr><td>BETWEEN</td><td>Filter within a range (inclusive)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> salary <span class="cmd">BETWEEN</span> 40000 <span class="cmd">AND</span> 80000;
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> orders
+<span class="cmd">WHERE</span> order_date <span class="cmd">BETWEEN</span> '2024-01-01' <span class="cmd">AND</span> '2024-12-31';
+
+<span class="cmt">-- NOT BETWEEN:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> products
+<span class="cmd">WHERE</span> price <span class="cmd">NOT BETWEEN</span> 10 <span class="cmd">AND</span> 50;</pre></details></td></tr>
+<tr><td>LIKE</td><td>Pattern matching with wildcards</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- % = any number of characters</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> name <span class="cmd">LIKE</span> 'John%';  <span class="cmt">-- starts with John</span>
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> email <span class="cmd">LIKE</span> '%@gmail.com';  <span class="cmt">-- ends with</span>
+
+<span class="cmt">-- _ = exactly one character</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> products
+<span class="cmd">WHERE</span> code <span class="cmd">LIKE</span> 'A_B%';  <span class="cmt">-- A + any char + B...</span>
+
+<span class="cmt">-- Case-insensitive (PostgreSQL):</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> name <span class="cmd">ILIKE</span> '%smith%';</pre></details></td></tr>
+<tr><td>IS NULL / IS NOT NULL</td><td>Check for NULL values</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> manager_id <span class="cmd">IS NULL</span>;  <span class="cmt">-- no manager</span>
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> phone <span class="cmd">IS NOT NULL</span>;
+
+<span class="cmt">-- Common mistake (this does NOT work):</span>
+<span class="cmt">-- WHERE manager_id = NULL  ← always false!</span></pre></details></td></tr>
+<tr><td>EXISTS</td><td>Check if subquery returns any rows</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> customers c
+<span class="cmd">WHERE EXISTS</span> (
+  <span class="cmd">SELECT</span> 1 <span class="cmd">FROM</span> orders o
+  <span class="cmd">WHERE</span> o.customer_id = c.id
+);  <span class="cmt">-- customers who have placed orders</span>
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> customers c
+<span class="cmd">WHERE NOT EXISTS</span> (
+  <span class="cmd">SELECT</span> 1 <span class="cmd">FROM</span> orders o
+  <span class="cmd">WHERE</span> o.customer_id = c.id
+);  <span class="cmt">-- customers with no orders</span></pre></details></td></tr>
+</table>
+
+<!-- Section 3 -->
+<h2 id="s3">3. Aggregation (COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING)</h2>
+<p class="section-desc">Aggregation summarizes data into meaningful statistics — counts, totals, averages across groups.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>COUNT</td><td>Count rows or non-null values</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT COUNT</span>(*) <span class="cmd">FROM</span> employees;  <span class="cmt">-- all rows</span>
+
+<span class="cmd">SELECT COUNT</span>(phone) <span class="cmd">FROM</span> employees;  <span class="cmt">-- non-null only</span>
+
+<span class="cmd">SELECT COUNT</span>(<span class="cmd">DISTINCT</span> department)
+<span class="cmd">FROM</span> employees;  <span class="cmt">-- unique departments</span></pre></details></td></tr>
+<tr><td>SUM / AVG</td><td>Sum or average of numeric column</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT SUM</span>(salary) <span class="cmd">AS</span> total_payroll
+<span class="cmd">FROM</span> employees;
+
+<span class="cmd">SELECT AVG</span>(salary) <span class="cmd">AS</span> avg_salary
+<span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department = 'Engineering';
+
+<span class="cmd">SELECT</span> department,
+       <span class="cmd">SUM</span>(salary) <span class="cmd">AS</span> dept_total,
+       <span class="cmd">AVG</span>(salary) <span class="cmd">AS</span> dept_avg
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY</span> department;</pre></details></td></tr>
+<tr><td>MIN / MAX</td><td>Minimum or maximum value</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT MIN</span>(salary), <span class="cmd">MAX</span>(salary)
+<span class="cmd">FROM</span> employees;
+
+<span class="cmd">SELECT MIN</span>(hire_date) <span class="cmd">AS</span> earliest,
+       <span class="cmd">MAX</span>(hire_date) <span class="cmd">AS</span> latest
+<span class="cmd">FROM</span> employees;</pre></details></td></tr>
+<tr><td>GROUP BY</td><td>Group rows for aggregate calculations</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> department, <span class="cmd">COUNT</span>(*) <span class="cmd">AS</span> headcount
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY</span> department;
+
+<span class="cmt">-- Multiple grouping columns:</span>
+<span class="cmd">SELECT</span> department, job_title, <span class="cmd">AVG</span>(salary)
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY</span> department, job_title;
+
+<span class="cmt">-- With ORDER BY:</span>
+<span class="cmd">SELECT</span> department, <span class="cmd">COUNT</span>(*) <span class="cmd">AS</span> cnt
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY</span> department
+<span class="cmd">ORDER BY</span> cnt <span class="cmd">DESC</span>;</pre></details></td></tr>
+<tr><td>HAVING</td><td>Filter groups (WHERE for aggregates)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> department, <span class="cmd">COUNT</span>(*) <span class="cmd">AS</span> cnt
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY</span> department
+<span class="cmd">HAVING COUNT</span>(*) > 5;  <span class="cmt">-- depts with more than 5</span>
+
+<span class="cmd">SELECT</span> department, <span class="cmd">AVG</span>(salary) <span class="cmd">AS</span> avg_sal
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY</span> department
+<span class="cmd">HAVING AVG</span>(salary) > 70000
+<span class="cmd">ORDER BY</span> avg_sal <span class="cmd">DESC</span>;</pre></details></td></tr>
+<tr><td>GROUPING SETS / ROLLUP / CUBE</td><td>Multiple grouping levels in one query</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- ROLLUP: hierarchical subtotals</span>
+<span class="cmd">SELECT</span> department, job_title, <span class="cmd">SUM</span>(salary)
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY ROLLUP</span>(department, job_title);
+
+<span class="cmt">-- CUBE: all combinations of subtotals</span>
+<span class="cmd">SELECT</span> department, job_title, <span class="cmd">SUM</span>(salary)
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY CUBE</span>(department, job_title);
+
+<span class="cmt">-- GROUPING SETS: specific combos</span>
+<span class="cmd">SELECT</span> department, job_title, <span class="cmd">SUM</span>(salary)
+<span class="cmd">FROM</span> employees
+<span class="cmd">GROUP BY GROUPING SETS</span>(
+  (department, job_title),
+  (department),
+  ()
+);</pre></details></td></tr>
+</table>
+
+<!-- Section 4 -->
+<h2 id="s4">4. Joins (INNER, LEFT, RIGHT, FULL, CROSS, SELF)</h2>
+<p class="section-desc">Joins combine related data from multiple tables — the key to working with normalized relational databases.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>INNER JOIN</td><td>Rows that match in both tables</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> e.name, d.dept_name
+<span class="cmd">FROM</span> employees e
+<span class="cmd">INNER JOIN</span> departments d
+  <span class="cmd">ON</span> e.dept_id = d.id;
+
+<span class="cmt">-- Multiple join conditions:</span>
+<span class="cmd">SELECT</span> o.id, p.name, oi.quantity
+<span class="cmd">FROM</span> orders o
+<span class="cmd">JOIN</span> order_items oi <span class="cmd">ON</span> o.id = oi.order_id
+<span class="cmd">JOIN</span> products p <span class="cmd">ON</span> oi.product_id = p.id;</pre></details></td></tr>
+<tr><td>LEFT JOIN</td><td>All rows from left + matching from right (NULL if no match)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> e.name, d.dept_name
+<span class="cmd">FROM</span> employees e
+<span class="cmd">LEFT JOIN</span> departments d
+  <span class="cmd">ON</span> e.dept_id = d.id;
+<span class="cmt">-- Shows all employees, even without dept</span>
+
+<span class="cmt">-- Find unmatched rows (anti-join):</span>
+<span class="cmd">SELECT</span> c.name
+<span class="cmd">FROM</span> customers c
+<span class="cmd">LEFT JOIN</span> orders o <span class="cmd">ON</span> c.id = o.customer_id
+<span class="cmd">WHERE</span> o.id <span class="cmd">IS NULL</span>;  <span class="cmt">-- customers with no orders</span></pre></details></td></tr>
+<tr><td>RIGHT JOIN</td><td>All rows from right + matching from left</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> e.name, d.dept_name
+<span class="cmd">FROM</span> employees e
+<span class="cmd">RIGHT JOIN</span> departments d
+  <span class="cmd">ON</span> e.dept_id = d.id;
+<span class="cmt">-- Shows all departments, even with no employees</span>
+
+<span class="cmt">-- Equivalent to swapping tables in LEFT JOIN</span></pre></details></td></tr>
+<tr><td>FULL OUTER JOIN</td><td>All rows from both tables (NULL where no match)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> e.name, d.dept_name
+<span class="cmd">FROM</span> employees e
+<span class="cmd">FULL OUTER JOIN</span> departments d
+  <span class="cmd">ON</span> e.dept_id = d.id;
+<span class="cmt">-- All employees AND all departments</span>
+<span class="cmt">-- NULLs on both sides where no match</span>
+
+<span class="cmt">-- Find orphans on both sides:</span>
+<span class="cmd">SELECT</span> e.name, d.dept_name
+<span class="cmd">FROM</span> employees e
+<span class="cmd">FULL OUTER JOIN</span> departments d
+  <span class="cmd">ON</span> e.dept_id = d.id
+<span class="cmd">WHERE</span> e.id <span class="cmd">IS NULL</span> <span class="cmd">OR</span> d.id <span class="cmd">IS NULL</span>;</pre></details></td></tr>
+<tr><td>CROSS JOIN</td><td>Cartesian product (every combination)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> s.size, c.color
+<span class="cmd">FROM</span> sizes s
+<span class="cmd">CROSS JOIN</span> colors c;
+<span class="cmt">-- If sizes has 3 rows and colors has 4,</span>
+<span class="cmt">-- result has 12 rows (3 × 4)</span>
+
+<span class="cmt">-- Useful for generating date series:</span>
+<span class="cmd">SELECT</span> d.date, p.product_id
+<span class="cmd">FROM</span> dates d
+<span class="cmd">CROSS JOIN</span> products p;</pre></details></td></tr>
+<tr><td>SELF JOIN</td><td>Join a table to itself</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Employee and their manager:</span>
+<span class="cmd">SELECT</span> e.name <span class="cmd">AS</span> employee,
+       m.name <span class="cmd">AS</span> manager
+<span class="cmd">FROM</span> employees e
+<span class="cmd">LEFT JOIN</span> employees m
+  <span class="cmd">ON</span> e.manager_id = m.id;
+
+<span class="cmt">-- Find duplicates:</span>
+<span class="cmd">SELECT</span> a.id, b.id, a.email
+<span class="cmd">FROM</span> users a
+<span class="cmd">JOIN</span> users b
+  <span class="cmd">ON</span> a.email = b.email
+  <span class="cmd">AND</span> a.id < b.id;</pre></details></td></tr>
+<tr><td>NATURAL JOIN</td><td>Auto-join on columns with same name</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">NATURAL JOIN</span> departments;
+<span class="cmt">-- Joins on all columns with matching names</span>
+<span class="cmt">-- ⚠️ Fragile — avoid in production code</span>
+
+<span class="cmt">-- USING clause (explicit shared column):</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">JOIN</span> departments <span class="cmd">USING</span> (dept_id);</pre></details></td></tr>
+</table>
+
+<!-- Section 5 -->
+<h2 id="s5">5. Subqueries (Scalar, Column, Table, Correlated)</h2>
+<p class="section-desc">Subqueries embed one query inside another — useful when you need intermediate results for filtering or comparison.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>Scalar Subquery</td><td>Returns a single value; usable in SELECT or WHERE</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> name, salary,
+  (<span class="cmd">SELECT AVG</span>(salary) <span class="cmd">FROM</span> employees) <span class="cmd">AS</span> avg_sal
+<span class="cmd">FROM</span> employees;
+
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> salary > (
+  <span class="cmd">SELECT AVG</span>(salary) <span class="cmd">FROM</span> employees
+);</pre></details></td></tr>
+<tr><td>Column Subquery</td><td>Returns a list of values (use with IN, ANY, ALL)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> dept_id <span class="cmd">IN</span> (
+  <span class="cmd">SELECT</span> id <span class="cmd">FROM</span> departments
+  <span class="cmd">WHERE</span> location = 'London'
+);
+
+<span class="cmt">-- ANY: true if condition matches any value</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> products
+<span class="cmd">WHERE</span> price > <span class="cmd">ANY</span> (
+  <span class="cmd">SELECT</span> price <span class="cmd">FROM</span> products <span class="cmd">WHERE</span> category = 'A'
+);
+
+<span class="cmt">-- ALL: true if condition matches all values</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> products
+<span class="cmd">WHERE</span> price > <span class="cmd">ALL</span> (
+  <span class="cmd">SELECT</span> price <span class="cmd">FROM</span> products <span class="cmd">WHERE</span> category = 'B'
+);</pre></details></td></tr>
+<tr><td>Table Subquery (Derived Table)</td><td>Returns a result set used as a virtual table in FROM</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> dept, avg_sal
+<span class="cmd">FROM</span> (
+  <span class="cmd">SELECT</span> department <span class="cmd">AS</span> dept,
+         <span class="cmd">AVG</span>(salary) <span class="cmd">AS</span> avg_sal
+  <span class="cmd">FROM</span> employees
+  <span class="cmd">GROUP BY</span> department
+) <span class="cmd">AS</span> dept_stats
+<span class="cmd">WHERE</span> avg_sal > 60000;</pre></details></td></tr>
+<tr><td>Correlated Subquery</td><td>References outer query — runs once per outer row</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Employees earning above their dept average:</span>
+<span class="cmd">SELECT</span> e.name, e.salary, e.department
+<span class="cmd">FROM</span> employees e
+<span class="cmd">WHERE</span> e.salary > (
+  <span class="cmd">SELECT AVG</span>(e2.salary)
+  <span class="cmd">FROM</span> employees e2
+  <span class="cmd">WHERE</span> e2.department = e.department
+);
+
+<span class="cmt">-- Latest order per customer:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> orders o
+<span class="cmd">WHERE</span> o.order_date = (
+  <span class="cmd">SELECT MAX</span>(o2.order_date)
+  <span class="cmd">FROM</span> orders o2
+  <span class="cmd">WHERE</span> o2.customer_id = o.customer_id
+);</pre></details></td></tr>
+</table>
+
+<!-- Section 6 -->
+<h2 id="s6">6. Data Manipulation (INSERT, UPDATE, DELETE, UPSERT)</h2>
+<p class="section-desc">DML commands modify data — inserting new records, updating existing ones, and removing obsolete data.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>INSERT INTO</td><td>Add new rows to a table</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Single row:</span>
+<span class="cmd">INSERT INTO</span> employees (name, dept, salary)
+<span class="cmd">VALUES</span> ('Alice', 'Engineering', 85000);
+
+<span class="cmt">-- Multiple rows:</span>
+<span class="cmd">INSERT INTO</span> employees (name, dept, salary)
+<span class="cmd">VALUES</span>
+  ('Bob', 'Sales', 60000),
+  ('Carol', 'HR', 55000),
+  ('Dave', 'Engineering', 90000);
+
+<span class="cmt">-- Insert from SELECT:</span>
+<span class="cmd">INSERT INTO</span> archive_employees
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> terminated = true;</pre></details></td></tr>
+<tr><td>UPDATE</td><td>Modify existing rows</td><td><details><summary>▶ Show</summary><pre><span class="cmd">UPDATE</span> employees
+<span class="cmd">SET</span> salary = 95000
+<span class="cmd">WHERE</span> id = 42;
+
+<span class="cmt">-- Update multiple columns:</span>
+<span class="cmd">UPDATE</span> employees
+<span class="cmd">SET</span> salary = salary * 1.10,
+    title = 'Senior Engineer'
+<span class="cmd">WHERE</span> department = 'Engineering'
+  <span class="cmd">AND</span> years_exp >= 5;
+
+<span class="cmt">-- Update with JOIN (PostgreSQL):</span>
+<span class="cmd">UPDATE</span> employees e
+<span class="cmd">SET</span> dept_name = d.name
+<span class="cmd">FROM</span> departments d
+<span class="cmd">WHERE</span> e.dept_id = d.id;</pre></details></td></tr>
+<tr><td>DELETE</td><td>Remove rows from a table</td><td><details><summary>▶ Show</summary><pre><span class="cmd">DELETE FROM</span> employees
+<span class="cmd">WHERE</span> id = 42;
+
+<span class="cmd">DELETE FROM</span> logs
+<span class="cmd">WHERE</span> created_at < '2023-01-01';
+
+<span class="cmt">-- Delete with subquery:</span>
+<span class="cmd">DELETE FROM</span> orders
+<span class="cmd">WHERE</span> customer_id <span class="cmd">IN</span> (
+  <span class="cmd">SELECT</span> id <span class="cmd">FROM</span> customers
+  <span class="cmd">WHERE</span> inactive = true
+);
+
+<span class="cmt">-- ⚠️ Delete ALL rows (careful!):</span>
+<span class="cmd">DELETE FROM</span> temp_data;</pre></details></td></tr>
+<tr><td>UPSERT</td><td>Insert or update if row exists</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL (ON CONFLICT):</span>
+<span class="cmd">INSERT INTO</span> products (sku, name, price)
+<span class="cmd">VALUES</span> ('ABC123', 'Widget', 9.99)
+<span class="cmd">ON CONFLICT</span> (sku)
+<span class="cmd">DO UPDATE SET</span>
+  name = EXCLUDED.name,
+  price = EXCLUDED.price;
+
+<span class="cmt">-- MySQL (ON DUPLICATE KEY):</span>
+<span class="cmd">INSERT INTO</span> products (sku, name, price)
+<span class="cmd">VALUES</span> ('ABC123', 'Widget', 9.99)
+<span class="cmd">ON DUPLICATE KEY UPDATE</span>
+  name = VALUES(name),
+  price = VALUES(price);
+
+<span class="cmt">-- SQL Server (MERGE):</span>
+<span class="cmd">MERGE INTO</span> products <span class="cmd">AS</span> target
+<span class="cmd">USING</span> (VALUES ('ABC123','Widget',9.99))
+  <span class="cmd">AS</span> src(sku, name, price)
+<span class="cmd">ON</span> target.sku = src.sku
+<span class="cmd">WHEN MATCHED THEN UPDATE SET</span>
+  name = src.name, price = src.price
+<span class="cmd">WHEN NOT MATCHED THEN INSERT</span>
+  (sku, name, price) <span class="cmd">VALUES</span>
+  (src.sku, src.name, src.price);</pre></details></td></tr>
+</table>
+
+<!-- Section 7 -->
+<h2 id="s7">7. Data Definition (CREATE, ALTER, DROP, TRUNCATE)</h2>
+<p class="section-desc">DDL commands define database structure — creating tables, altering schemas, managing the data model.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>CREATE TABLE</td><td>Define a new table with columns and types</td><td><details><summary>▶ Show</summary><pre><span class="cmd">CREATE TABLE</span> employees (
+  id        <span class="cmd">SERIAL PRIMARY KEY</span>,
+  name      <span class="cmd">VARCHAR</span>(100) <span class="cmd">NOT NULL</span>,
+  email     <span class="cmd">VARCHAR</span>(255) <span class="cmd">UNIQUE</span>,
+  salary    <span class="cmd">DECIMAL</span>(10,2) <span class="cmd">DEFAULT</span> 0,
+  dept_id   <span class="cmd">INT REFERENCES</span> departments(id),
+  hire_date <span class="cmd">DATE DEFAULT CURRENT_DATE</span>,
+  active    <span class="cmd">BOOLEAN DEFAULT</span> true
+);
+
+<span class="cmt">-- Create from another table:</span>
+<span class="cmd">CREATE TABLE</span> emp_backup <span class="cmd">AS</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees;</pre></details></td></tr>
+<tr><td>ALTER TABLE</td><td>Modify table structure</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Add column:</span>
+<span class="cmd">ALTER TABLE</span> employees
+<span class="cmd">ADD COLUMN</span> phone <span class="cmd">VARCHAR</span>(20);
+
+<span class="cmt">-- Drop column:</span>
+<span class="cmd">ALTER TABLE</span> employees
+<span class="cmd">DROP COLUMN</span> phone;
+
+<span class="cmt">-- Rename column:</span>
+<span class="cmd">ALTER TABLE</span> employees
+<span class="cmd">RENAME COLUMN</span> name <span class="cmd">TO</span> full_name;
+
+<span class="cmt">-- Change type:</span>
+<span class="cmd">ALTER TABLE</span> employees
+<span class="cmd">ALTER COLUMN</span> salary <span class="cmd">TYPE NUMERIC</span>(12,2);
+
+<span class="cmt">-- Rename table:</span>
+<span class="cmd">ALTER TABLE</span> employees <span class="cmd">RENAME TO</span> staff;</pre></details></td></tr>
+<tr><td>DROP TABLE</td><td>Delete a table and all its data permanently</td><td><details><summary>▶ Show</summary><pre><span class="cmd">DROP TABLE</span> employees;  <span class="cmt">-- error if not exists</span>
+
+<span class="cmd">DROP TABLE IF EXISTS</span> employees;  <span class="cmt">-- safe</span>
+
+<span class="cmt">-- Drop with dependent objects:</span>
+<span class="cmd">DROP TABLE</span> departments <span class="cmd">CASCADE</span>;
+<span class="cmt">-- removes FKs referencing this table</span></pre></details></td></tr>
+<tr><td>TRUNCATE</td><td>Remove all rows quickly (no logging per row)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">TRUNCATE TABLE</span> logs;
+
+<span class="cmt">-- Reset auto-increment:</span>
+<span class="cmd">TRUNCATE TABLE</span> logs <span class="cmd">RESTART IDENTITY</span>;
+
+<span class="cmt">-- Truncate with FK dependencies:</span>
+<span class="cmd">TRUNCATE TABLE</span> orders <span class="cmd">CASCADE</span>;
+
+<span class="cmt">-- TRUNCATE vs DELETE:</span>
+<span class="cmt">-- TRUNCATE: faster, resets identity, can't WHERE</span>
+<span class="cmt">-- DELETE:   slower, row-level log, can filter</span></pre></details></td></tr>
+<tr><td>Common Data Types</td><td>Frequently used column types across databases</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Numeric:</span>
+INT, BIGINT, SMALLINT, SERIAL
+DECIMAL(p,s), NUMERIC(p,s), FLOAT, REAL
+
+<span class="cmt">-- Text:</span>
+CHAR(n), VARCHAR(n), TEXT
+
+<span class="cmt">-- Date/Time:</span>
+DATE, TIME, TIMESTAMP, INTERVAL
+
+<span class="cmt">-- Boolean:</span>
+BOOLEAN  <span class="cmt">-- true/false/null</span>
+
+<span class="cmt">-- Binary:</span>
+BYTEA (Postgres), BLOB (MySQL/Oracle)
+
+<span class="cmt">-- JSON:</span>
+JSON, JSONB (Postgres)</pre></details></td></tr>
+</table>
+
+<!-- Section 8 -->
+<h2 id="s8">8. Constraints &amp; Indexes (PK, FK, UNIQUE, CHECK, INDEX)</h2>
+<p class="section-desc">Constraints enforce data integrity rules. Indexes speed up queries — both are essential for production databases.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>PRIMARY KEY</td><td>Unique identifier for each row</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Inline:</span>
+<span class="cmd">CREATE TABLE</span> users (
+  id <span class="cmd">INT PRIMARY KEY</span>,
+  name <span class="cmd">VARCHAR</span>(100)
+);
+
+<span class="cmt">-- Named constraint:</span>
+<span class="cmd">CREATE TABLE</span> users (
+  id <span class="cmd">INT</span>,
+  name <span class="cmd">VARCHAR</span>(100),
+  <span class="cmd">CONSTRAINT</span> pk_users <span class="cmd">PRIMARY KEY</span> (id)
+);
+
+<span class="cmt">-- Composite PK:</span>
+<span class="cmd">CREATE TABLE</span> order_items (
+  order_id <span class="cmd">INT</span>,
+  product_id <span class="cmd">INT</span>,
+  <span class="cmd">PRIMARY KEY</span> (order_id, product_id)
+);</pre></details></td></tr>
+<tr><td>FOREIGN KEY</td><td>Enforce referential integrity between tables</td><td><details><summary>▶ Show</summary><pre><span class="cmd">CREATE TABLE</span> orders (
+  id <span class="cmd">SERIAL PRIMARY KEY</span>,
+  customer_id <span class="cmd">INT</span>,
+  <span class="cmd">CONSTRAINT</span> fk_customer
+    <span class="cmd">FOREIGN KEY</span> (customer_id)
+    <span class="cmd">REFERENCES</span> customers(id)
+    <span class="cmd">ON DELETE CASCADE</span>
+    <span class="cmd">ON UPDATE SET NULL</span>
+);
+
+<span class="cmt">-- Add FK to existing table:</span>
+<span class="cmd">ALTER TABLE</span> orders
+<span class="cmd">ADD CONSTRAINT</span> fk_customer
+  <span class="cmd">FOREIGN KEY</span> (customer_id)
+  <span class="cmd">REFERENCES</span> customers(id);</pre></details></td></tr>
+<tr><td>UNIQUE</td><td>Ensure no duplicate values in column(s)</td><td><details><summary>▶ Show</summary><pre><span class="cmd">CREATE TABLE</span> users (
+  id <span class="cmd">SERIAL PRIMARY KEY</span>,
+  email <span class="cmd">VARCHAR</span>(255) <span class="cmd">UNIQUE</span>,
+  <span class="cmt">-- Composite unique:</span>
+  <span class="cmd">UNIQUE</span> (first_name, last_name)
+);
+
+<span class="cmt">-- Add to existing table:</span>
+<span class="cmd">ALTER TABLE</span> users
+<span class="cmd">ADD CONSTRAINT</span> uq_email <span class="cmd">UNIQUE</span> (email);</pre></details></td></tr>
+<tr><td>CHECK</td><td>Validate data against a condition</td><td><details><summary>▶ Show</summary><pre><span class="cmd">CREATE TABLE</span> products (
+  id <span class="cmd">SERIAL PRIMARY KEY</span>,
+  price <span class="cmd">DECIMAL</span>(10,2) <span class="cmd">CHECK</span> (price >= 0),
+  quantity <span class="cmd">INT CHECK</span> (quantity >= 0),
+  <span class="cmd">CONSTRAINT</span> chk_dates
+    <span class="cmd">CHECK</span> (end_date > start_date)
+);
+
+<span class="cmt">-- Add check to existing table:</span>
+<span class="cmd">ALTER TABLE</span> employees
+<span class="cmd">ADD CONSTRAINT</span> chk_salary
+  <span class="cmd">CHECK</span> (salary > 0);</pre></details></td></tr>
+<tr><td>CREATE INDEX</td><td>Speed up queries on frequently searched columns</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Single column index:</span>
+<span class="cmd">CREATE INDEX</span> idx_emp_dept
+<span class="cmd">ON</span> employees(department);
+
+<span class="cmt">-- Composite index:</span>
+<span class="cmd">CREATE INDEX</span> idx_emp_dept_sal
+<span class="cmd">ON</span> employees(department, salary);
+
+<span class="cmt">-- Unique index:</span>
+<span class="cmd">CREATE UNIQUE INDEX</span> idx_users_email
+<span class="cmd">ON</span> users(email);
+
+<span class="cmt">-- Partial index (PostgreSQL):</span>
+<span class="cmd">CREATE INDEX</span> idx_active_emp
+<span class="cmd">ON</span> employees(name)
+<span class="cmd">WHERE</span> active = true;
+
+<span class="cmt">-- Drop index:</span>
+<span class="cmd">DROP INDEX</span> idx_emp_dept;</pre></details></td></tr>
+</table>
+
+<!-- Section 9 -->
+<h2 id="s9">9. Views &amp; Procedures (CREATE VIEW, Stored Procedures, Functions)</h2>
+<p class="section-desc">Views simplify complex queries into reusable abstractions. Procedures encapsulate business logic in the database.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>CREATE VIEW</td><td>Virtual table based on a query</td><td><details><summary>▶ Show</summary><pre><span class="cmd">CREATE VIEW</span> active_employees <span class="cmd">AS</span>
+<span class="cmd">SELECT</span> id, name, department, salary
+<span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> active = true;
+
+<span class="cmt">-- Use like a table:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> active_employees
+<span class="cmd">WHERE</span> department = 'Engineering';
+
+<span class="cmt">-- Replace existing view:</span>
+<span class="cmd">CREATE OR REPLACE VIEW</span> active_employees <span class="cmd">AS</span>
+<span class="cmd">SELECT</span> id, name, department, salary, hire_date
+<span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> active = true;
+
+<span class="cmt">-- Drop view:</span>
+<span class="cmd">DROP VIEW IF EXISTS</span> active_employees;</pre></details></td></tr>
+<tr><td>Materialized View</td><td>Cached view — stores results physically</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL:</span>
+<span class="cmd">CREATE MATERIALIZED VIEW</span> monthly_sales <span class="cmd">AS</span>
+<span class="cmd">SELECT</span> date_trunc('month', order_date) <span class="cmd">AS</span> month,
+       <span class="cmd">SUM</span>(amount) <span class="cmd">AS</span> total
+<span class="cmd">FROM</span> orders
+<span class="cmd">GROUP BY</span> 1;
+
+<span class="cmt">-- Refresh data:</span>
+<span class="cmd">REFRESH MATERIALIZED VIEW</span> monthly_sales;
+
+<span class="cmt">-- Concurrent refresh (no lock):</span>
+<span class="cmd">REFRESH MATERIALIZED VIEW CONCURRENTLY</span>
+  monthly_sales;</pre></details></td></tr>
+<tr><td>Stored Procedure</td><td>Reusable block of SQL logic (no return value)</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL:</span>
+<span class="cmd">CREATE OR REPLACE PROCEDURE</span> give_raise(
+  emp_id <span class="cmd">INT</span>,
+  pct <span class="cmd">DECIMAL</span>
+)
+<span class="cmd">LANGUAGE</span> plpgsql <span class="cmd">AS</span> $$
+<span class="cmd">BEGIN</span>
+  <span class="cmd">UPDATE</span> employees
+  <span class="cmd">SET</span> salary = salary * (1 + pct/100)
+  <span class="cmd">WHERE</span> id = emp_id;
+  <span class="cmd">COMMIT</span>;
+<span class="cmd">END</span>;
+$$;
+
+<span class="cmt">-- Call it:</span>
+<span class="cmd">CALL</span> give_raise(42, 10);</pre></details></td></tr>
+<tr><td>Function</td><td>Returns a value; can be used in queries</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL:</span>
+<span class="cmd">CREATE OR REPLACE FUNCTION</span> get_dept_avg(
+  dept_name <span class="cmd">VARCHAR</span>
+) <span class="cmd">RETURNS DECIMAL AS</span> $$
+<span class="cmd">BEGIN</span>
+  <span class="cmd">RETURN</span> (
+    <span class="cmd">SELECT AVG</span>(salary) <span class="cmd">FROM</span> employees
+    <span class="cmd">WHERE</span> department = dept_name
+  );
+<span class="cmd">END</span>;
+$$ <span class="cmd">LANGUAGE</span> plpgsql;
+
+<span class="cmt">-- Use in query:</span>
+<span class="cmd">SELECT</span> name, salary,
+  get_dept_avg(department) <span class="cmd">AS</span> dept_avg
+<span class="cmd">FROM</span> employees;
+
+<span class="cmt">-- Drop function:</span>
+<span class="cmd">DROP FUNCTION IF EXISTS</span> get_dept_avg;</pre></details></td></tr>
+</table>
+
+<!-- Section 10 -->
+<h2 id="s10">10. Window Functions (ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, NTILE)</h2>
+<p class="section-desc">Window functions perform calculations across related rows without collapsing them — rankings, running totals, row comparisons.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>ROW_NUMBER()</td><td>Sequential number for each row in partition</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> name, department, salary,
+  <span class="cmd">ROW_NUMBER() OVER</span> (
+    <span class="cmd">PARTITION BY</span> department
+    <span class="cmd">ORDER BY</span> salary <span class="cmd">DESC</span>
+  ) <span class="cmd">AS</span> rn
+<span class="cmd">FROM</span> employees;
+
+<span class="cmt">-- Top earner per department:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> (
+  <span class="cmd">SELECT</span> *, <span class="cmd">ROW_NUMBER() OVER</span> (
+    <span class="cmd">PARTITION BY</span> department
+    <span class="cmd">ORDER BY</span> salary <span class="cmd">DESC</span>
+  ) <span class="cmd">AS</span> rn
+  <span class="cmd">FROM</span> employees
+) t <span class="cmd">WHERE</span> rn = 1;</pre></details></td></tr>
+<tr><td>RANK() / DENSE_RANK()</td><td>Rank with gaps / without gaps for ties</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> name, salary,
+  <span class="cmd">RANK() OVER</span> (<span class="cmd">ORDER BY</span> salary <span class="cmd">DESC</span>) <span class="cmd">AS</span> rnk,
+  <span class="cmd">DENSE_RANK() OVER</span> (<span class="cmd">ORDER BY</span> salary <span class="cmd">DESC</span>) <span class="cmd">AS</span> drnk
+<span class="cmd">FROM</span> employees;
+<span class="cmt">-- salary: 100k, 90k, 90k, 80k</span>
+<span class="cmt">-- RANK:      1,    2,    2,    4  (gap)</span>
+<span class="cmt">-- DENSE_RANK: 1,   2,    2,    3  (no gap)</span></pre></details></td></tr>
+<tr><td>LAG() / LEAD()</td><td>Access previous/next row values</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> order_date, amount,
+  <span class="cmd">LAG</span>(amount, 1) <span class="cmd">OVER</span> (<span class="cmd">ORDER BY</span> order_date)
+    <span class="cmd">AS</span> prev_amount,
+  <span class="cmd">LEAD</span>(amount, 1) <span class="cmd">OVER</span> (<span class="cmd">ORDER BY</span> order_date)
+    <span class="cmd">AS</span> next_amount,
+  amount - <span class="cmd">LAG</span>(amount) <span class="cmd">OVER</span> (<span class="cmd">ORDER BY</span> order_date)
+    <span class="cmd">AS</span> change
+<span class="cmd">FROM</span> orders;
+
+<span class="cmt">-- LAG(col, n, default) — n rows back</span></pre></details></td></tr>
+<tr><td>NTILE()</td><td>Divide rows into N equal buckets</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> name, salary,
+  <span class="cmd">NTILE</span>(4) <span class="cmd">OVER</span> (<span class="cmd">ORDER BY</span> salary <span class="cmd">DESC</span>)
+    <span class="cmd">AS</span> quartile
+<span class="cmd">FROM</span> employees;
+<span class="cmt">-- Assigns 1-4 (top 25% = 1, etc.)</span></pre></details></td></tr>
+<tr><td>SUM/AVG OVER</td><td>Running totals and moving averages</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Running total:</span>
+<span class="cmd">SELECT</span> order_date, amount,
+  <span class="cmd">SUM</span>(amount) <span class="cmd">OVER</span> (
+    <span class="cmd">ORDER BY</span> order_date
+    <span class="cmd">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+  ) <span class="cmd">AS</span> running_total
+<span class="cmd">FROM</span> orders;
+
+<span class="cmt">-- 3-day moving average:</span>
+<span class="cmd">SELECT</span> order_date, amount,
+  <span class="cmd">AVG</span>(amount) <span class="cmd">OVER</span> (
+    <span class="cmd">ORDER BY</span> order_date
+    <span class="cmd">ROWS BETWEEN</span> 2 <span class="cmd">PRECEDING AND CURRENT ROW</span>
+  ) <span class="cmd">AS</span> moving_avg_3
+<span class="cmd">FROM</span> orders;</pre></details></td></tr>
+<tr><td>FIRST_VALUE / LAST_VALUE</td><td>Get first or last value in window frame</td><td><details><summary>▶ Show</summary><pre><span class="cmd">SELECT</span> name, department, salary,
+  <span class="cmd">FIRST_VALUE</span>(name) <span class="cmd">OVER</span> (
+    <span class="cmd">PARTITION BY</span> department
+    <span class="cmd">ORDER BY</span> salary <span class="cmd">DESC</span>
+  ) <span class="cmd">AS</span> top_earner
+<span class="cmd">FROM</span> employees;</pre></details></td></tr>
+</table>
+
+<!-- Section 11 -->
+<h2 id="s11">11. CTEs &amp; Recursive Queries</h2>
+<p class="section-desc">CTEs (WITH clause) make complex queries readable. Recursive CTEs traverse hierarchies like org charts and categories.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>WITH (CTE)</td><td>Named temporary result set for readability</td><td><details><summary>▶ Show</summary><pre><span class="cmd">WITH</span> dept_stats <span class="cmd">AS</span> (
+  <span class="cmd">SELECT</span> department,
+         <span class="cmd">AVG</span>(salary) <span class="cmd">AS</span> avg_sal,
+         <span class="cmd">COUNT</span>(*) <span class="cmd">AS</span> cnt
+  <span class="cmd">FROM</span> employees
+  <span class="cmd">GROUP BY</span> department
+)
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> dept_stats
+<span class="cmd">WHERE</span> avg_sal > 70000
+<span class="cmd">ORDER BY</span> avg_sal <span class="cmd">DESC</span>;</pre></details></td></tr>
+<tr><td>Multiple CTEs</td><td>Chain multiple CTEs separated by commas</td><td><details><summary>▶ Show</summary><pre><span class="cmd">WITH</span>
+high_earners <span class="cmd">AS</span> (
+  <span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+  <span class="cmd">WHERE</span> salary > 100000
+),
+dept_counts <span class="cmd">AS</span> (
+  <span class="cmd">SELECT</span> department, <span class="cmd">COUNT</span>(*) <span class="cmd">AS</span> cnt
+  <span class="cmd">FROM</span> high_earners
+  <span class="cmd">GROUP BY</span> department
+)
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> dept_counts
+<span class="cmd">ORDER BY</span> cnt <span class="cmd">DESC</span>;</pre></details></td></tr>
+<tr><td>RECURSIVE CTE</td><td>Self-referencing query for hierarchical data</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Org chart traversal:</span>
+<span class="cmd">WITH RECURSIVE</span> org_tree <span class="cmd">AS</span> (
+  <span class="cmt">-- Base case: top-level (no manager)</span>
+  <span class="cmd">SELECT</span> id, name, manager_id, 1 <span class="cmd">AS</span> level
+  <span class="cmd">FROM</span> employees
+  <span class="cmd">WHERE</span> manager_id <span class="cmd">IS NULL</span>
+
+  <span class="cmd">UNION ALL</span>
+
+  <span class="cmt">-- Recursive case: find direct reports</span>
+  <span class="cmd">SELECT</span> e.id, e.name, e.manager_id, t.level + 1
+  <span class="cmd">FROM</span> employees e
+  <span class="cmd">JOIN</span> org_tree t <span class="cmd">ON</span> e.manager_id = t.id
+)
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> org_tree
+<span class="cmd">ORDER BY</span> level, name;</pre></details></td></tr>
+<tr><td>Recursive — Number Series</td><td>Generate sequences without a table</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Generate numbers 1-100:</span>
+<span class="cmd">WITH RECURSIVE</span> nums <span class="cmd">AS</span> (
+  <span class="cmd">SELECT</span> 1 <span class="cmd">AS</span> n
+  <span class="cmd">UNION ALL</span>
+  <span class="cmd">SELECT</span> n + 1 <span class="cmd">FROM</span> nums <span class="cmd">WHERE</span> n < 100
+)
+<span class="cmd">SELECT</span> n <span class="cmd">FROM</span> nums;
+
+<span class="cmt">-- Generate date series:</span>
+<span class="cmd">WITH RECURSIVE</span> dates <span class="cmd">AS</span> (
+  <span class="cmd">SELECT</span> '2024-01-01'::<span class="cmd">DATE AS</span> d
+  <span class="cmd">UNION ALL</span>
+  <span class="cmd">SELECT</span> d + 1 <span class="cmd">FROM</span> dates <span class="cmd">WHERE</span> d < '2024-12-31'
+)
+<span class="cmd">SELECT</span> d <span class="cmd">FROM</span> dates;</pre></details></td></tr>
+<tr><td>CTE with DML</td><td>Use CTE with INSERT, UPDATE, DELETE</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Delete and return deleted rows:</span>
+<span class="cmd">WITH</span> deleted <span class="cmd">AS</span> (
+  <span class="cmd">DELETE FROM</span> logs
+  <span class="cmd">WHERE</span> created_at < '2023-01-01'
+  <span class="cmd">RETURNING</span> *
+)
+<span class="cmd">INSERT INTO</span> archive_logs
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> deleted;</pre></details></td></tr>
+</table>
+
+<!-- Section 12 -->
+<h2 id="s12">12. Transactions (BEGIN, COMMIT, ROLLBACK, SAVEPOINT, Isolation)</h2>
+<p class="section-desc">Transactions ensure data consistency — either all changes succeed together or none apply (ACID properties).</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>BEGIN / COMMIT</td><td>Start and complete a transaction</td><td><details><summary>▶ Show</summary><pre><span class="cmd">BEGIN</span>;  <span class="cmt">-- or START TRANSACTION</span>
+
+<span class="cmd">UPDATE</span> accounts <span class="cmd">SET</span> balance = balance - 500
+<span class="cmd">WHERE</span> id = 1;
+
+<span class="cmd">UPDATE</span> accounts <span class="cmd">SET</span> balance = balance + 500
+<span class="cmd">WHERE</span> id = 2;
+
+<span class="cmd">COMMIT</span>;  <span class="cmt">-- both succeed or neither does</span></pre></details></td></tr>
+<tr><td>ROLLBACK</td><td>Undo all changes since BEGIN</td><td><details><summary>▶ Show</summary><pre><span class="cmd">BEGIN</span>;
+
+<span class="cmd">DELETE FROM</span> orders <span class="cmd">WHERE</span> status = 'draft';
+<span class="cmt">-- Oops, wrong condition!</span>
+
+<span class="cmd">ROLLBACK</span>;  <span class="cmt">-- nothing deleted</span></pre></details></td></tr>
+<tr><td>SAVEPOINT</td><td>Create a named point to partially rollback to</td><td><details><summary>▶ Show</summary><pre><span class="cmd">BEGIN</span>;
+
+<span class="cmd">INSERT INTO</span> orders (customer_id, amount)
+<span class="cmd">VALUES</span> (1, 100);
+
+<span class="cmd">SAVEPOINT</span> sp1;
+
+<span class="cmd">INSERT INTO</span> order_items (order_id, product_id)
+<span class="cmd">VALUES</span> (999, 5);  <span class="cmt">-- might fail</span>
+
+<span class="cmt">-- If error, rollback only to savepoint:</span>
+<span class="cmd">ROLLBACK TO SAVEPOINT</span> sp1;
+
+<span class="cmt">-- First insert still intact:</span>
+<span class="cmd">COMMIT</span>;</pre></details></td></tr>
+<tr><td>Isolation Levels</td><td>Control visibility of concurrent changes</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Set for current transaction:</span>
+<span class="cmd">SET TRANSACTION ISOLATION LEVEL</span>
+  READ COMMITTED;
+
+<span class="cmt">-- Levels (low → high isolation):</span>
+<span class="cmt">-- READ UNCOMMITTED  — dirty reads possible</span>
+<span class="cmt">-- READ COMMITTED    — default in PostgreSQL</span>
+<span class="cmt">-- REPEATABLE READ   — default in MySQL</span>
+<span class="cmt">-- SERIALIZABLE      — strongest, slowest</span>
+
+<span class="cmt">-- PostgreSQL example:</span>
+<span class="cmd">BEGIN ISOLATION LEVEL</span> SERIALIZABLE;
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> inventory
+  <span class="cmd">WHERE</span> product_id = 42;
+<span class="cmd">UPDATE</span> inventory <span class="cmd">SET</span> qty = qty - 1
+  <span class="cmd">WHERE</span> product_id = 42;
+<span class="cmd">COMMIT</span>;</pre></details></td></tr>
+<tr><td>LOCK</td><td>Explicitly lock tables or rows</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Row-level lock (PostgreSQL):</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> inventory
+<span class="cmd">WHERE</span> product_id = 42
+<span class="cmd">FOR UPDATE</span>;  <span class="cmt">-- locks this row</span>
+
+<span class="cmt">-- Skip locked rows:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> jobs
+<span class="cmd">WHERE</span> status = 'pending'
+<span class="cmd">LIMIT</span> 1
+<span class="cmd">FOR UPDATE SKIP LOCKED</span>;
+
+<span class="cmt">-- Table lock:</span>
+<span class="cmd">LOCK TABLE</span> inventory <span class="cmd">IN</span> EXCLUSIVE MODE;</pre></details></td></tr>
+</table>
+
+<!-- Section 13 -->
+<h2 id="s13">13. Performance (EXPLAIN, Index Strategy, Query Optimization)</h2>
+<p class="section-desc">Query optimization is critical for production — understanding EXPLAIN plans and index strategies prevents slow queries.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>EXPLAIN</td><td>Show query execution plan</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL:</span>
+<span class="cmd">EXPLAIN</span> <span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department = 'Engineering';
+
+<span class="cmt">-- With actual runtime stats:</span>
+<span class="cmd">EXPLAIN ANALYZE</span> <span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department = 'Engineering';
+
+<span class="cmt">-- Verbose with buffers:</span>
+<span class="cmd">EXPLAIN</span> (ANALYZE, BUFFERS, FORMAT TEXT)
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> salary > 50000;
+
+<span class="cmt">-- MySQL:</span>
+<span class="cmd">EXPLAIN</span> <span class="cmd">SELECT</span> * <span class="cmd">FROM</span> employees
+<span class="cmd">WHERE</span> department = 'Engineering';</pre></details></td></tr>
+<tr><td>Index Strategy</td><td>When and how to create effective indexes</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Index columns used in:</span>
+<span class="cmt">--   WHERE, JOIN ON, ORDER BY, GROUP BY</span>
+
+<span class="cmt">-- Composite index order matters:</span>
+<span class="cmd">CREATE INDEX</span> idx_dept_sal
+<span class="cmd">ON</span> employees(department, salary);
+<span class="cmt">-- Helps: WHERE dept = 'X' AND salary > N</span>
+<span class="cmt">-- Helps: WHERE dept = 'X' ORDER BY salary</span>
+<span class="cmt">-- No help: WHERE salary > N (2nd col only)</span>
+
+<span class="cmt">-- Covering index (includes all needed cols):</span>
+<span class="cmd">CREATE INDEX</span> idx_cover
+<span class="cmd">ON</span> orders(customer_id)
+<span class="cmd">INCLUDE</span> (order_date, amount);
+
+<span class="cmt">-- Check unused indexes (PostgreSQL):</span>
+<span class="cmd">SELECT</span> indexrelname, idx_scan
+<span class="cmd">FROM</span> pg_stat_user_indexes
+<span class="cmd">WHERE</span> idx_scan = 0;</pre></details></td></tr>
+<tr><td>Query Optimization Tips</td><td>Common patterns to improve performance</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- ❌ Avoid SELECT * in production:</span>
+<span class="cmd">SELECT</span> id, name, email <span class="cmd">FROM</span> users;
+
+<span class="cmt">-- ❌ Avoid functions on indexed columns:</span>
+<span class="cmt">-- Bad:  WHERE YEAR(created_at) = 2024</span>
+<span class="cmt">-- Good: WHERE created_at >= '2024-01-01'</span>
+<span class="cmt">--         AND created_at < '2025-01-01'</span>
+
+<span class="cmt">-- ❌ Avoid OR on different columns (use UNION):</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> emp <span class="cmd">WHERE</span> dept_id = 1
+<span class="cmd">UNION ALL</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> emp <span class="cmd">WHERE</span> mgr_id = 5;
+
+<span class="cmt">-- ✅ EXISTS vs IN for large subqueries:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> customers c
+<span class="cmd">WHERE EXISTS</span> (
+  <span class="cmd">SELECT</span> 1 <span class="cmd">FROM</span> orders o
+  <span class="cmd">WHERE</span> o.cust_id = c.id
+);
+
+<span class="cmt">-- ✅ Use LIMIT for pagination:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> products
+<span class="cmd">ORDER BY</span> id <span class="cmd">LIMIT</span> 20 <span class="cmd">OFFSET</span> 40;</pre></details></td></tr>
+<tr><td>Statistics &amp; Maintenance</td><td>Keep planner accurate with fresh stats</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL — update stats:</span>
+<span class="cmd">ANALYZE</span> employees;
+
+<span class="cmt">-- Vacuum (reclaim dead tuples):</span>
+<span class="cmd">VACUUM</span> employees;
+<span class="cmd">VACUUM FULL</span> employees;  <span class="cmt">-- rewrites table</span>
+
+<span class="cmt">-- MySQL — update stats:</span>
+<span class="cmd">ANALYZE TABLE</span> employees;
+
+<span class="cmt">-- MySQL — optimize fragmented table:</span>
+<span class="cmd">OPTIMIZE TABLE</span> employees;</pre></details></td></tr>
+</table>
+
+<!-- Section 14 -->
+<h2 id="s14">14. Advanced (Pivot, JSON Ops, Temp Tables, Triggers)</h2>
+<p class="section-desc">Advanced SQL techniques handle complex reporting, JSON data, temporary storage, and automated triggers.</p>
+<table>
+<tr><th>Command / Syntax</th><th>Description</th><th>Example</th></tr>
+<tr><td>PIVOT / CROSSTAB</td><td>Transpose rows into columns</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL (crosstab extension):</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> crosstab(
+  'SELECT department, quarter, revenue
+   FROM sales ORDER BY 1,2'
+) <span class="cmd">AS</span> ct(dept TEXT, q1 INT, q2 INT, q3 INT, q4 INT);
+
+<span class="cmt">-- Manual pivot with CASE:</span>
+<span class="cmd">SELECT</span> department,
+  <span class="cmd">SUM</span>(<span class="cmd">CASE WHEN</span> quarter=1 <span class="cmd">THEN</span> revenue <span class="cmd">END</span>) <span class="cmd">AS</span> q1,
+  <span class="cmd">SUM</span>(<span class="cmd">CASE WHEN</span> quarter=2 <span class="cmd">THEN</span> revenue <span class="cmd">END</span>) <span class="cmd">AS</span> q2,
+  <span class="cmd">SUM</span>(<span class="cmd">CASE WHEN</span> quarter=3 <span class="cmd">THEN</span> revenue <span class="cmd">END</span>) <span class="cmd">AS</span> q3,
+  <span class="cmd">SUM</span>(<span class="cmd">CASE WHEN</span> quarter=4 <span class="cmd">THEN</span> revenue <span class="cmd">END</span>) <span class="cmd">AS</span> q4
+<span class="cmd">FROM</span> sales
+<span class="cmd">GROUP BY</span> department;
+
+<span class="cmt">-- SQL Server PIVOT:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> sales
+<span class="cmd">PIVOT</span> (
+  SUM(revenue) <span class="cmd">FOR</span> quarter <span class="cmd">IN</span> ([1],[2],[3],[4])
+) <span class="cmd">AS</span> pvt;</pre></details></td></tr>
+<tr><td>JSON Operations</td><td>Query and manipulate JSON data</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL JSONB:</span>
+<span class="cmd">SELECT</span> data->>'name' <span class="cmd">AS</span> name
+<span class="cmd">FROM</span> events;  <span class="cmt">-- extract text value</span>
+
+<span class="cmd">SELECT</span> data->'address'->>'city' <span class="cmd">AS</span> city
+<span class="cmd">FROM</span> users;  <span class="cmt">-- nested access</span>
+
+<span class="cmt">-- Filter on JSON field:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> events
+<span class="cmd">WHERE</span> data->>'type' = 'click';
+
+<span class="cmt">-- JSON contains operator:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> products
+<span class="cmd">WHERE</span> tags @> '["electronics"]';
+
+<span class="cmt">-- Build JSON:</span>
+<span class="cmd">SELECT</span> json_build_object(
+  'id', id, 'name', name
+) <span class="cmd">FROM</span> employees;
+
+<span class="cmt">-- MySQL JSON:</span>
+<span class="cmd">SELECT</span> JSON_EXTRACT(data, '$.name') <span class="cmd">FROM</span> events;
+<span class="cmd">SELECT</span> data->'$.name' <span class="cmd">FROM</span> events;</pre></details></td></tr>
+<tr><td>Temporary Tables</td><td>Session-scoped tables for intermediate results</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- Create temp table:</span>
+<span class="cmd">CREATE TEMP TABLE</span> tmp_results (
+  id <span class="cmd">INT</span>,
+  score <span class="cmd">DECIMAL</span>(5,2)
+);
+
+<span class="cmt">-- Create from query:</span>
+<span class="cmd">CREATE TEMP TABLE</span> active_users <span class="cmd">AS</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> users <span class="cmd">WHERE</span> active = true;
+
+<span class="cmt">-- Use it:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">FROM</span> active_users
+<span class="cmd">WHERE</span> score > 80;
+
+<span class="cmt">-- Dropped automatically at session end,</span>
+<span class="cmt">-- or manually:</span>
+<span class="cmd">DROP TABLE IF EXISTS</span> tmp_results;
+
+<span class="cmt">-- SQL Server:</span>
+<span class="cmd">SELECT</span> * <span class="cmd">INTO</span> #tmp_results
+<span class="cmd">FROM</span> employees <span class="cmd">WHERE</span> dept = 'IT';</pre></details></td></tr>
+<tr><td>Triggers</td><td>Auto-execute code on INSERT/UPDATE/DELETE</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- PostgreSQL trigger function:</span>
+<span class="cmd">CREATE OR REPLACE FUNCTION</span> update_modified()
+<span class="cmd">RETURNS TRIGGER AS</span> $$
+<span class="cmd">BEGIN</span>
+  NEW.updated_at = NOW();
+  <span class="cmd">RETURN</span> NEW;
+<span class="cmd">END</span>;
+$$ <span class="cmd">LANGUAGE</span> plpgsql;
+
+<span class="cmt">-- Attach trigger:</span>
+<span class="cmd">CREATE TRIGGER</span> trg_update_modified
+<span class="cmd">BEFORE UPDATE ON</span> employees
+<span class="cmd">FOR EACH ROW</span>
+<span class="cmd">EXECUTE FUNCTION</span> update_modified();
+
+<span class="cmt">-- Audit trigger:</span>
+<span class="cmd">CREATE TRIGGER</span> trg_audit
+<span class="cmd">AFTER DELETE ON</span> orders
+<span class="cmd">FOR EACH ROW</span>
+<span class="cmd">EXECUTE FUNCTION</span> log_deletion();
+
+<span class="cmt">-- Drop trigger:</span>
+<span class="cmd">DROP TRIGGER</span> trg_update_modified
+<span class="cmd">ON</span> employees;</pre></details></td></tr>
+<tr><td>UNION / INTERSECT / EXCEPT</td><td>Set operations combining result sets</td><td><details><summary>▶ Show</summary><pre><span class="cmt">-- UNION (deduplicated):</span>
+<span class="cmd">SELECT</span> name <span class="cmd">FROM</span> employees
+<span class="cmd">UNION</span>
+<span class="cmd">SELECT</span> name <span class="cmd">FROM</span> contractors;
+
+<span class="cmt">-- UNION ALL (keeps duplicates, faster):</span>
+<span class="cmd">SELECT</span> name <span class="cmd">FROM</span> employees
+<span class="cmd">UNION ALL</span>
+<span class="cmd">SELECT</span> name <span class="cmd">FROM</span> contractors;
+
+<span class="cmt">-- INTERSECT (in both):</span>
+<span class="cmd">SELECT</span> email <span class="cmd">FROM</span> users_2023
+<span class="cmd">INTERSECT</span>
+<span class="cmd">SELECT</span> email <span class="cmd">FROM</span> users_2024;
+
+<span class="cmt">-- EXCEPT (in first but not second):</span>
+<span class="cmd">SELECT</span> email <span class="cmd">FROM</span> users_2023
+<span class="cmd">EXCEPT</span>
+<span class="cmd">SELECT</span> email <span class="cmd">FROM</span> users_2024;</pre></details></td></tr>
+</table>
+
+<script>
+document.getElementById('toggleAll').addEventListener('change', function() {
+  const details = document.querySelectorAll('details');
+  details.forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+});
+</script>
+
+</body>
+</html>

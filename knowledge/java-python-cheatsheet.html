@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java ↔ Python ↔ TypeScript Cheatsheet</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #1a1a1a;
+    padding: 24px 30px;
+    background: #fff;
+  }
+  h1 { text-align: center; font-size: 26px; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #555; margin-bottom: 24px; font-size: 13px; }
+  h2 {
+    font-size: 15px;
+    margin: 24px 0 8px 0;
+    padding: 5px 10px;
+    background: #2c3e50;
+    color: #fff;
+    border-radius: 4px;
+  }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 12px; }
+  th { background: #34495e; color: #fff; font-weight: 600; text-align: left; padding: 6px 8px; }
+  td { padding: 4px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  tr:hover { background: #edf2f7; }
+  td:first-child { font-weight: 500; color: #2c3e50; width: 12%; white-space: nowrap; }
+  td:nth-child(2) { width: 24%; }
+  td:nth-child(3) { width: 24%; }
+  td:nth-child(4) { width: 24%; }
+  td:nth-child(5) { width: 16%; }
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    font-size: 11px;
+    background: #f0f0f0;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #c0392b;
+  }
+  td:nth-child(3) code { color: #2471a3; }
+  td:nth-child(4) code { color: #2980b9; }
+  /* Collapsible example column */
+  details { margin: 0; }
+  details summary {
+    cursor: pointer;
+    font-size: 10px;
+    color: #7f8c8d;
+    user-select: none;
+    padding: 1px 0;
+  }
+  details summary:hover { color: #2c3e50; }
+  details[open] summary { color: #2c3e50; font-weight: 500; }
+  details pre {
+    margin: 4px 0 0 0;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    font-size: 10.5px;
+    line-height: 1.4;
+    overflow-x: auto;
+    white-space: pre;
+    background: #f9f9f9;
+    border: 1px solid #e8e8e8;
+  }
+  details pre .j { color: #c0392b; }
+  details pre .p { color: #2471a3; }
+  details pre .t { color: #2980b9; }
+  .toc { columns: 3; margin-bottom: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px; }
+  .toc a { display: block; padding: 2px 0; color: #2471a3; text-decoration: none; font-size: 12px; }
+  .toc a:hover { text-decoration: underline; }
+  @media print {
+    body { padding: 8px 12px; font-size: 10px; }
+    details[open] pre { break-inside: avoid; }
+    h2 { break-after: avoid; }
+    tr { break-inside: avoid; }
+  }
+  .toggle-all { text-align: center; margin-bottom: 16px; }
+  .toggle-label { font-size: 13px; color: #555; margin-left: 8px; vertical-align: middle; }
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+  input:checked + .slider { background: #4a90d9; }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .section-desc { color: #555; font-size: 12px; margin: 0 0 8px 0; padding: 4px 10px; border-left: 3px solid #ddd; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Java ↔ Python ↔ TypeScript Cheatsheet</h1>
+<p class="subtitle">Comprehensive three-language mapping with inline collapsible examples — click ▶ to expand</p>
+
+<div class="toggle-all">
+  <label class="switch">
+    <input type="checkbox" id="toggleAll">
+    <span class="slider"></span>
+  </label>
+  <span class="toggle-label">Expand All Examples</span>
+</div>
+
+<div class="toc">
+  <a href="#s1">1. Data Types</a>
+  <a href="#s2">2. Variables &amp; Constants</a>
+  <a href="#s3">3. Operators</a>
+  <a href="#s4">4. Control Flow</a>
+  <a href="#s5">5. Strings</a>
+  <a href="#s6">6. Arrays</a>
+  <a href="#s7">7. Lists</a>
+  <a href="#s8">8. Sets</a>
+  <a href="#s9">9. Maps / Dicts</a>
+  <a href="#s10">10. Queue, Deque, Stack</a>
+  <a href="#s11">11. Math</a>
+  <a href="#s12">12. Input / Output</a>
+  <a href="#s13">13. File I/O</a>
+  <a href="#s14">14. OOP</a>
+  <a href="#s15">15. Exceptions</a>
+  <a href="#s16">16. Functional / Lambdas</a>
+  <a href="#s17">17. Concurrency</a>
+  <a href="#s18">18. Date &amp; Time</a>
+  <a href="#s19">19. Sorting</a>
+  <a href="#s20">20. Iterators &amp; Generators</a>
+  <a href="#s21">21. Null Handling</a>
+  <a href="#s22">22. Design Patterns</a>
+  <a href="#s23">23. Standard Library</a>
+</div>
+
+<!-- Section 1: Data Types -->
+<h2 id="s1">1. Data Types</h2>
+<p class="section-desc">Understanding type systems is fundamental — Java is statically typed (types declared at compile time), Python is dynamically typed (types inferred at runtime), and TypeScript adds optional static typing to JavaScript.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Integer</td><td><code>int x = 10;</code></td><td><code>x = 10</code></td><td><code>let x: number = 10;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int x = 10;</span>
+<span class="p">x = 10</span>
+<span class="t">let x: number = 10;</span></pre></details></td></tr>
+<tr><td>Long</td><td><code>long x = 10L;</code></td><td><code>x = 10</code> (arbitrary precision)</td><td><code>let x: number = 10;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">long big = 9999999999L;</span>
+<span class="p">big = 9999999999  # auto big int</span>
+<span class="t">let big: number = 9999999999;</span></pre></details></td></tr>
+<tr><td>Float</td><td><code>float x = 3.14f;</code></td><td><code>x = 3.14</code></td><td><code>let x: number = 3.14;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">float pi = 3.14f;</span>
+<span class="p">pi = 3.14</span>
+<span class="t">let pi: number = 3.14;</span></pre></details></td></tr>
+<tr><td>Double</td><td><code>double x = 3.14;</code></td><td><code>x = 3.14</code></td><td><code>let x: number = 3.14;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">double precise = 3.141592653;</span>
+<span class="p">precise = 3.141592653</span>
+<span class="t">let precise: number = 3.141592653;</span></pre></details></td></tr>
+<tr><td>Boolean</td><td><code>boolean flag = true;</code></td><td><code>flag = True</code></td><td><code>let flag: boolean = true;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">boolean done = false;</span>
+<span class="p">done = False</span>
+<span class="t">let done: boolean = false;</span></pre></details></td></tr>
+<tr><td>Character</td><td><code>char c = 'A';</code></td><td><code>c = 'A'</code></td><td><code>let c: string = 'A';</code></td><td><details><summary>▶ Show</summary><pre><span class="j">char grade = 'A';</span>
+<span class="p">grade = 'A'  # just a string</span>
+<span class="t">let grade: string = 'A';  // no char type</span></pre></details></td></tr>
+<tr><td>String</td><td><code>String s = "hello";</code></td><td><code>s = "hello"</code></td><td><code>let s: string = "hello";</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String msg = "Hello World";</span>
+<span class="p">msg = "Hello World"</span>
+<span class="t">let msg: string = "Hello World";</span></pre></details></td></tr>
+<tr><td>Null</td><td><code>null</code></td><td><code>None</code></td><td><code>null</code> / <code>undefined</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String s = null;</span>
+<span class="p">s = None</span>
+<span class="t">let s: string | null = null;</span></pre></details></td></tr>
+<tr><td>Type check</td><td><code>x instanceof String</code></td><td><code>isinstance(x, str)</code></td><td><code>typeof x === 'string'</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (x instanceof String) { ... }</span>
+<span class="p">if isinstance(x, str): ...</span>
+<span class="t">if (typeof x === 'string') { ... }</span></pre></details></td></tr>
+<tr><td>Type cast</td><td><code>(int) x</code></td><td><code>int(x)</code></td><td><code>x as number</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int n = (int) 3.7;  // 3</span>
+<span class="p">n = int(3.7)  # 3</span>
+<span class="t">let n = Math.floor(3.7 as number);  // 3</span></pre></details></td></tr>
+<tr><td>Get type</td><td><code>x.getClass().getName()</code></td><td><code>type(x).__name__</code></td><td><code>typeof x</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".getClass().getName() → java.lang.String</span>
+<span class="p">type("hello").__name__ → 'str'</span>
+<span class="t">typeof "hello"  // "string"</span></pre></details></td></tr>
+</table>
+
+<!-- Section 2: Variables & Constants -->
+<h2 id="s2">2. Variables &amp; Constants</h2>
+<p class="section-desc">Variables store data for reuse. Constants prevent accidental modification of values that should never change.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Variable</td><td><code>int x = 5;</code></td><td><code>x = 5</code></td><td><code>let x: number = 5;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int count = 0;</span>
+<span class="p">count = 0</span>
+<span class="t">let count: number = 0;</span></pre></details></td></tr>
+<tr><td>Constant</td><td><code>final int X = 5;</code></td><td><code>X = 5</code> (UPPER_CASE)</td><td><code>const X: number = 5;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">final double TAX_RATE = 0.18;</span>
+<span class="p">TAX_RATE = 0.18  # convention only</span>
+<span class="t">const TAX_RATE: number = 0.18;</span></pre></details></td></tr>
+<tr><td>Multiple assign</td><td><code>int a = 1, b = 2;</code></td><td><code>a, b = 1, 2</code></td><td><code>let [a, b] = [1, 2];</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int x = 10, y = 20, z = 30;</span>
+<span class="p">x, y, z = 10, 20, 30</span>
+<span class="t">let [x, y, z] = [10, 20, 30];</span></pre></details></td></tr>
+<tr><td>Swap</td><td><code>int tmp = a; a = b; b = tmp;</code></td><td><code>a, b = b, a</code></td><td><code>[a, b] = [b, a];</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int tmp = a; a = b; b = tmp; // 3 lines</span>
+<span class="p">a, b = b, a  # one line!</span>
+<span class="t">[a, b] = [b, a];  // destructuring</span></pre></details></td></tr>
+<tr><td>Global</td><td><code>static int x;</code></td><td><code>x = 5</code> (module level)</td><td><code>let x = 5;</code> (module level)</td><td><details><summary>▶ Show</summary><pre><span class="j">class App { static int count = 0; }</span>
+<span class="p">count = 0  # module-level global</span>
+<span class="t">let count = 0;  // module-level</span></pre></details></td></tr>
+</table>
+<!-- Section 3: Operators -->
+<h2 id="s3">3. Operators</h2>
+<p class="section-desc">Operators perform computations and comparisons. Key difference: Java uses symbols (&amp;&amp;, ||), Python uses English words (and, or), TypeScript uses symbols like Java.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Arithmetic</td><td><code>+ - * / %</code></td><td><code>+ - * / %</code></td><td><code>+ - * / %</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int r = 10 % 3;  // 1</span>
+<span class="p">r = 10 % 3  # 1</span>
+<span class="t">let r = 10 % 3;  // 1</span></pre></details></td></tr>
+<tr><td>Integer division</td><td><code>7 / 2</code> → 3</td><td><code>7 // 2</code> → 3</td><td><code>Math.floor(7 / 2)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int half = 7 / 2;  // 3</span>
+<span class="p">half = 7 // 2  # 3</span>
+<span class="t">let half = Math.floor(7 / 2);  // 3</span></pre></details></td></tr>
+<tr><td>Power</td><td><code>Math.pow(2, 3)</code></td><td><code>2 ** 3</code></td><td><code>2 ** 3</code></td><td><details><summary>▶ Show</summary><pre><span class="j">double p = Math.pow(2, 10);  // 1024.0</span>
+<span class="p">p = 2 ** 10  # 1024</span>
+<span class="t">let p = 2 ** 10;  // 1024</span></pre></details></td></tr>
+<tr><td>Floor division</td><td><code>Math.floorDiv(7, 2)</code></td><td><code>7 // 2</code></td><td><code>Math.floor(7 / 2)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Math.floorDiv(-7, 2)  // -4</span>
+<span class="p">-7 // 2  # -4</span>
+<span class="t">Math.floor(-7 / 2)  // -4</span></pre></details></td></tr>
+<tr><td>Logical AND</td><td><code>&amp;&amp;</code></td><td><code>and</code></td><td><code>&amp;&amp;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (x > 0 && x < 10) { }</span>
+<span class="p">if x > 0 and x < 10:</span>
+<span class="t">if (x > 0 && x < 10) { }</span></pre></details></td></tr>
+<tr><td>Logical OR</td><td><code>||</code></td><td><code>or</code></td><td><code>||</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (a || b) { }</span>
+<span class="p">if a or b:</span>
+<span class="t">if (a || b) { }</span></pre></details></td></tr>
+<tr><td>Logical NOT</td><td><code>!</code></td><td><code>not</code></td><td><code>!</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (!done) { }</span>
+<span class="p">if not done:</span>
+<span class="t">if (!done) { }</span></pre></details></td></tr>
+<tr><td>Bitwise</td><td><code>&amp; | ^ &lt;&lt; &gt;&gt;</code></td><td><code>&amp; | ^ &lt;&lt; &gt;&gt;</code></td><td><code>&amp; | ^ &lt;&lt; &gt;&gt;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int mask = 0xFF & val;</span>
+<span class="p">mask = 0xFF & val</span>
+<span class="t">let mask = 0xFF & val;</span></pre></details></td></tr>
+<tr><td>Ternary</td><td><code>x &gt; 0 ? "pos" : "neg"</code></td><td><code>"pos" if x &gt; 0 else "neg"</code></td><td><code>x &gt; 0 ? "pos" : "neg"</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String s = age >= 18 ? "adult" : "minor";</span>
+<span class="p">s = "adult" if age >= 18 else "minor"</span>
+<span class="t">let s = age >= 18 ? "adult" : "minor";</span></pre></details></td></tr>
+<tr><td>Equality</td><td><code>==</code> / <code>.equals()</code></td><td><code>==</code> / <code>is</code></td><td><code>===</code> / <code>==</code></td><td><details><summary>▶ Show</summary><pre><span class="j">s1.equals(s2)  // value comparison</span>
+<span class="p">s1 == s2  # value comparison</span>
+<span class="p">s1 is s2  # identity (same object)</span>
+<span class="t">s1 === s2  // strict equality (preferred)</span></pre></details></td></tr>
+</table>
+
+<!-- Section 4: Control Flow -->
+<h2 id="s4">4. Control Flow</h2>
+<p class="section-desc">Control flow directs program execution. Python uses indentation instead of braces; TypeScript uses braces like Java.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>If</td><td><code>if (x &gt; 0) { }</code></td><td><code>if x &gt; 0:</code></td><td><code>if (x &gt; 0) { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (score >= 90) { grade = "A"; }</span>
+<span class="p">if score >= 90: grade = "A"</span>
+<span class="t">if (score >= 90) { grade = "A"; }</span></pre></details></td></tr>
+<tr><td>Else if</td><td><code>else if (x &lt; 0) { }</code></td><td><code>elif x &lt; 0:</code></td><td><code>else if (x &lt; 0) { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">else if (score >= 80) { grade = "B"; }</span>
+<span class="p">elif score >= 80: grade = "B"</span>
+<span class="t">else if (score >= 80) { grade = "B"; }</span></pre></details></td></tr>
+<tr><td>Else</td><td><code>else { }</code></td><td><code>else:</code></td><td><code>else { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">else { grade = "F"; }</span>
+<span class="p">else: grade = "F"</span>
+<span class="t">else { grade = "F"; }</span></pre></details></td></tr>
+<tr><td>Switch/Match</td><td><code>switch (x) { case 1: ... }</code></td><td><code>match x: case 1: ...</code></td><td><code>switch (x) { case 1: ... }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">switch (day) { case 1: s="Mon"; break; }</span>
+<span class="p">match day:
+    case 1: s = "Mon"  # Python 3.10+</span>
+<span class="t">switch (day) { case 1: s = "Mon"; break; }</span></pre></details></td></tr>
+<tr><td>For loop</td><td><code>for (int i=0; i&lt;n; i++)</code></td><td><code>for i in range(n):</code></td><td><code>for (let i = 0; i &lt; n; i++)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (int i = 0; i < 5; i++) { print(i); }</span>
+<span class="p">for i in range(5): print(i)</span>
+<span class="t">for (let i = 0; i < 5; i++) { console.log(i); }</span></pre></details></td></tr>
+<tr><td>For-each</td><td><code>for (int x : arr)</code></td><td><code>for x in arr:</code></td><td><code>for (const x of arr)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (String s : names) { println(s); }</span>
+<span class="p">for s in names: print(s)</span>
+<span class="t">for (const s of names) { console.log(s); }</span></pre></details></td></tr>
+<tr><td>While</td><td><code>while (x &gt; 0) { }</code></td><td><code>while x &gt; 0:</code></td><td><code>while (x &gt; 0) { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">while (n > 0) { n--; }</span>
+<span class="p">while n > 0: n -= 1</span>
+<span class="t">while (n > 0) { n--; }</span></pre></details></td></tr>
+<tr><td>Do-while</td><td><code>do { } while (cond);</code></td><td><code>while True: ... if not cond: break</code></td><td><code>do { } while (cond);</code></td><td><details><summary>▶ Show</summary><pre><span class="j">do { input = read(); } while (input != 'q');</span>
+<span class="p">while True:
+    inp = read()
+    if inp == 'q': break</span>
+<span class="t">do { input = read(); } while (input !== 'q');</span></pre></details></td></tr>
+<tr><td>Range with step</td><td><code>for (int i=0; i&lt;10; i+=2)</code></td><td><code>for i in range(0, 10, 2):</code></td><td><code>for (let i = 0; i &lt; 10; i += 2)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (int i = 0; i < 10; i += 2) // 0,2,4,6,8</span>
+<span class="p">for i in range(0, 10, 2):  # 0,2,4,6,8</span>
+<span class="t">for (let i = 0; i < 10; i += 2) // 0,2,4,6,8</span></pre></details></td></tr>
+<tr><td>Reverse loop</td><td><code>for (int i=9; i&gt;=0; i--)</code></td><td><code>for i in range(9, -1, -1):</code></td><td><code>for (let i = 9; i &gt;= 0; i--)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (int i = 9; i >= 0; i--) // 9,8,...,0</span>
+<span class="p">for i in range(9, -1, -1):  # 9,8,...,0</span>
+<span class="t">for (let i = 9; i >= 0; i--) // 9,8,...,0</span></pre></details></td></tr>
+<tr><td>Break / Continue</td><td><code>break; continue;</code></td><td><code>break</code> / <code>continue</code></td><td><code>break; continue;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (x == 5) break; if (x == 3) continue;</span>
+<span class="p">if x == 5: break
+if x == 3: continue</span>
+<span class="t">if (x === 5) break; if (x === 3) continue;</span></pre></details></td></tr>
+</table>
+
+<!-- Section 5: Strings -->
+<h2 id="s5">5. Strings</h2>
+<p class="section-desc">String manipulation is one of the most common operations. Python's slicing and f-strings make it more concise; TypeScript uses template literals.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Length</td><td><code>s.length()</code></td><td><code>len(s)</code></td><td><code>s.length</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".length()  // 5</span>
+<span class="p">len("hello")  # 5</span>
+<span class="t">"hello".length  // 5</span></pre></details></td></tr>
+<tr><td>Char at</td><td><code>s.charAt(i)</code></td><td><code>s[i]</code></td><td><code>s[i]</code> or <code>s.charAt(i)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".charAt(1)  // 'e'</span>
+<span class="p">"hello"[1]  # 'e'</span>
+<span class="t">"hello"[1]  // 'e'</span></pre></details></td></tr>
+<tr><td>Substring</td><td><code>s.substring(start, end)</code></td><td><code>s[start:end]</code></td><td><code>s.substring(start, end)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".substring(1, 4)  // "ell"</span>
+<span class="p">"hello"[1:4]  # "ell"</span>
+<span class="t">"hello".substring(1, 4)  // "ell"</span></pre></details></td></tr>
+<tr><td>Concat</td><td><code>s1 + s2</code></td><td><code>s1 + s2</code></td><td><code>s1 + s2</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"Hi" + " " + "World"  // "Hi World"</span>
+<span class="p">"Hi" + " " + "World"  # "Hi World"</span>
+<span class="t">"Hi" + " " + "World"  // "Hi World"</span></pre></details></td></tr>
+<tr><td>Repeat</td><td><code>s.repeat(3)</code></td><td><code>s * 3</code></td><td><code>s.repeat(3)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"ab".repeat(3)  // "ababab"</span>
+<span class="p">"ab" * 3  # "ababab"</span>
+<span class="t">"ab".repeat(3)  // "ababab"</span></pre></details></td></tr>
+<tr><td>Split</td><td><code>s.split(",")</code></td><td><code>s.split(",")</code></td><td><code>s.split(",")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"a,b,c".split(",")  // ["a","b","c"]</span>
+<span class="p">"a,b,c".split(",")  # ['a','b','c']</span>
+<span class="t">"a,b,c".split(",")  // ["a","b","c"]</span></pre></details></td></tr>
+<tr><td>Join</td><td><code>String.join(",", list)</code></td><td><code>",".join(list)</code></td><td><code>arr.join(",")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String.join("-", List.of("a","b"))  // "a-b"</span>
+<span class="p">"-".join(["a","b"])  # "a-b"</span>
+<span class="t">["a","b"].join("-")  // "a-b"</span></pre></details></td></tr>
+<tr><td>Contains</td><td><code>s.contains("x")</code></td><td><code>"x" in s</code></td><td><code>s.includes("x")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".contains("ell")  // true</span>
+<span class="p">"ell" in "hello"  # True</span>
+<span class="t">"hello".includes("ell")  // true</span></pre></details></td></tr>
+<tr><td>Starts with</td><td><code>s.startsWith("x")</code></td><td><code>s.startswith("x")</code></td><td><code>s.startsWith("x")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".startsWith("he")  // true</span>
+<span class="p">"hello".startswith("he")  # True</span>
+<span class="t">"hello".startsWith("he")  // true</span></pre></details></td></tr>
+<tr><td>Ends with</td><td><code>s.endsWith("x")</code></td><td><code>s.endswith("x")</code></td><td><code>s.endsWith("x")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".endsWith("lo")  // true</span>
+<span class="p">"hello".endswith("lo")  # True</span>
+<span class="t">"hello".endsWith("lo")  // true</span></pre></details></td></tr>
+<tr><td>Index of</td><td><code>s.indexOf("x")</code></td><td><code>s.find("x")</code></td><td><code>s.indexOf("x")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".indexOf("ll")  // 2</span>
+<span class="p">"hello".find("ll")  # 2</span>
+<span class="t">"hello".indexOf("ll")  // 2</span></pre></details></td></tr>
+<tr><td>Replace</td><td><code>s.replace("a", "b")</code></td><td><code>s.replace("a", "b")</code></td><td><code>s.replace("a", "b")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"aabaa".replace("a", "x")  // "xxbxx"</span>
+<span class="p">"aabaa".replace("a", "x")  # "xxbxx"</span>
+<span class="t">"aabaa".replaceAll("a", "x")  // "xxbxx"</span></pre></details></td></tr>
+<tr><td>Uppercase</td><td><code>s.toUpperCase()</code></td><td><code>s.upper()</code></td><td><code>s.toUpperCase()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"hello".toUpperCase()  // "HELLO"</span>
+<span class="p">"hello".upper()  # "HELLO"</span>
+<span class="t">"hello".toUpperCase()  // "HELLO"</span></pre></details></td></tr>
+<tr><td>Lowercase</td><td><code>s.toLowerCase()</code></td><td><code>s.lower()</code></td><td><code>s.toLowerCase()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"HELLO".toLowerCase()  // "hello"</span>
+<span class="p">"HELLO".lower()  # "hello"</span>
+<span class="t">"HELLO".toLowerCase()  // "hello"</span></pre></details></td></tr>
+<tr><td>Trim</td><td><code>s.trim()</code></td><td><code>s.strip()</code></td><td><code>s.trim()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"  hi  ".trim()  // "hi"</span>
+<span class="p">"  hi  ".strip()  # "hi"</span>
+<span class="t">"  hi  ".trim()  // "hi"</span></pre></details></td></tr>
+<tr><td>Format</td><td><code>String.format("%s=%d", k, v)</code></td><td><code>f"{k}={v}"</code></td><td><code>`${k}=${v}`</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String.format("%s is %d", "age", 25)</span>
+<span class="p">f"{'age'} is {25}"</span>
+<span class="t">`${"age"} is ${25}`</span></pre></details></td></tr>
+<tr><td>Reverse</td><td><code>new StringBuilder(s).reverse().toString()</code></td><td><code>s[::-1]</code></td><td><code>s.split("").reverse().join("")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">new StringBuilder("hello").reverse().toString() // "olleh"</span>
+<span class="p">"hello"[::-1]  # "olleh"</span>
+<span class="t">"hello".split("").reverse().join("")  // "olleh"</span></pre></details></td></tr>
+<tr><td>Is digit</td><td><code>Character.isDigit(c)</code></td><td><code>c.isdigit()</code></td><td><code>!isNaN(Number(c))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Character.isDigit('5')  // true</span>
+<span class="p">'5'.isdigit()  # True</span>
+<span class="t">!isNaN(Number('5'))  // true</span></pre></details></td></tr>
+<tr><td>Regex match</td><td><code>s.matches("regex")</code></td><td><code>re.fullmatch("regex", s)</code></td><td><code>s.match(/regex/)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">"123".matches("\\d+")  // true</span>
+<span class="p">import re
+re.fullmatch(r"\d+", "123")  # Match obj</span>
+<span class="t">"123".match(/^\d+$/)  // ["123"]</span></pre></details></td></tr>
+<tr><td>StringBuilder</td><td><code>new StringBuilder()</code></td><td><code>[]</code> + <code>"".join()</code></td><td><code>parts.push("a"); parts.join("")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">StringBuilder sb = new StringBuilder();
+sb.append("a").append("b");  // "ab"</span>
+<span class="p">parts = []
+parts.append("a"); parts.append("b")
+"".join(parts)  # "ab"</span>
+<span class="t">const parts: string[] = [];
+parts.push("a"); parts.push("b");
+parts.join("");  // "ab"</span></pre></details></td></tr>
+</table>
+
+<!-- Section 6: Arrays -->
+<h2 id="s6">6. Arrays</h2>
+<p class="section-desc">Arrays store fixed-size collections. Python lists are more flexible; TypeScript arrays are dynamic like Python's.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Declare</td><td><code>int[] arr = new int[5];</code></td><td><code>arr = [0] * 5</code></td><td><code>const arr: number[] = new Array(5).fill(0);</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int[] arr = new int[3];  // [0, 0, 0]</span>
+<span class="p">arr = [0] * 3  # [0, 0, 0]</span>
+<span class="t">const arr: number[] = new Array(3).fill(0);</span></pre></details></td></tr>
+<tr><td>Initialize</td><td><code>int[] arr = {1, 2, 3};</code></td><td><code>arr = [1, 2, 3]</code></td><td><code>const arr: number[] = [1, 2, 3];</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int[] nums = {10, 20, 30};</span>
+<span class="p">nums = [10, 20, 30]</span>
+<span class="t">const nums: number[] = [10, 20, 30];</span></pre></details></td></tr>
+<tr><td>Length</td><td><code>arr.length</code></td><td><code>len(arr)</code></td><td><code>arr.length</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int n = nums.length;  // 3</span>
+<span class="p">n = len(nums)  # 3</span>
+<span class="t">const n = nums.length;  // 3</span></pre></details></td></tr>
+<tr><td>Access / Set</td><td><code>arr[0]</code> / <code>arr[0] = x</code></td><td><code>arr[0]</code> / <code>arr[0] = x</code></td><td><code>arr[0]</code> / <code>arr[0] = x</code></td><td><details><summary>▶ Show</summary><pre><span class="j">arr[0] = 99; int v = arr[0];</span>
+<span class="p">arr[0] = 99; v = arr[0]</span>
+<span class="t">arr[0] = 99; const v = arr[0];</span></pre></details></td></tr>
+<tr><td>2D array</td><td><code>int[][] m = new int[3][4];</code></td><td><code>[[0]*4 for _ in range(3)]</code></td><td><code>Array.from({length: 3}, () =&gt; new Array(4).fill(0))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int[][] grid = new int[2][3]; // 2 rows, 3 cols</span>
+<span class="p">grid = [[0]*3 for _ in range(2)]</span>
+<span class="t">const grid = Array.from({length: 2}, () => new Array(3).fill(0));</span></pre></details></td></tr>
+<tr><td>Sort</td><td><code>Arrays.sort(arr)</code></td><td><code>arr.sort()</code></td><td><code>arr.sort((a, b) =&gt; a - b)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int[] a = {3,1,2}; Arrays.sort(a); // [1,2,3]</span>
+<span class="p">a = [3,1,2]; a.sort()  # [1,2,3]</span>
+<span class="t">[3,1,2].sort((a, b) => a - b)  // [1,2,3]</span></pre></details></td></tr>
+<tr><td>Sort desc</td><td><code>Arrays.sort(arr, reverseOrder())</code></td><td><code>arr.sort(reverse=True)</code></td><td><code>arr.sort((a, b) =&gt; b - a)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Integer[] a = {1,3,2};
+Arrays.sort(a, Collections.reverseOrder()); // [3,2,1]</span>
+<span class="p">a = [1,3,2]; a.sort(reverse=True)  # [3,2,1]</span>
+<span class="t">[1,3,2].sort((a, b) => b - a)  // [3,2,1]</span></pre></details></td></tr>
+<tr><td>Binary search</td><td><code>Arrays.binarySearch(arr, key)</code></td><td><code>bisect.bisect_left(arr, key)</code></td><td><code>arr.findIndex(x =&gt; x &gt;= key)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int idx = Arrays.binarySearch(new int[]{1,3,5}, 3); // 1</span>
+<span class="p">import bisect
+bisect.bisect_left([1,3,5], 3)  # 1</span>
+<span class="t">[1,3,5].findIndex(x => x >= 3)  // 1</span></pre></details></td></tr>
+<tr><td>Sum</td><td><code>Arrays.stream(arr).sum()</code></td><td><code>sum(arr)</code></td><td><code>arr.reduce((a, b) =&gt; a + b, 0)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Arrays.stream(new int[]{1,2,3}).sum()  // 6</span>
+<span class="p">sum([1,2,3])  # 6</span>
+<span class="t">[1,2,3].reduce((a, b) => a + b, 0)  // 6</span></pre></details></td></tr>
+<tr><td>Min / Max</td><td><code>Arrays.stream(arr).min()</code></td><td><code>min(arr)</code> / <code>max(arr)</code></td><td><code>Math.min(...arr)</code> / <code>Math.max(...arr)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Arrays.stream(a).min().getAsInt()  // 1</span>
+<span class="p">min([3,1,2])  # 1</span>
+<span class="t">Math.min(...[3,1,2])  // 1</span></pre></details></td></tr>
+<tr><td>Slice</td><td><code>Arrays.copyOfRange(arr, i, j)</code></td><td><code>arr[i:j]</code></td><td><code>arr.slice(i, j)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Arrays.copyOfRange(new int[]{1,2,3,4}, 1, 3) // [2,3]</span>
+<span class="p">[1,2,3,4][1:3]  # [2,3]</span>
+<span class="t">[1,2,3,4].slice(1, 3)  // [2,3]</span></pre></details></td></tr>
+<tr><td>Contains</td><td><code>Arrays.asList(arr).contains(x)</code></td><td><code>x in arr</code></td><td><code>arr.includes(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Arrays.asList(names).contains("Bob")  // true</span>
+<span class="p">"Bob" in names  # True</span>
+<span class="t">names.includes("Bob")  // true</span></pre></details></td></tr>
+<tr><td>Reverse</td><td><code>Collections.reverse(...)</code></td><td><code>arr[::-1]</code></td><td><code>arr.reverse()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Collections.reverse(Arrays.asList(arr));</span>
+<span class="p">arr[::-1]  # or arr.reverse() in-place</span>
+<span class="t">arr.reverse()  // in-place</span></pre></details></td></tr>
+</table>
+
+<!-- Section 7: Lists -->
+<h2 id="s7">7. Lists (ArrayList / list)</h2>
+<p class="section-desc">Lists are the workhorse collection. Java requires streams for functional operations; Python uses list comprehensions; TypeScript uses array methods.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Create</td><td><code>new ArrayList&lt;&gt;()</code></td><td><code>[]</code></td><td><code>const list: number[] = [];</code></td><td><details><summary>▶ Show</summary><pre><span class="j">List&lt;Integer&gt; nums = new ArrayList&lt;&gt;();</span>
+<span class="p">nums = []</span>
+<span class="t">const nums: number[] = [];</span></pre></details></td></tr>
+<tr><td>Add</td><td><code>list.add(x)</code></td><td><code>lst.append(x)</code></td><td><code>list.push(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.add(10); nums.add(20);</span>
+<span class="p">nums.append(10); nums.append(20)</span>
+<span class="t">nums.push(10); nums.push(20);</span></pre></details></td></tr>
+<tr><td>Insert at</td><td><code>list.add(i, x)</code></td><td><code>lst.insert(i, x)</code></td><td><code>list.splice(i, 0, x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.add(0, 99);  // insert at front</span>
+<span class="p">nums.insert(0, 99)  # insert at front</span>
+<span class="t">nums.splice(0, 0, 99);  // insert at front</span></pre></details></td></tr>
+<tr><td>Get</td><td><code>list.get(i)</code></td><td><code>lst[i]</code></td><td><code>list[i]</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int val = nums.get(0);</span>
+<span class="p">val = nums[0]</span>
+<span class="t">const val = nums[0];</span></pre></details></td></tr>
+<tr><td>Set</td><td><code>list.set(i, x)</code></td><td><code>lst[i] = x</code></td><td><code>list[i] = x</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.set(0, 42);</span>
+<span class="p">nums[0] = 42</span>
+<span class="t">nums[0] = 42;</span></pre></details></td></tr>
+<tr><td>Remove index</td><td><code>list.remove(i)</code></td><td><code>del lst[i]</code> / <code>lst.pop(i)</code></td><td><code>list.splice(i, 1)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.remove(0);  // remove first element</span>
+<span class="p">del nums[0]  # or nums.pop(0)</span>
+<span class="t">nums.splice(0, 1);  // remove first element</span></pre></details></td></tr>
+<tr><td>Remove value</td><td><code>list.remove(Integer.valueOf(x))</code></td><td><code>lst.remove(x)</code></td><td><code>list.splice(list.indexOf(x), 1)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.remove(Integer.valueOf(10));</span>
+<span class="p">nums.remove(10)  # first occurrence</span>
+<span class="t">nums.splice(nums.indexOf(10), 1);</span></pre></details></td></tr>
+<tr><td>Size</td><td><code>list.size()</code></td><td><code>len(lst)</code></td><td><code>list.length</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int n = nums.size();</span>
+<span class="p">n = len(nums)</span>
+<span class="t">const n = nums.length;</span></pre></details></td></tr>
+<tr><td>Contains</td><td><code>list.contains(x)</code></td><td><code>x in lst</code></td><td><code>list.includes(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (nums.contains(5)) { ... }</span>
+<span class="p">if 5 in nums: ...</span>
+<span class="t">if (nums.includes(5)) { ... }</span></pre></details></td></tr>
+<tr><td>Sort</td><td><code>list.sort(naturalOrder())</code></td><td><code>lst.sort()</code></td><td><code>list.sort((a, b) =&gt; a - b)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.sort(Comparator.naturalOrder());</span>
+<span class="p">nums.sort()</span>
+<span class="t">nums.sort((a, b) => a - b);</span></pre></details></td></tr>
+<tr><td>Sort custom</td><td><code>list.sort((a,b) -&gt; ...)</code></td><td><code>lst.sort(key=...)</code></td><td><code>list.sort((a, b) =&gt; a.length - b.length)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">words.sort((a,b) -> a.length()-b.length());</span>
+<span class="p">words.sort(key=len)</span>
+<span class="t">words.sort((a, b) => a.length - b.length);</span></pre></details></td></tr>
+<tr><td>Filter</td><td><code>.stream().filter(...).collect(...)</code></td><td><code>[x for x in lst if ...]</code></td><td><code>list.filter(x =&gt; x &gt; 0)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.stream().filter(n -> n>0).collect(toList());</span>
+<span class="p">[n for n in nums if n > 0]</span>
+<span class="t">nums.filter(n => n > 0);</span></pre></details></td></tr>
+<tr><td>Map</td><td><code>.stream().map(...).collect(...)</code></td><td><code>[f(x) for x in lst]</code></td><td><code>list.map(x =&gt; x * 2)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.stream().map(n -> n*2).collect(toList());</span>
+<span class="p">[n*2 for n in nums]</span>
+<span class="t">nums.map(n => n * 2);</span></pre></details></td></tr>
+<tr><td>Reduce</td><td><code>.stream().reduce(0, Integer::sum)</code></td><td><code>functools.reduce(...)</code></td><td><code>list.reduce((acc, x) =&gt; acc + x, 0)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.stream().reduce(0, Integer::sum);  // sum</span>
+<span class="p">from functools import reduce
+reduce(lambda a,b: a+b, nums, 0)</span>
+<span class="t">nums.reduce((acc, x) => acc + x, 0);</span></pre></details></td></tr>
+<tr><td>Any match</td><td><code>.stream().anyMatch(...)</code></td><td><code>any(...)</code></td><td><code>list.some(x =&gt; x &gt; 10)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.stream().anyMatch(n -> n > 10);</span>
+<span class="p">any(n > 10 for n in nums)</span>
+<span class="t">nums.some(n => n > 10);</span></pre></details></td></tr>
+<tr><td>All match</td><td><code>.stream().allMatch(...)</code></td><td><code>all(...)</code></td><td><code>list.every(x =&gt; x &gt; 0)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.stream().allMatch(n -> n > 0);</span>
+<span class="p">all(n > 0 for n in nums)</span>
+<span class="t">nums.every(n => n > 0);</span></pre></details></td></tr>
+<tr><td>Enumerate</td><td>Manual index</td><td><code>enumerate(lst)</code></td><td><code>list.forEach((val, i) =&gt; ...)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (int i=0; i&lt;list.size(); i++) {...}</span>
+<span class="p">for i, val in enumerate(lst): ...</span>
+<span class="t">list.forEach((val, i) => console.log(i, val));</span></pre></details></td></tr>
+<tr><td>Zip</td><td>Manual / IntStream</td><td><code>zip(a, b)</code></td><td><code>a.map((v, i) =&gt; [v, b[i]])</code></td><td><details><summary>▶ Show</summary><pre><span class="j">// manual loop over two lists by index</span>
+<span class="p">for x, y in zip(names, scores): ...</span>
+<span class="t">names.map((n, i) => [n, scores[i]]);</span></pre></details></td></tr>
+</table>
+
+<!-- Section 8: Sets -->
+<h2 id="s8">8. Sets (HashSet / set)</h2>
+<p class="section-desc">Sets store unique elements and enable fast membership testing and mathematical set operations.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Create</td><td><code>new HashSet&lt;&gt;()</code></td><td><code>set()</code></td><td><code>const s = new Set&lt;number&gt;();</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Set&lt;Integer&gt; s = new HashSet&lt;&gt;();</span>
+<span class="p">s = set()</span>
+<span class="t">const s = new Set&lt;number&gt;();</span></pre></details></td></tr>
+<tr><td>With values</td><td><code>Set.of(1, 2, 3)</code></td><td><code>{1, 2, 3}</code></td><td><code>new Set([1, 2, 3])</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Set&lt;Integer&gt; s = Set.of(1, 2, 3);</span>
+<span class="p">s = {1, 2, 3}</span>
+<span class="t">const s = new Set([1, 2, 3]);</span></pre></details></td></tr>
+<tr><td>Add</td><td><code>set.add(x)</code></td><td><code>s.add(x)</code></td><td><code>s.add(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">s.add(4);  // {1,2,3,4}</span>
+<span class="p">s.add(4)  # {1,2,3,4}</span>
+<span class="t">s.add(4);  // Set {1,2,3,4}</span></pre></details></td></tr>
+<tr><td>Remove</td><td><code>set.remove(x)</code></td><td><code>s.discard(x)</code></td><td><code>s.delete(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">s.remove(2);  // throws if absent</span>
+<span class="p">s.discard(2)  # no error if absent</span>
+<span class="t">s.delete(2);  // returns false if absent</span></pre></details></td></tr>
+<tr><td>Contains</td><td><code>set.contains(x)</code></td><td><code>x in s</code></td><td><code>s.has(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (s.contains(3)) { ... }</span>
+<span class="p">if 3 in s: ...</span>
+<span class="t">if (s.has(3)) { ... }</span></pre></details></td></tr>
+<tr><td>Union</td><td><code>set1.addAll(set2)</code></td><td><code>s1 | s2</code></td><td><code>new Set([...a, ...b])</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Set&lt;Integer&gt; u = new HashSet&lt;&gt;(a); u.addAll(b);</span>
+<span class="p">u = a | b  # or a.union(b)</span>
+<span class="t">const u = new Set([...a, ...b]);</span></pre></details></td></tr>
+<tr><td>Intersection</td><td><code>set1.retainAll(set2)</code></td><td><code>s1 &amp; s2</code></td><td><code>new Set([...a].filter(x =&gt; b.has(x)))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Set&lt;Integer&gt; i = new HashSet&lt;&gt;(a); i.retainAll(b);</span>
+<span class="p">i = a & b  # or a.intersection(b)</span>
+<span class="t">const i = new Set([...a].filter(x => b.has(x)));</span></pre></details></td></tr>
+<tr><td>Difference</td><td><code>set1.removeAll(set2)</code></td><td><code>s1 - s2</code></td><td><code>new Set([...a].filter(x =&gt; !b.has(x)))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Set&lt;Integer&gt; d = new HashSet&lt;&gt;(a); d.removeAll(b);</span>
+<span class="p">d = a - b  # or a.difference(b)</span>
+<span class="t">const d = new Set([...a].filter(x => !b.has(x)));</span></pre></details></td></tr>
+<tr><td>Subset</td><td><code>b.containsAll(a)</code></td><td><code>a &lt;= b</code></td><td><code>[...a].every(x =&gt; b.has(x))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">b.containsAll(a)  // is a subset of b?</span>
+<span class="p">a <= b  # or a.issubset(b)</span>
+<span class="t">[...a].every(x => b.has(x))  // is a subset?</span></pre></details></td></tr>
+<tr><td>Frozen/Immutable</td><td><code>Collections.unmodifiableSet(s)</code></td><td><code>frozenset(s)</code></td><td><code>Object.freeze(new Set(s))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Set&lt;Integer&gt; imm = Collections.unmodifiableSet(s);</span>
+<span class="p">imm = frozenset(s)  # hashable</span>
+<span class="t">const imm = Object.freeze(new Set(s));</span></pre></details></td></tr>
+</table>
+
+<!-- Section 9: Maps -->
+<h2 id="s9">9. Maps (HashMap / dict)</h2>
+<p class="section-desc">Key-value stores are essential for lookups, counting, grouping, and caching.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Create</td><td><code>new HashMap&lt;&gt;()</code></td><td><code>{}</code></td><td><code>const m = new Map&lt;string, number&gt;();</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Map&lt;String,Integer&gt; m = new HashMap&lt;&gt;();</span>
+<span class="p">m = {}</span>
+<span class="t">const m = new Map&lt;string, number&gt;();</span></pre></details></td></tr>
+<tr><td>Put</td><td><code>map.put(k, v)</code></td><td><code>d[k] = v</code></td><td><code>m.set(key, val)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">m.put("age", 25);</span>
+<span class="p">m["age"] = 25</span>
+<span class="t">m.set("age", 25);</span></pre></details></td></tr>
+<tr><td>Get</td><td><code>map.get(k)</code></td><td><code>d[k]</code> / <code>d.get(k)</code></td><td><code>m.get(key)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int age = m.get("age");  // 25</span>
+<span class="p">age = m["age"]  # 25</span>
+<span class="t">const age = m.get("age");  // 25</span></pre></details></td></tr>
+<tr><td>Get or default</td><td><code>map.getOrDefault(k, def)</code></td><td><code>d.get(k, default)</code></td><td><code>m.get(key) ?? defaultVal</code></td><td><details><summary>▶ Show</summary><pre><span class="j">m.getOrDefault("x", 0)  // 0</span>
+<span class="p">m.get("x", 0)  # 0</span>
+<span class="t">m.get("x") ?? 0  // 0</span></pre></details></td></tr>
+<tr><td>Contains key</td><td><code>map.containsKey(k)</code></td><td><code>k in d</code></td><td><code>m.has(key)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (m.containsKey("age")) { ... }</span>
+<span class="p">if "age" in m: ...</span>
+<span class="t">if (m.has("age")) { ... }</span></pre></details></td></tr>
+<tr><td>Remove</td><td><code>map.remove(k)</code></td><td><code>del d[k]</code> / <code>d.pop(k)</code></td><td><code>m.delete(key)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">m.remove("age");</span>
+<span class="p">del m["age"]  # or m.pop("age")</span>
+<span class="t">m.delete("age");</span></pre></details></td></tr>
+<tr><td>Keys</td><td><code>map.keySet()</code></td><td><code>d.keys()</code></td><td><code>m.keys()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (String k : m.keySet()) { ... }</span>
+<span class="p">for k in m.keys(): ...  # or just: for k in m:</span>
+<span class="t">for (const k of m.keys()) { ... }</span></pre></details></td></tr>
+<tr><td>Values</td><td><code>map.values()</code></td><td><code>d.values()</code></td><td><code>m.values()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (int v : m.values()) { ... }</span>
+<span class="p">for v in m.values(): ...</span>
+<span class="t">for (const v of m.values()) { ... }</span></pre></details></td></tr>
+<tr><td>Entries</td><td><code>map.entrySet()</code></td><td><code>d.items()</code></td><td><code>for (const [k, v] of m)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (var e : m.entrySet()) { e.getKey(); e.getValue(); }</span>
+<span class="p">for k, v in m.items(): ...</span>
+<span class="t">for (const [k, v] of m) { ... }</span></pre></details></td></tr>
+<tr><td>Merge / Count</td><td><code>map.merge(k, 1, Integer::sum)</code></td><td><code>d[k] = d.get(k,0) + 1</code></td><td><code>m.set(k, (m.get(k) ?? 0) + 1)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">freq.merge("hi", 1, Integer::sum); // freq["hi"]++</span>
+<span class="p">freq["hi"] = freq.get("hi", 0) + 1</span>
+<span class="t">freq.set("hi", (freq.get("hi") ?? 0) + 1);</span></pre></details></td></tr>
+<tr><td>setdefault</td><td><code>map.computeIfAbsent(k, ...)</code></td><td><code>d.setdefault(k, [])</code></td><td><code>if (!m.has(k)) m.set(k, [])</code></td><td><details><summary>▶ Show</summary><pre><span class="j">m.computeIfAbsent("items", k -> new ArrayList<>()).add(x);</span>
+<span class="p">m.setdefault("items", []).append(x)</span>
+<span class="t">if (!m.has("items")) m.set("items", []);
+m.get("items")!.push(x);</span></pre></details></td></tr>
+<tr><td>Counter</td><td>Manual loop</td><td><code>Counter(lst)</code></td><td>Manual loop / Map</td><td><details><summary>▶ Show</summary><pre><span class="j">Map&lt;String,Integer&gt; freq = new HashMap&lt;&gt;();
+for (String w : words) freq.merge(w, 1, Integer::sum);</span>
+<span class="p">from collections import Counter
+freq = Counter(words)</span>
+<span class="t">const freq = new Map&lt;string, number&gt;();
+for (const w of words) freq.set(w, (freq.get(w) ?? 0) + 1);</span></pre></details></td></tr>
+<tr><td>Sorted by key</td><td><code>new TreeMap&lt;&gt;(map)</code></td><td><code>dict(sorted(d.items()))</code></td><td><code>new Map([...m].sort((a, b) =&gt; a[0].localeCompare(b[0])))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">TreeMap&lt;String,Integer&gt; sorted = new TreeMap&lt;&gt;(m);</span>
+<span class="p">sorted_d = dict(sorted(m.items()))</span>
+<span class="t">const sorted = new Map([...m].sort((a, b) => a[0].localeCompare(b[0])));</span></pre></details></td></tr>
+</table>
+
+<!-- Section 10: Queue/Stack/PQ -->
+<h2 id="s10">10. Queue, Deque, Stack, PriorityQueue</h2>
+<p class="section-desc">These data structures control processing order — FIFO for queues, LIFO for stacks, priority for heaps.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Queue create</td><td><code>new LinkedList&lt;&gt;()</code></td><td><code>deque()</code></td><td><code>const q: string[] = [];</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Queue&lt;String&gt; q = new LinkedList&lt;&gt;();</span>
+<span class="p">from collections import deque; q = deque()</span>
+<span class="t">const q: string[] = [];  // array as queue</span></pre></details></td></tr>
+<tr><td>Enqueue</td><td><code>q.offer(x)</code></td><td><code>q.append(x)</code></td><td><code>q.push(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">q.offer("task1"); q.offer("task2");</span>
+<span class="p">q.append("task1"); q.append("task2")</span>
+<span class="t">q.push("task1"); q.push("task2");</span></pre></details></td></tr>
+<tr><td>Dequeue</td><td><code>q.poll()</code></td><td><code>q.popleft()</code></td><td><code>q.shift()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String first = q.poll();  // "task1"</span>
+<span class="p">first = q.popleft()  # "task1"</span>
+<span class="t">const first = q.shift();  // "task1"</span></pre></details></td></tr>
+<tr><td>Peek</td><td><code>q.peek()</code></td><td><code>q[0]</code></td><td><code>q[0]</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String front = q.peek();  // no removal</span>
+<span class="p">front = q[0]  # no removal</span>
+<span class="t">const front = q[0];  // no removal</span></pre></details></td></tr>
+<tr><td>Stack push</td><td><code>stack.push(x)</code></td><td><code>stack.append(x)</code></td><td><code>stack.push(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Deque&lt;Integer&gt; stk = new ArrayDeque&lt;&gt;();
+stk.push(10); stk.push(20);</span>
+<span class="p">stk = []
+stk.append(10); stk.append(20)</span>
+<span class="t">const stk: number[] = [];
+stk.push(10); stk.push(20);</span></pre></details></td></tr>
+<tr><td>Stack pop</td><td><code>stack.pop()</code></td><td><code>stack.pop()</code></td><td><code>stack.pop()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int top = stk.pop();  // 20 (LIFO)</span>
+<span class="p">top = stk.pop()  # 20 (LIFO)</span>
+<span class="t">const top = stk.pop();  // 20 (LIFO)</span></pre></details></td></tr>
+<tr><td>Stack peek</td><td><code>stack.peek()</code></td><td><code>stack[-1]</code></td><td><code>stack[stack.length - 1]</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int top = stk.peek();  // no removal</span>
+<span class="p">top = stk[-1]  # no removal</span>
+<span class="t">const top = stk[stk.length - 1];  // no removal</span></pre></details></td></tr>
+<tr><td>PQ (min)</td><td><code>new PriorityQueue&lt;&gt;()</code></td><td><code>heapq.heappush(h, x)</code></td><td>Manual sort or library</td><td><details><summary>▶ Show</summary><pre><span class="j">PriorityQueue&lt;Integer&gt; pq = new PriorityQueue&lt;&gt;();
+pq.offer(5); pq.offer(1); pq.poll(); // 1</span>
+<span class="p">import heapq; h = []
+heapq.heappush(h,5); heapq.heappush(h,1)
+heapq.heappop(h)  # 1</span>
+<span class="t">// No built-in PQ; use sorted insert or library
+const h = [5, 1]; h.sort((a,b) => a-b); h.shift(); // 1</span></pre></details></td></tr>
+<tr><td>PQ (max)</td><td><code>new PriorityQueue&lt;&gt;(reverseOrder())</code></td><td><code>heappush(h, -x)</code></td><td>Manual sort descending</td><td><details><summary>▶ Show</summary><pre><span class="j">PriorityQueue&lt;Integer&gt; pq =
+  new PriorityQueue&lt;&gt;(Collections.reverseOrder());</span>
+<span class="p">heapq.heappush(h, -x)  # negate trick
+max_val = -heapq.heappop(h)</span>
+<span class="t">h.sort((a,b) => b-a); const max = h.shift();</span></pre></details></td></tr>
+<tr><td>Heapify</td><td><code>new PriorityQueue&lt;&gt;(list)</code></td><td><code>heapq.heapify(lst)</code></td><td><code>arr.sort((a, b) =&gt; a - b)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">PriorityQueue&lt;Integer&gt; pq = new PriorityQueue&lt;&gt;(list);</span>
+<span class="p">heapq.heapify(nums)  # in-place O(n)</span>
+<span class="t">nums.sort((a, b) => a - b);  // sort as substitute</span></pre></details></td></tr>
+</table>
+
+<!-- Section 11: Math -->
+<h2 id="s11">11. Math</h2>
+<p class="section-desc">Math operations cover arithmetic, parsing, random numbers, and number-to-string conversions.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Absolute</td><td><code>Math.abs(x)</code></td><td><code>abs(x)</code></td><td><code>Math.abs(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Math.abs(-7)  // 7</span>
+<span class="p">abs(-7)  # 7</span>
+<span class="t">Math.abs(-7)  // 7</span></pre></details></td></tr>
+<tr><td>Max / Min</td><td><code>Math.max(a,b)</code> / <code>Math.min(a,b)</code></td><td><code>max(a,b)</code> / <code>min(a,b)</code></td><td><code>Math.max(a, b)</code> / <code>Math.min(a, b)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Math.max(3, 7)  // 7</span>
+<span class="p">max(3, 7)  # 7</span>
+<span class="t">Math.max(3, 7)  // 7</span></pre></details></td></tr>
+<tr><td>Power</td><td><code>Math.pow(a, b)</code></td><td><code>a ** b</code></td><td><code>2 ** 3</code> or <code>Math.pow(a, b)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Math.pow(2, 10)  // 1024.0</span>
+<span class="p">2 ** 10  # 1024</span>
+<span class="t">2 ** 10  // 1024</span></pre></details></td></tr>
+<tr><td>Sqrt</td><td><code>Math.sqrt(x)</code></td><td><code>math.sqrt(x)</code></td><td><code>Math.sqrt(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Math.sqrt(144)  // 12.0</span>
+<span class="p">math.sqrt(144)  # 12.0</span>
+<span class="t">Math.sqrt(144)  // 12</span></pre></details></td></tr>
+<tr><td>Ceil / Floor</td><td><code>Math.ceil(x)</code> / <code>Math.floor(x)</code></td><td><code>math.ceil(x)</code> / <code>math.floor(x)</code></td><td><code>Math.ceil(x)</code> / <code>Math.floor(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Math.ceil(4.2)  // 5.0
+Math.floor(4.8)  // 4.0</span>
+<span class="p">math.ceil(4.2)  # 5
+math.floor(4.8)  # 4</span>
+<span class="t">Math.ceil(4.2)  // 5
+Math.floor(4.8)  // 4</span></pre></details></td></tr>
+<tr><td>Round</td><td><code>Math.round(x)</code></td><td><code>round(x)</code></td><td><code>Math.round(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Math.round(4.6)  // 5</span>
+<span class="p">round(4.6)  # 5</span>
+<span class="t">Math.round(4.6)  // 5</span></pre></details></td></tr>
+<tr><td>Log</td><td><code>Math.log(x)</code> / <code>Math.log10(x)</code></td><td><code>math.log(x)</code> / <code>math.log10(x)</code></td><td><code>Math.log(x)</code> / <code>Math.log10(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Math.log(Math.E)  // 1.0
+Math.log10(1000)  // 3.0</span>
+<span class="p">math.log(math.e)  # 1.0
+math.log10(1000)  # 3.0</span>
+<span class="t">Math.log(Math.E)  // 1
+Math.log10(1000)  // 3</span></pre></details></td></tr>
+<tr><td>Random</td><td><code>new Random().nextInt(n)</code></td><td><code>random.randint(a, b)</code></td><td><code>Math.random()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int r = new Random().nextInt(100); // 0-99</span>
+<span class="p">import random
+r = random.randint(0, 99)  # 0-99 inclusive</span>
+<span class="t">const r = Math.floor(Math.random() * 100); // 0-99</span></pre></details></td></tr>
+<tr><td>GCD</td><td><code>BigInteger</code> / manual</td><td><code>math.gcd(a, b)</code></td><td>Manual (Euclidean)</td><td><details><summary>▶ Show</summary><pre><span class="j">// Euclidean: while(b!=0){int t=b;b=a%b;a=t;}</span>
+<span class="p">math.gcd(12, 8)  # 4</span>
+<span class="t">function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}</span></pre></details></td></tr>
+<tr><td>Factorial</td><td>Manual</td><td><code>math.factorial(n)</code></td><td>Manual loop</td><td><details><summary>▶ Show</summary><pre><span class="j">// loop: int f=1; for(int i=2;i<=n;i++) f*=i;</span>
+<span class="p">math.factorial(5)  # 120</span>
+<span class="t">// let f=1; for(let i=2;i<=n;i++) f*=i;</span></pre></details></td></tr>
+<tr><td>Parse int</td><td><code>Integer.parseInt("42")</code></td><td><code>int("42")</code></td><td><code>parseInt("42", 10)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int n = Integer.parseInt("42");  // 42</span>
+<span class="p">n = int("42")  # 42</span>
+<span class="t">const n = parseInt("42", 10);  // 42</span></pre></details></td></tr>
+<tr><td>Binary / Hex</td><td><code>Integer.toBinaryString(x)</code></td><td><code>bin(x)</code> / <code>hex(x)</code></td><td><code>x.toString(2)</code> / <code>x.toString(16)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Integer.toBinaryString(10)  // "1010"
+Integer.toHexString(255)    // "ff"</span>
+<span class="p">bin(10)   # '0b1010'
+hex(255)  # '0xff'</span>
+<span class="t">(10).toString(2)   // "1010"
+(255).toString(16) // "ff"</span></pre></details></td></tr>
+<tr><td>Infinity</td><td><code>Double.POSITIVE_INFINITY</code></td><td><code>float('inf')</code></td><td><code>Infinity</code> / <code>-Infinity</code></td><td><details><summary>▶ Show</summary><pre><span class="j">double max = Double.POSITIVE_INFINITY;</span>
+<span class="p">mx = float('inf'); mn = float('-inf')</span>
+<span class="t">const mx = Infinity; const mn = -Infinity;</span></pre></details></td></tr>
+</table>
+
+<!-- Section 12: I/O -->
+<h2 id="s12">12. Input / Output</h2>
+<p class="section-desc">I/O handles user interaction and displaying results — fundamental for any program.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Print</td><td><code>System.out.println(x)</code></td><td><code>print(x)</code></td><td><code>console.log(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">System.out.println("Hello");  // + newline</span>
+<span class="p">print("Hello")  # + newline</span>
+<span class="t">console.log("Hello");  // + newline</span></pre></details></td></tr>
+<tr><td>Print no newline</td><td><code>System.out.print(x)</code></td><td><code>print(x, end="")</code></td><td><code>process.stdout.write(x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">System.out.print("no newline");</span>
+<span class="p">print("no newline", end="")</span>
+<span class="t">process.stdout.write("no newline");</span></pre></details></td></tr>
+<tr><td>Formatted</td><td><code>System.out.printf(...)</code></td><td><code>print(f"...")</code></td><td><code>console.log(`${name} is ${age}`)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">System.out.printf("Hi %s, age %d%n", name, age);</span>
+<span class="p">print(f"Hi {name}, age {age}")</span>
+<span class="t">console.log(`Hi ${name}, age ${age}`);</span></pre></details></td></tr>
+<tr><td>Read line</td><td><code>scanner.nextLine()</code></td><td><code>input()</code></td><td><code>readline</code> (Node.js)</td><td><details><summary>▶ Show</summary><pre><span class="j">Scanner sc = new Scanner(System.in);
+String line = sc.nextLine();</span>
+<span class="p">line = input("Enter: ")</span>
+<span class="t">import * as readline from 'readline';
+const rl = readline.createInterface({input: process.stdin});</span></pre></details></td></tr>
+<tr><td>Read int</td><td><code>scanner.nextInt()</code></td><td><code>int(input())</code></td><td><code>parseInt(line, 10)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int n = sc.nextInt();</span>
+<span class="p">n = int(input())</span>
+<span class="t">const n = parseInt(line, 10);</span></pre></details></td></tr>
+<tr><td>Print array</td><td><code>Arrays.toString(arr)</code></td><td><code>print(arr)</code></td><td><code>console.log(arr)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">System.out.println(Arrays.toString(new int[]{1,2,3}));</span>
+<span class="p">print([1,2,3])  # [1, 2, 3]</span>
+<span class="t">console.log([1,2,3]);  // [1, 2, 3]</span></pre></details></td></tr>
+<tr><td>Print with sep</td><td><code>String.join(", ", list)</code></td><td><code>print(*lst, sep=", ")</code></td><td><code>console.log(arr.join(", "))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">System.out.println(String.join(", ", words));</span>
+<span class="p">print(*words, sep=", ")</span>
+<span class="t">console.log(words.join(", "));</span></pre></details></td></tr>
+</table>
+
+<!-- Section 13: File I/O -->
+<h2 id="s13">13. File I/O</h2>
+<p class="section-desc">File operations let you persist data, read configs, and process external data sources.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Read file</td><td><code>Files.readString(Path.of(f))</code></td><td><code>open(f).read()</code></td><td><code>fs.readFileSync(path, 'utf8')</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String txt = Files.readString(Path.of("f.txt"));</span>
+<span class="p">txt = open("f.txt").read()</span>
+<span class="t">import fs from 'fs';
+const txt = fs.readFileSync("f.txt", "utf8");</span></pre></details></td></tr>
+<tr><td>Read lines</td><td><code>Files.readAllLines(path)</code></td><td><code>open(f).readlines()</code></td><td><code>fs.readFileSync(f, 'utf8').split('\n')</code></td><td><details><summary>▶ Show</summary><pre><span class="j">List&lt;String&gt; lines = Files.readAllLines(Path.of("f.txt"));</span>
+<span class="p">lines = open("f.txt").readlines()</span>
+<span class="t">const lines = fs.readFileSync("f.txt", "utf8").split("\n");</span></pre></details></td></tr>
+<tr><td>Write file</td><td><code>Files.writeString(path, s)</code></td><td><code>open(f,"w").write(s)</code></td><td><code>fs.writeFileSync(path, data)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Files.writeString(Path.of("out.txt"), "hello");</span>
+<span class="p">open("out.txt", "w").write("hello")</span>
+<span class="t">fs.writeFileSync("out.txt", "hello");</span></pre></details></td></tr>
+<tr><td>Append</td><td><code>Files.writeString(p, s, APPEND)</code></td><td><code>open(f,"a").write(s)</code></td><td><code>fs.appendFileSync(path, data)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Files.writeString(p, "more", StandardOpenOption.APPEND);</span>
+<span class="p">open("f.txt", "a").write("more")</span>
+<span class="t">fs.appendFileSync("f.txt", "more");</span></pre></details></td></tr>
+<tr><td>With resource</td><td><code>try (var r = ...) { }</code></td><td><code>with open(f) as f:</code></td><td>N/A (sync) / <code>try-finally</code></td><td><details><summary>▶ Show</summary><pre><span class="j">try (BufferedReader br = Files.newBufferedReader(p)) {
+    String line; while ((line=br.readLine())!=null) {}
+}</span>
+<span class="p">with open("f.txt") as f:
+    for line in f: ...</span>
+<span class="t">// Node.js sync reads don't need resource mgmt
+const data = fs.readFileSync("f.txt", "utf8");</span></pre></details></td></tr>
+<tr><td>File exists</td><td><code>Files.exists(path)</code></td><td><code>os.path.exists(f)</code></td><td><code>fs.existsSync(path)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">boolean ok = Files.exists(Path.of("f.txt"));</span>
+<span class="p">import os; ok = os.path.exists("f.txt")</span>
+<span class="t">const ok = fs.existsSync("f.txt");</span></pre></details></td></tr>
+<tr><td>Create dir</td><td><code>Files.createDirectories(p)</code></td><td><code>os.makedirs(d, exist_ok=True)</code></td><td><code>fs.mkdirSync(d, { recursive: true })</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Files.createDirectories(Path.of("a/b/c"));</span>
+<span class="p">os.makedirs("a/b/c", exist_ok=True)</span>
+<span class="t">fs.mkdirSync("a/b/c", { recursive: true });</span></pre></details></td></tr>
+<tr><td>Read JSON</td><td>Jackson / Gson</td><td><code>json.load(open(f))</code></td><td><code>JSON.parse(fs.readFileSync(f, 'utf8'))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">ObjectMapper om = new ObjectMapper();
+Map data = om.readValue(new File("f.json"), Map.class);</span>
+<span class="p">import json
+data = json.load(open("f.json"))</span>
+<span class="t">const data = JSON.parse(fs.readFileSync("f.json", "utf8"));</span></pre></details></td></tr>
+</table>
+
+<!-- Section 14: OOP -->
+<h2 id="s14">14. Object-Oriented Programming</h2>
+<p class="section-desc">Object-oriented programming organizes code into reusable classes. Python is flexible with duck typing; TypeScript adds interfaces and access modifiers.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Class</td><td><code>public class Dog { }</code></td><td><code>class Dog:</code></td><td><code>class Dog { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">public class Dog { String name; }</span>
+<span class="p">class Dog:
+    def __init__(self): self.name = ""</span>
+<span class="t">class Dog { name: string = ""; }</span></pre></details></td></tr>
+<tr><td>Constructor</td><td><code>public Dog(String n) {...}</code></td><td><code>def __init__(self, n):</code></td><td><code>constructor(n: string) { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">public Dog(String name) { this.name = name; }</span>
+<span class="p">def __init__(self, name): self.name = name</span>
+<span class="t">constructor(public name: string) { }</span></pre></details></td></tr>
+<tr><td>Inheritance</td><td><code>class Lab extends Dog</code></td><td><code>class Lab(Dog):</code></td><td><code>class Lab extends Dog { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">class Lab extends Dog {
+    Lab(String n) { super(n); }
+}</span>
+<span class="p">class Lab(Dog):
+    def __init__(self, n): super().__init__(n)</span>
+<span class="t">class Lab extends Dog {
+    constructor(n: string) { super(n); }
+}</span></pre></details></td></tr>
+<tr><td>Abstract</td><td><code>abstract class Animal</code></td><td><code>class Animal(ABC):</code></td><td><code>abstract class Animal { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">abstract class Shape {
+    abstract double area();
+}</span>
+<span class="p">from abc import ABC, abstractmethod
+class Shape(ABC):
+    @abstractmethod
+    def area(self): pass</span>
+<span class="t">abstract class Shape {
+    abstract area(): number;
+}</span></pre></details></td></tr>
+<tr><td>Interface</td><td><code>interface Flyable {...}</code></td><td><code>class Flyable(ABC):</code></td><td><code>interface Flyable { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">interface Flyable { void fly(); }</span>
+<span class="p">class Flyable(ABC):
+    @abstractmethod
+    def fly(self): pass</span>
+<span class="t">interface Flyable { fly(): void; }</span></pre></details></td></tr>
+<tr><td>Static method</td><td><code>public static void util()</code></td><td><code>@staticmethod</code></td><td><code>static method() { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">public static int add(int a, int b) { return a+b; }</span>
+<span class="p">@staticmethod
+def add(a, b): return a + b</span>
+<span class="t">static add(a: number, b: number): number { return a + b; }</span></pre></details></td></tr>
+<tr><td>Getter/Setter</td><td><code>getName() / setName()</code></td><td><code>@property</code></td><td><code>get prop() { }</code> / <code>set prop(v) { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">public String getName() { return name; }
+public void setName(String n) { name = n; }</span>
+<span class="p">@property
+def name(self): return self._name
+@name.setter
+def name(self, n): self._name = n</span>
+<span class="t">get name(): string { return this._name; }
+set name(n: string) { this._name = n; }</span></pre></details></td></tr>
+<tr><td>toString</td><td><code>@Override toString()</code></td><td><code>def __str__(self):</code></td><td><code>toString(): string { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">@Override public String toString() {
+    return "Dog(" + name + ")"; }</span>
+<span class="p">def __str__(self): return f"Dog({self.name})"</span>
+<span class="t">toString(): string { return `Dog(${this.name})`; }</span></pre></details></td></tr>
+<tr><td>equals</td><td><code>@Override equals(Object o)</code></td><td><code>def __eq__(self, other):</code></td><td>Custom <code>equals()</code> method</td><td><details><summary>▶ Show</summary><pre><span class="j">@Override public boolean equals(Object o) {
+    return o instanceof Dog d && d.name.equals(name); }</span>
+<span class="p">def __eq__(self, other):
+    return isinstance(other, Dog) and other.name == self.name</span>
+<span class="t">equals(other: Dog): boolean {
+    return this.name === other.name;
+}</span></pre></details></td></tr>
+<tr><td>Enum</td><td><code>enum Color { RED, GREEN }</code></td><td><code>class Color(Enum):</code></td><td><code>enum Color { Red, Green }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">enum Direction { NORTH, SOUTH, EAST, WEST }</span>
+<span class="p">from enum import Enum
+class Direction(Enum):
+    NORTH = "N"; SOUTH = "S"</span>
+<span class="t">enum Direction { North, South, East, West }</span></pre></details></td></tr>
+<tr><td>Record/Dataclass</td><td><code>record Point(int x, int y)</code></td><td><code>@dataclass</code></td><td><code>class Point { constructor(public x: number, public y: number) {} }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">record Point(int x, int y) {}  // Java 16+
+Point p = new Point(3, 4);</span>
+<span class="p">from dataclasses import dataclass
+@dataclass
+class Point:
+    x: int; y: int
+p = Point(3, 4)</span>
+<span class="t">class Point {
+  constructor(public x: number, public y: number) {}
+}
+const p = new Point(3, 4);</span></pre></details></td></tr>
+<tr><td>Generics</td><td><code>class Box&lt;T&gt; { }</code></td><td><code>class Box(Generic[T]):</code></td><td><code>class Box&lt;T&gt; { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">class Box&lt;T&gt; { T value; }</span>
+<span class="p">from typing import Generic, TypeVar
+T = TypeVar('T')
+class Box(Generic[T]):
+    def __init__(self, val: T): self.val = val</span>
+<span class="t">class Box&lt;T&gt; { constructor(public value: T) {} }
+const b = new Box&lt;number&gt;(42);</span></pre></details></td></tr>
+</table>
+
+<!-- Section 15: Exceptions -->
+<h2 id="s15">15. Exception Handling</h2>
+<p class="section-desc">Exception handling prevents crashes and enables graceful error recovery.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Try-catch</td><td><code>try {} catch (Ex e) {}</code></td><td><code>try: ... except Ex as e:</code></td><td><code>try { } catch (e) { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">try { int x = 1/0; }
+catch (ArithmeticException e) { println(e); }</span>
+<span class="p">try: x = 1/0
+except ZeroDivisionError as e: print(e)</span>
+<span class="t">try { const x = 1/0; }
+catch (e) { console.log(e); }</span></pre></details></td></tr>
+<tr><td>Multi catch</td><td><code>catch (A | B e)</code></td><td><code>except (A, B) as e:</code></td><td><code>catch (e) { if (e instanceof A) ... }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">catch (IOException | ParseException e) { }</span>
+<span class="p">except (IOError, ValueError) as e: ...</span>
+<span class="t">catch (e) {
+  if (e instanceof TypeError) { ... }
+}</span></pre></details></td></tr>
+<tr><td>Finally</td><td><code>finally { }</code></td><td><code>finally:</code></td><td><code>finally { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">finally { conn.close(); }</span>
+<span class="p">finally: conn.close()</span>
+<span class="t">finally { conn.close(); }</span></pre></details></td></tr>
+<tr><td>Throw</td><td><code>throw new RuntimeException()</code></td><td><code>raise RuntimeError()</code></td><td><code>throw new Error("msg")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">throw new IllegalArgumentException("bad input");</span>
+<span class="p">raise ValueError("bad input")</span>
+<span class="t">throw new Error("bad input");</span></pre></details></td></tr>
+<tr><td>Custom exception</td><td><code>class MyEx extends Exception</code></td><td><code>class MyEx(Exception):</code></td><td><code>class MyError extends Error { }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">class NotFoundError extends RuntimeException {
+    NotFoundError(String msg) { super(msg); }
+}</span>
+<span class="p">class NotFoundError(Exception):
+    pass</span>
+<span class="t">class NotFoundError extends Error {
+    constructor(msg: string) { super(msg); this.name = "NotFoundError"; }
+}</span></pre></details></td></tr>
+<tr><td>Try-with-resource</td><td><code>try (var r=...) {}</code></td><td><code>with ... as r:</code></td><td><code>try { } finally { r.close(); }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">try (var br = new BufferedReader(new FileReader(f))) {}</span>
+<span class="p">with open(f) as br: ...</span>
+<span class="t">// No auto-dispose; use try/finally
+try { ... } finally { handle.close(); }</span></pre></details></td></tr>
+<tr><td>Assert</td><td><code>assert x > 0 : "msg";</code></td><td><code>assert x > 0, "msg"</code></td><td><code>console.assert(x > 0, "msg")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">assert age >= 0 : "Age cannot be negative";</span>
+<span class="p">assert age >= 0, "Age cannot be negative"</span>
+<span class="t">console.assert(age >= 0, "Age cannot be negative");</span></pre></details></td></tr>
+<tr><td>Re-raise</td><td><code>throw e;</code></td><td><code>raise</code></td><td><code>throw e;</code></td><td><details><summary>▶ Show</summary><pre><span class="j">catch (Exception e) { log(e); throw e; }</span>
+<span class="p">except Exception as e: log(e); raise</span>
+<span class="t">catch (e) { log(e); throw e; }</span></pre></details></td></tr>
+</table>
+
+<!-- Section 16: Functional -->
+<h2 id="s16">16. Functional Programming / Lambdas</h2>
+<p class="section-desc">Functional programming enables concise data transformations. TypeScript's array methods are similar to Python comprehensions.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Lambda</td><td><code>(x, y) -&gt; x + y</code></td><td><code>lambda x, y: x + y</code></td><td><code>(x: number, y: number) =&gt; x + y</code></td><td><details><summary>▶ Show</summary><pre><span class="j">BiFunction&lt;Integer,Integer,Integer&gt; add = (a,b) -> a+b;
+add.apply(2, 3);  // 5</span>
+<span class="p">add = lambda a, b: a + b
+add(2, 3)  # 5</span>
+<span class="t">const add = (a: number, b: number) => a + b;
+add(2, 3);  // 5</span></pre></details></td></tr>
+<tr><td>Method ref</td><td><code>String::toUpperCase</code></td><td><code>str.upper</code></td><td><code>s =&gt; s.toUpperCase()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">list.stream().map(String::toUpperCase)</span>
+<span class="p">list(map(str.upper, words))</span>
+<span class="t">words.map(s => s.toUpperCase())</span></pre></details></td></tr>
+<tr><td>Predicate</td><td><code>Predicate&lt;T&gt; p = x -&gt; ...</code></td><td><code>p = lambda x: ...</code></td><td><code>const p = (x: number): boolean =&gt; ...</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Predicate&lt;Integer&gt; isEven = n -> n%2==0;</span>
+<span class="p">is_even = lambda n: n % 2 == 0</span>
+<span class="t">const isEven = (n: number): boolean => n % 2 === 0;</span></pre></details></td></tr>
+<tr><td>Map</td><td><code>.stream().map(...)</code></td><td><code>[f(x) for x in lst]</code></td><td><code>arr.map(x =&gt; x * x)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.stream().map(n -> n*n).collect(toList());</span>
+<span class="p">[n*n for n in nums]</span>
+<span class="t">nums.map(n => n * n);</span></pre></details></td></tr>
+<tr><td>Filter</td><td><code>.stream().filter(...)</code></td><td><code>[x for x in lst if ...]</code></td><td><code>arr.filter(x =&gt; x &gt; 0)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.stream().filter(n -> n>0).collect(toList());</span>
+<span class="p">[n for n in nums if n > 0]</span>
+<span class="t">nums.filter(n => n > 0);</span></pre></details></td></tr>
+<tr><td>Reduce</td><td><code>.stream().reduce(id, op)</code></td><td><code>functools.reduce(op, lst, id)</code></td><td><code>arr.reduce((acc, x) =&gt; acc + x, 0)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">nums.stream().reduce(0, Integer::sum); // sum</span>
+<span class="p">from functools import reduce
+reduce(lambda a,b: a+b, nums, 0)</span>
+<span class="t">nums.reduce((acc, x) => acc + x, 0);</span></pre></details></td></tr>
+<tr><td>Sorted</td><td><code>.stream().sorted(cmp)</code></td><td><code>sorted(lst, key=...)</code></td><td><code>[...arr].sort((a, b) =&gt; a - b)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">words.stream().sorted(Comparator.comparingInt(String::length));</span>
+<span class="p">sorted(words, key=len)</span>
+<span class="t">[...words].sort((a, b) => a.length - b.length);</span></pre></details></td></tr>
+<tr><td>Collect to list</td><td><code>.collect(Collectors.toList())</code></td><td><code>list(...)</code></td><td><code>Array.from(...)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">List&lt;Integer&gt; result = stream.collect(Collectors.toList());</span>
+<span class="p">result = list(generator_or_map)</span>
+<span class="t">const result = Array.from(iterable);</span></pre></details></td></tr>
+<tr><td>Group by</td><td><code>Collectors.groupingBy(...)</code></td><td><code>itertools.groupby(...)</code></td><td><code>reduce to Map</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Map&lt;Integer,List&lt;String&gt;&gt; byLen =
+  words.stream().collect(groupingBy(String::length));</span>
+<span class="p">from itertools import groupby
+groups = {k: list(v) for k, v in
+  groupby(sorted(words, key=len), key=len)}</span>
+<span class="t">const byLen = words.reduce((m, w) => {
+  const k = w.length;
+  m.set(k, [...(m.get(k) ?? []), w]); return m;
+}, new Map());</span></pre></details></td></tr>
+<tr><td>Optional</td><td><code>Optional.ofNullable(x)</code></td><td><code>x</code> (None checks)</td><td><code>x ?? "default"</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Optional.ofNullable(name).orElse("anon");</span>
+<span class="p">name if name is not None else "anon"</span>
+<span class="t">const display = name ?? "anon";</span></pre></details></td></tr>
+</table>
+
+<!-- Section 17: Concurrency -->
+<h2 id="s17">17. Concurrency / Multithreading</h2>
+<p class="section-desc">Concurrency handles parallel work — important for I/O-bound tasks, APIs, and CPU-intensive processing.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Thread</td><td><code>new Thread(() -&gt; ...).start()</code></td><td><code>Thread(target=f).start()</code></td><td>N/A (single-threaded event loop)</td><td><details><summary>▶ Show</summary><pre><span class="j">new Thread(() -> System.out.println("Hi")).start();</span>
+<span class="p">import threading
+threading.Thread(target=lambda: print("Hi")).start()</span>
+<span class="t">// No threads; use async/await or Web Workers</span></pre></details></td></tr>
+<tr><td>Sleep</td><td><code>Thread.sleep(1000)</code></td><td><code>time.sleep(1)</code></td><td><code>await new Promise(r =&gt; setTimeout(r, 1000))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Thread.sleep(1000);  // 1 second (ms)</span>
+<span class="p">import time; time.sleep(1)  # 1 second</span>
+<span class="t">await new Promise(r => setTimeout(r, 1000));</span></pre></details></td></tr>
+<tr><td>Thread pool</td><td><code>Executors.newFixedThreadPool(n)</code></td><td><code>ThreadPoolExecutor(n)</code></td><td><code>Promise.all([...])</code></td><td><details><summary>▶ Show</summary><pre><span class="j">ExecutorService ex = Executors.newFixedThreadPool(4);
+Future&lt;Integer&gt; f = ex.submit(() -> compute());</span>
+<span class="p">from concurrent.futures import ThreadPoolExecutor
+with ThreadPoolExecutor(4) as ex:
+    f = ex.submit(compute)</span>
+<span class="t">// Use Promise.all for concurrent I/O
+await Promise.all([task1(), task2(), task3()]);</span></pre></details></td></tr>
+<tr><td>Future get</td><td><code>future.get()</code></td><td><code>future.result()</code></td><td><code>await promise</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int result = future.get();  // blocks</span>
+<span class="p">result = future.result()  # blocks</span>
+<span class="t">const result = await promise;  // suspends</span></pre></details></td></tr>
+<tr><td>Lock</td><td><code>synchronized / ReentrantLock</code></td><td><code>threading.Lock()</code></td><td>N/A (single-threaded)</td><td><details><summary>▶ Show</summary><pre><span class="j">synchronized (this) { count++; }
+// or: lock.lock(); try { ... } finally { lock.unlock(); }</span>
+<span class="p">lock = threading.Lock()
+with lock: count += 1</span>
+<span class="t">// No locking needed — single-threaded event loop</span></pre></details></td></tr>
+<tr><td>Async/Await</td><td><code>CompletableFuture</code></td><td><code>async/await (asyncio)</code></td><td><code>async function f() { await ... }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">CompletableFuture.supplyAsync(() -> fetchData())
+    .thenApply(data -> process(data));</span>
+<span class="p">import asyncio
+async def main():
+    data = await fetch_data()
+    result = process(data)</span>
+<span class="t">async function main() {
+    const data = await fetchData();
+    const result = process(data);
+}</span></pre></details></td></tr>
+</table>
+
+<!-- Section 18: Date & Time -->
+<h2 id="s18">18. Date &amp; Time</h2>
+<p class="section-desc">Date/time operations are needed for scheduling, logging, expiry checks, and time-based calculations.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Now (date)</td><td><code>LocalDate.now()</code></td><td><code>date.today()</code></td><td><code>new Date()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">LocalDate today = LocalDate.now(); // 2026-07-31</span>
+<span class="p">from datetime import date
+today = date.today()  # 2026-07-31</span>
+<span class="t">const today = new Date();  // full datetime</span></pre></details></td></tr>
+<tr><td>Now (datetime)</td><td><code>LocalDateTime.now()</code></td><td><code>datetime.now()</code></td><td><code>new Date()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">LocalDateTime now = LocalDateTime.now();</span>
+<span class="p">from datetime import datetime
+now = datetime.now()</span>
+<span class="t">const now = new Date();</span></pre></details></td></tr>
+<tr><td>Create date</td><td><code>LocalDate.of(y, m, d)</code></td><td><code>date(y, m, d)</code></td><td><code>new Date(y, m-1, d)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">LocalDate d = LocalDate.of(2024, 1, 15);</span>
+<span class="p">d = date(2024, 1, 15)</span>
+<span class="t">const d = new Date(2024, 0, 15);  // month is 0-indexed</span></pre></details></td></tr>
+<tr><td>Parse</td><td><code>LocalDate.parse("...")</code></td><td><code>datetime.strptime(...)</code></td><td><code>new Date("2024-01-01")</code></td><td><details><summary>▶ Show</summary><pre><span class="j">LocalDate.parse("2024-01-15"); // ISO format</span>
+<span class="p">datetime.strptime("2024-01-15", "%Y-%m-%d")</span>
+<span class="t">const d = new Date("2024-01-15");</span></pre></details></td></tr>
+<tr><td>Format</td><td><code>date.format(formatter)</code></td><td><code>date.strftime(fmt)</code></td><td><code>date.toISOString()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));</span>
+<span class="p">now.strftime("%d/%m/%Y")</span>
+<span class="t">now.toISOString()  // or toLocaleDateString()</span></pre></details></td></tr>
+<tr><td>Add days</td><td><code>date.plusDays(n)</code></td><td><code>date + timedelta(days=n)</code></td><td><code>new Date(d.getTime() + n*86400000)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">LocalDate next = today.plusDays(30);</span>
+<span class="p">from datetime import timedelta
+nxt = today + timedelta(days=30)</span>
+<span class="t">const nxt = new Date(today.getTime() + 30*86400000);</span></pre></details></td></tr>
+<tr><td>Difference</td><td><code>ChronoUnit.DAYS.between(a,b)</code></td><td><code>(b - a).days</code></td><td><code>(d2.getTime() - d1.getTime()) / 86400000</code></td><td><details><summary>▶ Show</summary><pre><span class="j">long days = ChronoUnit.DAYS.between(d1, d2);</span>
+<span class="p">days = (d2 - d1).days</span>
+<span class="t">const days = (d2.getTime() - d1.getTime()) / 86400000;</span></pre></details></td></tr>
+<tr><td>Timestamp</td><td><code>Instant.now().getEpochSecond()</code></td><td><code>int(time.time())</code></td><td><code>Date.now()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">long ts = Instant.now().getEpochSecond();</span>
+<span class="p">import time; ts = int(time.time())</span>
+<span class="t">const ts = Date.now();  // milliseconds</span></pre></details></td></tr>
+<tr><td>Compare</td><td><code>d1.isBefore(d2)</code> / <code>isAfter</code></td><td><code>d1 &lt; d2</code> / <code>d1 &gt; d2</code></td><td><code>d1.getTime() &lt; d2.getTime()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (deadline.isBefore(LocalDate.now())) { expired(); }</span>
+<span class="p">if deadline < date.today(): expired()</span>
+<span class="t">if (deadline.getTime() < Date.now()) { expired(); }</span></pre></details></td></tr>
+</table>
+
+<!-- Section 19: Sorting -->
+<h2 id="s19">19. Sorting &amp; Comparators</h2>
+<p class="section-desc">Sorting is fundamental for display, binary search prerequisites, and data organization.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Sort array</td><td><code>Arrays.sort(arr)</code></td><td><code>arr.sort()</code></td><td><code>arr.sort((a, b) =&gt; a - b)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">int[] a = {3,1,2}; Arrays.sort(a); // [1,2,3]</span>
+<span class="p">a = [3,1,2]; a.sort()  # [1,2,3]</span>
+<span class="t">[3,1,2].sort((a, b) => a - b)  // [1,2,3]</span></pre></details></td></tr>
+<tr><td>Sorted copy</td><td><code>stream().sorted().collect()</code></td><td><code>sorted(lst)</code></td><td><code>[...arr].sort((a, b) =&gt; a - b)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">List&lt;Integer&gt; s = nums.stream().sorted().collect(toList());</span>
+<span class="p">s = sorted(nums)  # original unchanged</span>
+<span class="t">const s = [...nums].sort((a, b) => a - b);</span></pre></details></td></tr>
+<tr><td>Reverse</td><td><code>sort(reverseOrder())</code></td><td><code>sort(reverse=True)</code></td><td><code>arr.sort((a, b) =&gt; b - a)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Arrays.sort(arr, Collections.reverseOrder());</span>
+<span class="p">arr.sort(reverse=True)</span>
+<span class="t">arr.sort((a, b) => b - a);</span></pre></details></td></tr>
+<tr><td>Custom key</td><td><code>list.sort((a,b) -&gt; ...)</code></td><td><code>lst.sort(key=...)</code></td><td><code>arr.sort((a, b) =&gt; a.length - b.length)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">words.sort((a,b) -> a.length() - b.length());</span>
+<span class="p">words.sort(key=len)</span>
+<span class="t">words.sort((a, b) => a.length - b.length);</span></pre></details></td></tr>
+<tr><td>Multi-key</td><td><code>comparing(A).thenComparing(B)</code></td><td><code>key=lambda x: (x.a, x.b)</code></td><td><code>arr.sort((a, b) =&gt; a.grade - b.grade || a.name.localeCompare(b.name))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">students.sort(Comparator.comparingInt(Student::grade)
+    .reversed().thenComparing(Student::name));</span>
+<span class="p">students.sort(key=lambda s: (-s.grade, s.name))</span>
+<span class="t">students.sort((a, b) => b.grade - a.grade || a.name.localeCompare(b.name));</span></pre></details></td></tr>
+<tr><td>Stable sort</td><td><code>Collections.sort</code> (stable)</td><td><code>list.sort()</code> (stable)</td><td><code>Array.sort()</code> (stable in modern engines)</td><td><details><summary>▶ Show</summary><pre><span class="j">// Both are stable: equal elements keep order</span>
+<span class="p"># Both are stable: equal elements keep order</span>
+<span class="t">// Array.sort() is stable in ES2019+</span></pre></details></td></tr>
+</table>
+
+<!-- Section 20: Iterators & Generators -->
+<h2 id="s20">20. Iterators &amp; Generators</h2>
+<p class="section-desc">Iterators enable lazy evaluation — processing large datasets without loading everything into memory.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Iterator</td><td><code>list.iterator()</code></td><td><code>iter(lst)</code></td><td><code>arr[Symbol.iterator]()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Iterator&lt;String&gt; it = list.iterator();
+while (it.hasNext()) println(it.next());</span>
+<span class="p">it = iter(lst)
+print(next(it))  # StopIteration at end</span>
+<span class="t">const it = arr[Symbol.iterator]();
+console.log(it.next().value);</span></pre></details></td></tr>
+<tr><td>Generator</td><td>N/A</td><td><code>yield</code></td><td><code>function* gen() { yield 1; }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">// No equivalent; use Stream.iterate()</span>
+<span class="p">def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b</span>
+<span class="t">function* fibonacci() {
+    let [a, b] = [0, 1];
+    while (true) { yield a; [a, b] = [b, a + b]; }
+}</span></pre></details></td></tr>
+<tr><td>Infinite stream</td><td><code>Stream.iterate(0, x-&gt;x+1)</code></td><td><code>itertools.count(0)</code></td><td><code>function* count() { let i=0; while(true) yield i++; }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Stream.iterate(0, x->x+1).limit(5); // 0,1,2,3,4</span>
+<span class="p">from itertools import islice, count
+list(islice(count(0), 5))  # [0,1,2,3,4]</span>
+<span class="t">function* count(start=0) {
+  let i = start; while(true) yield i++;
+}</span></pre></details></td></tr>
+<tr><td>Take N</td><td><code>.limit(n)</code></td><td><code>itertools.islice(it, n)</code></td><td><code>[...take(gen(), n)]</code> (custom)</td><td><details><summary>▶ Show</summary><pre><span class="j">stream.limit(10).collect(toList());</span>
+<span class="p">list(islice(generator, 10))</span>
+<span class="t">// custom: function* take(it, n) { for(const v of it) { if(n--<=0)break; yield v; } }</span></pre></details></td></tr>
+<tr><td>Chain</td><td><code>Stream.concat(a, b)</code></td><td><code>itertools.chain(a, b)</code></td><td><code>[...a, ...b]</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Stream.concat(stream1, stream2);</span>
+<span class="p">from itertools import chain
+list(chain([1,2], [3,4]))  # [1,2,3,4]</span>
+<span class="t">[...[1,2], ...[3,4]]  // [1,2,3,4]</span></pre></details></td></tr>
+<tr><td>Permutations</td><td>Manual</td><td><code>itertools.permutations()</code></td><td>Manual / library</td><td><details><summary>▶ Show</summary><pre><span class="j">// implement recursively</span>
+<span class="p">from itertools import permutations
+list(permutations([1,2,3]))  # 6 tuples</span>
+<span class="t">// implement recursively or use a library</span></pre></details></td></tr>
+<tr><td>Combinations</td><td>Manual</td><td><code>itertools.combinations()</code></td><td>Manual / library</td><td><details><summary>▶ Show</summary><pre><span class="j">// implement recursively</span>
+<span class="p">from itertools import combinations
+list(combinations("ABC", 2))  # AB,AC,BC</span>
+<span class="t">// implement recursively or use a library</span></pre></details></td></tr>
+<tr><td>Enumerate</td><td>Manual index</td><td><code>enumerate(lst)</code></td><td><code>arr.entries()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (int i=0; i&lt;list.size(); i++)
+    println(i + ": " + list.get(i));</span>
+<span class="p">for i, val in enumerate(lst):
+    print(f"{i}: {val}")</span>
+<span class="t">for (const [i, val] of arr.entries()) {
+    console.log(`${i}: ${val}`);
+}</span></pre></details></td></tr>
+<tr><td>Zip</td><td>Manual</td><td><code>zip(a, b)</code></td><td><code>a.map((v, i) =&gt; [v, b[i]])</code></td><td><details><summary>▶ Show</summary><pre><span class="j">for (int i=0; i&lt;Math.min(a.size(),b.size()); i++)
+    println(a.get(i) + " " + b.get(i));</span>
+<span class="p">for x, y in zip(names, scores):
+    print(f"{x}: {y}")</span>
+<span class="t">names.map((n, i) => `${n}: ${scores[i]}`);</span></pre></details></td></tr>
+</table>
+
+<!-- Section 21: Null Handling -->
+<h2 id="s21">21. Null Handling</h2>
+<p class="section-desc">Null/None handling prevents the most common runtime errors. TypeScript has excellent null safety with strict mode.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Null check</td><td><code>if (x != null)</code></td><td><code>if x is not None:</code></td><td><code>if (x !== null &amp;&amp; x !== undefined)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">if (name != null) { println(name); }</span>
+<span class="p">if name is not None: print(name)</span>
+<span class="t">if (name != null) { console.log(name); }</span></pre></details></td></tr>
+<tr><td>Default value</td><td><code>x != null ? x : def</code></td><td><code>x if x is not None else def</code></td><td><code>x ?? defaultVal</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String display = name != null ? name : "anon";</span>
+<span class="p">display = name if name is not None else "anon"</span>
+<span class="t">const display = name ?? "anon";</span></pre></details></td></tr>
+<tr><td>Optional</td><td><code>Optional.ofNullable(x)</code></td><td><code>x</code> (just use None)</td><td><code>x?: string</code> (optional type)</td><td><details><summary>▶ Show</summary><pre><span class="j">String val = Optional.ofNullable(name)
+    .map(String::toUpperCase)
+    .orElse("ANON");</span>
+<span class="p">val = name.upper() if name else "ANON"</span>
+<span class="t">const val = name?.toUpperCase() ?? "ANON";</span></pre></details></td></tr>
+<tr><td>Safe chain</td><td><code>Optional.map().map()</code></td><td><code>x and x.attr</code></td><td><code>obj?.prop?.nested</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Optional.ofNullable(user).map(User::getAddr)
+    .map(Addr::getCity).orElse("?");</span>
+<span class="p">city = user.addr.city if user and user.addr else "?"</span>
+<span class="t">const city = user?.addr?.city ?? "?";</span></pre></details></td></tr>
+<tr><td>Require non-null</td><td><code>Objects.requireNonNull(x)</code></td><td><code>assert x is not None</code></td><td><code>x!</code> (non-null assertion)</td><td><details><summary>▶ Show</summary><pre><span class="j">Objects.requireNonNull(config, "config required");</span>
+<span class="p">assert config is not None, "config required"</span>
+<span class="t">const cfg = config!;  // assert non-null to compiler</span></pre></details></td></tr>
+</table>
+
+<!-- Section 22: Design Patterns -->
+<h2 id="s22">22. Design Patterns (Quick Reference)</h2>
+<p class="section-desc">Patterns are proven solutions to recurring problems — knowing them helps you write maintainable code.</p>
+<table>
+<tr><th>Pattern</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>Singleton</td><td>Private constructor + static</td><td>Module-level / <code>__new__</code></td><td><code>class S { private static instance: S; }</code></td><td><details><summary>▶ Show</summary><pre><span class="j">class DB { static final DB INST = new DB(); private DB(){} }</span>
+<span class="p"># module-level singleton
+db = Database()  # import db from module</span>
+<span class="t">class DB {
+  private static instance: DB;
+  static getInstance() { return this.instance ??= new DB(); }
+}</span></pre></details></td></tr>
+<tr><td>Factory</td><td>Static factory method</td><td><code>@classmethod</code></td><td><code>function create(type: string): Product</code></td><td><details><summary>▶ Show</summary><pre><span class="j">class Shape { static Shape create(String type) {...} }</span>
+<span class="p">class Shape:
+    @classmethod
+    def create(cls, type): ...</span>
+<span class="t">function createShape(type: string): Shape {
+  switch(type) { case "circle": return new Circle(); }
+}</span></pre></details></td></tr>
+<tr><td>Builder</td><td>Builder inner class</td><td>Named params / dataclass</td><td>Method chaining with <code>this</code> return</td><td><details><summary>▶ Show</summary><pre><span class="j">Pizza p = new Pizza.Builder("L").cheese().build();</span>
+<span class="p">p = Pizza(size="L", cheese=True)  # named params</span>
+<span class="t">class PizzaBuilder {
+  private size = ""; cheese(v=true) { ...; return this; }
+  build() { return new Pizza(this); }
+}</span></pre></details></td></tr>
+<tr><td>Strategy</td><td>Interface + implementations</td><td>Functions as first-class</td><td>Functions / interfaces</td><td><details><summary>▶ Show</summary><pre><span class="j">interface Sort { void sort(int[] a); }
+class Sorter { Sort strategy; void run(int[] a){...} }</span>
+<span class="p">def bubble(a): ...
+def quick(a): ...
+class Sorter:
+    def __init__(self, fn): self.fn = fn</span>
+<span class="t">type SortFn = (a: number[]) => void;
+class Sorter { constructor(private fn: SortFn) {} }</span></pre></details></td></tr>
+<tr><td>Decorator</td><td>Wrapper class</td><td><code>@decorator</code></td><td>Higher-order function</td><td><details><summary>▶ Show</summary><pre><span class="j">class LoggingList&lt;T&gt; implements List&lt;T&gt; { ... }</span>
+<span class="p">def log(fn):
+    def wrapper(*a): print(f"call {fn.__name__}"); return fn(*a)
+    return wrapper
+@log
+def greet(n): return f"hi {n}"</span>
+<span class="t">function log(fn: Function) {
+  return (...args: any[]) => { console.log("call"); return fn(...args); };
+}</span></pre></details></td></tr>
+<tr><td>Context Mgr</td><td><code>try-with-resources</code></td><td><code>with (__enter__/__exit__)</code></td><td><code>try/finally</code> or <code>using</code> (proposal)</td><td><details><summary>▶ Show</summary><pre><span class="j">class Conn implements AutoCloseable {
+    public void close() { ... }
+}
+try (var c = new Conn()) { ... }</span>
+<span class="p">class Conn:
+    def __enter__(self): return self
+    def __exit__(self, *a): self.close()
+with Conn() as c: ...</span>
+<span class="t">class Conn { close() { ... } }
+const c = new Conn();
+try { ... } finally { c.close(); }</span></pre></details></td></tr>
+</table>
+
+<!-- Section 23: Standard Library -->
+<h2 id="s23">23. Useful Standard Library</h2>
+<p class="section-desc">Standard library utilities save time — no need to reinvent hashing, encoding, or process management.</p>
+<table>
+<tr><th>Concept</th><th>Java</th><th>Python</th><th>TypeScript</th><th>Example</th></tr>
+<tr><td>UUID</td><td><code>UUID.randomUUID()</code></td><td><code>uuid.uuid4()</code></td><td><code>crypto.randomUUID()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String id = UUID.randomUUID().toString();</span>
+<span class="p">import uuid; id = str(uuid.uuid4())</span>
+<span class="t">const id = crypto.randomUUID();</span></pre></details></td></tr>
+<tr><td>Base64 encode</td><td><code>Base64.getEncoder().encodeToString(b)</code></td><td><code>base64.b64encode(b)</code></td><td><code>btoa(str)</code> or <code>Buffer.from(s).toString('base64')</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String enc = Base64.getEncoder().encodeToString("hi".getBytes());</span>
+<span class="p">import base64
+enc = base64.b64encode(b"hi").decode()  # "aGk="</span>
+<span class="t">const enc = Buffer.from("hi").toString("base64");  // "aGk="</span></pre></details></td></tr>
+<tr><td>Hash SHA256</td><td><code>MessageDigest.getInstance("SHA-256")</code></td><td><code>hashlib.sha256()</code></td><td><code>crypto.createHash('sha256')</code></td><td><details><summary>▶ Show</summary><pre><span class="j">MessageDigest md = MessageDigest.getInstance("SHA-256");
+byte[] hash = md.digest("data".getBytes());</span>
+<span class="p">import hashlib
+h = hashlib.sha256(b"data").hexdigest()</span>
+<span class="t">import crypto from 'crypto';
+const h = crypto.createHash('sha256').update('data').digest('hex');</span></pre></details></td></tr>
+<tr><td>Regex</td><td><code>Pattern.compile(regex)</code></td><td><code>re.compile(regex)</code></td><td><code>/pattern/.test(s)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Pattern p = Pattern.compile("\\d+");
+Matcher m = p.matcher("abc123"); m.find(); // "123"</span>
+<span class="p">import re
+re.findall(r"\d+", "abc123")  # ['123']</span>
+<span class="t">/\d+/.test("abc123")  // true
+"abc123".match(/\d+/)  // ["123"]</span></pre></details></td></tr>
+<tr><td>HTTP request</td><td><code>HttpClient</code> (Java 11)</td><td><code>requests.get(url)</code></td><td><code>fetch(url)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">HttpClient client = HttpClient.newHttpClient();
+var req = HttpRequest.newBuilder(URI.create(url)).build();
+var res = client.send(req, BodyHandlers.ofString());</span>
+<span class="p">import requests
+res = requests.get(url)
+print(res.json())</span>
+<span class="t">const res = await fetch(url);
+const data = await res.json();</span></pre></details></td></tr>
+<tr><td>Run command</td><td><code>ProcessBuilder</code></td><td><code>subprocess.run()</code></td><td><code>child_process.execSync()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Process p = new ProcessBuilder("ls","-la").start();</span>
+<span class="p">import subprocess
+subprocess.run(["ls", "-la"])</span>
+<span class="t">import { execSync } from 'child_process';
+execSync("ls -la");</span></pre></details></td></tr>
+<tr><td>Env variable</td><td><code>System.getenv("KEY")</code></td><td><code>os.environ.get("KEY")</code></td><td><code>process.env.KEY</code></td><td><details><summary>▶ Show</summary><pre><span class="j">String home = System.getenv("HOME");</span>
+<span class="p">import os; home = os.environ.get("HOME")</span>
+<span class="t">const home = process.env.HOME;</span></pre></details></td></tr>
+<tr><td>Timer</td><td><code>System.nanoTime()</code></td><td><code>time.perf_counter()</code></td><td><code>performance.now()</code></td><td><details><summary>▶ Show</summary><pre><span class="j">long t0 = System.nanoTime();
+// ... work ...
+long ms = (System.nanoTime()-t0) / 1_000_000;</span>
+<span class="p">import time; t0 = time.perf_counter()
+# ... work ...
+ms = (time.perf_counter()-t0)*1000</span>
+<span class="t">const t0 = performance.now();
+// ... work ...
+const ms = performance.now() - t0;</span></pre></details></td></tr>
+<tr><td>Deep copy</td><td><code>clone()</code> / serialization</td><td><code>copy.deepcopy(obj)</code></td><td><code>structuredClone(obj)</code></td><td><details><summary>▶ Show</summary><pre><span class="j">// implement Cloneable or serialize/deserialize</span>
+<span class="p">import copy
+b = copy.deepcopy(a)  # fully independent</span>
+<span class="t">const b = structuredClone(a);  // deep copy</span></pre></details></td></tr>
+<tr><td>Sleep</td><td><code>Thread.sleep(ms)</code></td><td><code>time.sleep(sec)</code></td><td><code>await new Promise(r =&gt; setTimeout(r, ms))</code></td><td><details><summary>▶ Show</summary><pre><span class="j">Thread.sleep(2000);  // 2 seconds (ms)</span>
+<span class="p">time.sleep(2)  # 2 seconds</span>
+<span class="t">await new Promise(r => setTimeout(r, 2000));  // 2s</span></pre></details></td></tr>
+</table>
+
+<p style="margin-top: 24px; text-align: center; color: #888; font-size: 11px;">
+  Click ▶ Show to expand examples. Print with Cmd+P → Save as PDF.<br>
+  <a href="https://docs.oracle.com/en/java/">Java Docs</a> |
+  <a href="https://docs.python.org/3/">Python Docs</a> |
+  <a href="https://www.typescriptlang.org/docs/">TypeScript Docs</a>
+</p>
+
+<script>
+document.getElementById('toggleAll').addEventListener('change', function() {
+  const details = document.querySelectorAll('details');
+  details.forEach(d => d.open = this.checked);
+  document.querySelector('.toggle-label').textContent = this.checked ? 'Collapse All Examples' : 'Expand All Examples';
+});
+</script>
+
+</body>
+</html>

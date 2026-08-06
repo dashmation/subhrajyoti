@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Interview Preparation Cheatsheet</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+h1 { background: #1a237e; color: #fff; padding: 24px; border-radius: 8px 8px 0 0; text-align: center; font-size: 28px; }
+h2 { background: #1a237e; color: #fff; padding: 14px 20px; margin-top: 40px; border-radius: 6px; font-size: 20px; }
+h3 { color: #1a237e; margin: 16px 0 8px; font-size: 16px; }
+.subtitle { text-align: center; background: #283593; color: #ccc; padding: 8px; border-radius: 0 0 8px 8px; margin-bottom: 20px; font-size: 13px; }
+.toc { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; }
+.toc ol { padding-left: 24px; }
+.toc li { margin: 4px 0; }
+.toc a { color: #1a237e; text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+.toggle-bar { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+.toggle-bar label { font-weight: 600; font-size: 14px; cursor: pointer; }
+.toggle-switch { position: relative; width: 48px; height: 24px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-switch .slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 24px; transition: 0.3s; cursor: pointer; }
+.toggle-switch .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+.toggle-switch input:checked + .slider { background: #1a237e; }
+.toggle-switch input:checked + .slider:before { transform: translateX(24px); }
+.section-desc { background: #e8eaf6; border-left: 4px solid #1a237e; padding: 12px 16px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 14px; color: #333; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+th { background: #1a237e; color: #fff; padding: 10px 14px; text-align: left; font-size: 13px; }
+td { padding: 10px 14px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) { background: #fafafa; }
+details { margin: 4px 0; }
+summary { cursor: pointer; color: #1a237e; font-weight: 600; font-size: 13px; padding: 4px 0; }
+pre { background: #1e1e1e; color: #d4d4d4; padding: 14px; border-radius: 6px; overflow-x: auto; font-size: 12.5px; line-height: 1.5; margin: 4px 0; }
+code { font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; }
+.lbl-j { color: #c0392b; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; border-bottom: 1px solid #333; padding-bottom: 3px; }
+.lbl-p { color: #2471a3; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-top: 8px; margin-bottom: 4px; border-bottom: 1px solid #333; padding-bottom: 3px; }
+.j { color: #e06c75; }
+.p { color: #61afef; }
+.practice { background: #fff3e0; border-left: 4px solid #f57c00; padding: 10px 14px; margin: 10px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.practice strong { color: #e65100; }
+@media print {
+  body { background: #fff; padding: 10px; font-size: 11px; }
+  h1, h2 { break-after: avoid; }
+  .toggle-bar { display: none; }
+  details { open; }
+  details[open] summary { display: none; }
+  pre { font-size: 10px; padding: 8px; }
+  table { font-size: 11px; box-shadow: none; }
+  .section-desc { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<h1>DSA Interview Preparation Cheatsheet</h1>
+<div class="subtitle">20 Essential Patterns &amp; Data Structures &bull; Java + Python &bull; Complexity Analysis</div>
+
+<div class="toggle-bar">
+<label for="toggleAll">Expand / Collapse All Examples:</label>
+<div class="toggle-switch">
+<input type="checkbox" id="toggleAll">
+<span class="slider"></span>
+</div>
+</div>
+
+<div class="toc">
+<h3>Table of Contents</h3>
+<ol>
+<li><a href="#s1">Big O &amp; Complexity</a></li>
+<li><a href="#s2">Arrays</a></li>
+<li><a href="#s3">Strings</a></li>
+<li><a href="#s4">HashMap &amp; HashSet</a></li>
+<li><a href="#s5">Two Pointer</a></li>
+<li><a href="#s6">Sliding Window</a></li>
+<li><a href="#s7">Prefix Sum</a></li>
+<li><a href="#s8">Linked List</a></li>
+<li><a href="#s9">Stack</a></li>
+<li><a href="#s10">Queue &amp; Deque</a></li>
+<li><a href="#s11">Heap / Priority Queue</a></li>
+<li><a href="#s12">Binary Search</a></li>
+<li><a href="#s13">Binary Tree</a></li>
+<li><a href="#s14">Graphs</a></li>
+<li><a href="#s15">Sorting</a></li>
+<li><a href="#s16">Dynamic Programming</a></li>
+<li><a href="#s17">Greedy</a></li>
+<li><a href="#s18">Backtracking</a></li>
+<li><a href="#s19">Monotonic Stack</a></li>
+<li><a href="#s20">Pattern Recognition</a></li>
+</ol>
+</div>
+
+<script>
+document.getElementById('toggleAll').addEventListener('change', function() {
+  const details = document.querySelectorAll('details');
+  details.forEach(d => d.open = this.checked);
+});
+</script>
+
+<!-- Section 1 -->
+<h2 id="s1">1. Big O &amp; Complexity</h2>
+<p class="section-desc"><strong>When to use:</strong> Every interview question requires complexity analysis. Look for nested loops (O(n²)), divide-and-conquer (O(n log n)), and hash lookups (O(1) amortized). Amortized analysis applies when expensive operations are rare (e.g., dynamic array resize).</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Constant</td><td>O(1) / O(1)</td><td>Array index access, hash lookup</td></tr>
+<tr><td>Logarithmic</td><td>O(log n) / O(1)</td><td>Binary search, balanced BST lookup</td></tr>
+<tr><td>Linear</td><td>O(n) / O(1)</td><td>Single pass, linear search</td></tr>
+<tr><td>Linearithmic</td><td>O(n log n) / O(n)</td><td>Merge sort, heap sort</td></tr>
+<tr><td>Quadratic</td><td>O(n²) / O(1)</td><td>Nested loops, bubble sort</td></tr>
+<tr><td>Exponential</td><td>O(2ⁿ) / O(n)</td><td>Recursive subsets, brute-force</td></tr>
+<tr><td>Factorial</td><td>O(n!) / O(n)</td><td>Permutations</td></tr>
+<tr><td>Amortized O(1)</td><td>O(1) avg / O(n) worst</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">// ArrayList.add() is O(1) amortized
+// Resize doubles capacity → cost spread over n adds
+ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+for (int i = 0; i &lt; n; i++) {
+    list.add(i); // amortized O(1)
+}</span>
+<span class="lbl-p">Python</span><span class="p"># list.append() is O(1) amortized
+# Same doubling strategy internally
+lst = []
+for i in range(n):
+    lst.append(i)  # amortized O(1)</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Analyze time complexity of given code snippets • Compare two approaches • Identify bottlenecks in nested operations • Explain amortized analysis for dynamic arrays and hash tables</div>
+
+<!-- Section 2 -->
+<h2 id="s2">2. Arrays</h2>
+<p class="section-desc"><strong>When to use:</strong> Arrays are the foundation. Look for problems involving contiguous elements, subarrays, in-place modifications, or sorted/unsorted sequences. Signals: "contiguous subarray", "in-place", "rotate", "merge intervals".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Kadane's Algorithm (Max Subarray)</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int maxSubArray(int[] nums) {
+    int maxSum = nums[0], curSum = nums[0];
+    for (int i = 1; i &lt; nums.length; i++) {
+        curSum = Math.max(nums[i], curSum + nums[i]);
+        maxSum = Math.max(maxSum, curSum);
+    }
+    return maxSum;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def max_sub_array(nums):
+    max_sum = cur_sum = nums[0]
+    for num in nums[1:]:
+        cur_sum = max(num, cur_sum + num)
+        max_sum = max(max_sum, cur_sum)
+    return max_sum</span></pre></details>
+</td></tr>
+<tr><td>Dutch National Flag (Sort Colors)</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public void sortColors(int[] nums) {
+    int lo = 0, mid = 0, hi = nums.length - 1;
+    while (mid &lt;= hi) {
+        if (nums[mid] == 0) { swap(nums, lo++, mid++); }
+        else if (nums[mid] == 1) { mid++; }
+        else { swap(nums, mid, hi--); }
+    }
+}
+void swap(int[] a, int i, int j) {
+    int t = a[i]; a[i] = a[j]; a[j] = t;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def sort_colors(nums):
+    lo, mid, hi = 0, 0, len(nums) - 1
+    while mid &lt;= hi:
+        if nums[mid] == 0:
+            nums[lo], nums[mid] = nums[mid], nums[lo]
+            lo += 1; mid += 1
+        elif nums[mid] == 1:
+            mid += 1
+        else:
+            nums[mid], nums[hi] = nums[hi], nums[mid]
+            hi -= 1</span></pre></details>
+</td></tr>
+<tr><td>Rotate Array</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public void rotate(int[] nums, int k) {
+    k %= nums.length;
+    reverse(nums, 0, nums.length - 1);
+    reverse(nums, 0, k - 1);
+    reverse(nums, k, nums.length - 1);
+}
+void reverse(int[] a, int l, int r) {
+    while (l &lt; r) { int t = a[l]; a[l++] = a[r]; a[r--] = t; }
+}</span>
+<span class="lbl-p">Python</span><span class="p">def rotate(nums, k):
+    k %= len(nums)
+    nums.reverse()
+    nums[:k] = reversed(nums[:k])
+    nums[k:] = reversed(nums[k:])</span></pre></details>
+</td></tr>
+<tr><td>Merge Intervals</td><td>O(n log n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[][] merge(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -&gt; a[0] - b[0]);
+    List&lt;int[]&gt; res = new ArrayList&lt;&gt;();
+    for (int[] iv : intervals) {
+        if (res.isEmpty() || res.get(res.size()-1)[1] &lt; iv[0])
+            res.add(iv);
+        else
+            res.get(res.size()-1)[1] = Math.max(res.get(res.size()-1)[1], iv[1]);
+    }
+    return res.toArray(new int[0][]);
+}</span>
+<span class="lbl-p">Python</span><span class="p">def merge(intervals):
+    intervals.sort(key=lambda x: x[0])
+    res = []
+    for iv in intervals:
+        if not res or res[-1][1] &lt; iv[0]:
+            res.append(iv)
+        else:
+            res[-1][1] = max(res[-1][1], iv[1])
+    return res</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Maximum Subarray (LC 53) • Sort Colors (LC 75) • Rotate Array (LC 189) • Merge Intervals (LC 56) • Product of Array Except Self (LC 238)</div>
+
+<!-- Section 3 -->
+<h2 id="s3">3. Strings</h2>
+<p class="section-desc"><strong>When to use:</strong> String problems often reduce to array problems with character manipulation. Look for palindromes (two pointers from center or ends), anagrams (frequency counting), and pattern matching (sliding window or KMP). Signals: "substring", "anagram", "palindrome", "permutation of".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Reverse a String</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public String reverseString(char[] s) {
+    int l = 0, r = s.length - 1;
+    while (l &lt; r) {
+        char t = s[l]; s[l] = s[r]; s[r] = t;
+        l++; r--;
+    }
+    return new String(s);
+}</span>
+<span class="lbl-p">Python</span><span class="p">def reverse_string(s):
+    # In-place: two pointer
+    l, r = 0, len(s) - 1
+    while l &lt; r:
+        s[l], s[r] = s[r], s[l]
+        l += 1; r -= 1
+    return s</span></pre></details>
+</td></tr>
+<tr><td>Valid Palindrome</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public boolean isPalindrome(String s) {
+    int l = 0, r = s.length() - 1;
+    while (l &lt; r) {
+        while (l &lt; r &amp;&amp; !Character.isLetterOrDigit(s.charAt(l))) l++;
+        while (l &lt; r &amp;&amp; !Character.isLetterOrDigit(s.charAt(r))) r--;
+        if (Character.toLowerCase(s.charAt(l)) != Character.toLowerCase(s.charAt(r)))
+            return false;
+        l++; r--;
+    }
+    return true;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def is_palindrome(s):
+    l, r = 0, len(s) - 1
+    while l &lt; r:
+        while l &lt; r and not s[l].isalnum(): l += 1
+        while l &lt; r and not s[r].isalnum(): r -= 1
+        if s[l].lower() != s[r].lower():
+            return False
+        l += 1; r -= 1
+    return True</span></pre></details>
+</td></tr>
+<tr><td>Valid Anagram</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public boolean isAnagram(String s, String t) {
+    if (s.length() != t.length()) return false;
+    int[] count = new int[26];
+    for (int i = 0; i &lt; s.length(); i++) {
+        count[s.charAt(i) - 'a']++;
+        count[t.charAt(i) - 'a']--;
+    }
+    for (int c : count) if (c != 0) return false;
+    return true;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def is_anagram(s, t):
+    from collections import Counter
+    return Counter(s) == Counter(t)</span></pre></details>
+</td></tr>
+<tr><td>Longest Palindromic Substring (Expand from Center)</td><td>O(n²) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public String longestPalindrome(String s) {
+    int start = 0, maxLen = 0;
+    for (int i = 0; i &lt; s.length(); i++) {
+        int len1 = expand(s, i, i);
+        int len2 = expand(s, i, i + 1);
+        int len = Math.max(len1, len2);
+        if (len &gt; maxLen) {
+            maxLen = len;
+            start = i - (len - 1) / 2;
+        }
+    }
+    return s.substring(start, start + maxLen);
+}
+int expand(String s, int l, int r) {
+    while (l &gt;= 0 &amp;&amp; r &lt; s.length() &amp;&amp; s.charAt(l) == s.charAt(r)) { l--; r++; }
+    return r - l - 1;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def longest_palindrome(s):
+    res = ""
+    for i in range(len(s)):
+        for l, r in [(i, i), (i, i+1)]:  # odd & even
+            while l &gt;= 0 and r &lt; len(s) and s[l] == s[r]:
+                l -= 1; r += 1
+            if r - l - 1 &gt; len(res):
+                res = s[l+1:r]
+    return res</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Valid Palindrome (LC 125) • Valid Anagram (LC 242) • Longest Palindromic Substring (LC 5) • Group Anagrams (LC 49) • Longest Common Prefix (LC 14)</div>
+
+<!-- Section 4 -->
+<h2 id="s4">4. HashMap &amp; HashSet</h2>
+<p class="section-desc"><strong>When to use:</strong> Use when you need O(1) lookup for complements, frequencies, or existence checks. Signals: "find pair with sum", "count occurrences", "check duplicates", "group by property", "subarray with sum k".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Two Sum</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] twoSum(int[] nums, int target) {
+    Map&lt;Integer, Integer&gt; map = new HashMap&lt;&gt;();
+    for (int i = 0; i &lt; nums.length; i++) {
+        int comp = target - nums[i];
+        if (map.containsKey(comp)) return new int[]{map.get(comp), i};
+        map.put(nums[i], i);
+    }
+    return new int[]{};
+}</span>
+<span class="lbl-p">Python</span><span class="p">def two_sum(nums, target):
+    seen = {}
+    for i, num in enumerate(nums):
+        comp = target - num
+        if comp in seen:
+            return [seen[comp], i]
+        seen[num] = i
+    return []</span></pre></details>
+</td></tr>
+<tr><td>Group Anagrams</td><td>O(n·k log k) / O(n·k)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public List&lt;List&lt;String&gt;&gt; groupAnagrams(String[] strs) {
+    Map&lt;String, List&lt;String&gt;&gt; map = new HashMap&lt;&gt;();
+    for (String s : strs) {
+        char[] ca = s.toCharArray();
+        Arrays.sort(ca);
+        String key = new String(ca);
+        map.computeIfAbsent(key, k -&gt; new ArrayList&lt;&gt;()).add(s);
+    }
+    return new ArrayList&lt;&gt;(map.values());
+}</span>
+<span class="lbl-p">Python</span><span class="p">def group_anagrams(strs):
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for s in strs:
+        key = ''.join(sorted(s))
+        groups[key].append(s)
+    return list(groups.values())</span></pre></details>
+</td></tr>
+<tr><td>Subarray Sum Equals K</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int subarraySum(int[] nums, int k) {
+    Map&lt;Integer, Integer&gt; prefixCount = new HashMap&lt;&gt;();
+    prefixCount.put(0, 1);
+    int sum = 0, count = 0;
+    for (int num : nums) {
+        sum += num;
+        count += prefixCount.getOrDefault(sum - k, 0);
+        prefixCount.merge(sum, 1, Integer::sum);
+    }
+    return count;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def subarray_sum(nums, k):
+    prefix_count = {0: 1}
+    total = count = 0
+    for num in nums:
+        total += num
+        count += prefix_count.get(total - k, 0)
+        prefix_count[total] = prefix_count.get(total, 0) + 1
+    return count</span></pre></details>
+</td></tr>
+<tr><td>Frequency Counting</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] topKFrequent(int[] nums, int k) {
+    Map&lt;Integer, Integer&gt; freq = new HashMap&lt;&gt;();
+    for (int n : nums) freq.merge(n, 1, Integer::sum);
+    return freq.entrySet().stream()
+        .sorted((a, b) -&gt; b.getValue() - a.getValue())
+        .limit(k).mapToInt(Map.Entry::getKey).toArray();
+}</span>
+<span class="lbl-p">Python</span><span class="p">def top_k_frequent(nums, k):
+    from collections import Counter
+    return [x for x, _ in Counter(nums).most_common(k)]</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Two Sum (LC 1) • Group Anagrams (LC 49) • Subarray Sum Equals K (LC 560) • Top K Frequent Elements (LC 347) • Contains Duplicate (LC 217)</div>
+
+<!-- Section 5 -->
+<h2 id="s5">5. Two Pointer</h2>
+<p class="section-desc"><strong>When to use:</strong> Use on sorted arrays or when you need to compare elements from both ends or track two positions. Signals: "sorted array", "pair with sum", "remove duplicates in-place", "container with most water", "move zeros".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Pair Sum (Opposite Direction)</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] twoSumSorted(int[] nums, int target) {
+    int l = 0, r = nums.length - 1;
+    while (l &lt; r) {
+        int sum = nums[l] + nums[r];
+        if (sum == target) return new int[]{l + 1, r + 1};
+        else if (sum &lt; target) l++;
+        else r--;
+    }
+    return new int[]{};
+}</span>
+<span class="lbl-p">Python</span><span class="p">def two_sum_sorted(nums, target):
+    l, r = 0, len(nums) - 1
+    while l &lt; r:
+        s = nums[l] + nums[r]
+        if s == target: return [l + 1, r + 1]
+        elif s &lt; target: l += 1
+        else: r -= 1
+    return []</span></pre></details>
+</td></tr>
+<tr><td>Container With Most Water</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int maxArea(int[] height) {
+    int l = 0, r = height.length - 1, max = 0;
+    while (l &lt; r) {
+        int area = Math.min(height[l], height[r]) * (r - l);
+        max = Math.max(max, area);
+        if (height[l] &lt; height[r]) l++;
+        else r--;
+    }
+    return max;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def max_area(height):
+    l, r = 0, len(height) - 1
+    max_water = 0
+    while l &lt; r:
+        area = min(height[l], height[r]) * (r - l)
+        max_water = max(max_water, area)
+        if height[l] &lt; height[r]: l += 1
+        else: r -= 1
+    return max_water</span></pre></details>
+</td></tr>
+<tr><td>Remove Duplicates (Same Direction)</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int removeDuplicates(int[] nums) {
+    if (nums.length == 0) return 0;
+    int slow = 0;
+    for (int fast = 1; fast &lt; nums.length; fast++) {
+        if (nums[fast] != nums[slow]) {
+            slow++;
+            nums[slow] = nums[fast];
+        }
+    }
+    return slow + 1;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def remove_duplicates(nums):
+    if not nums: return 0
+    slow = 0
+    for fast in range(1, len(nums)):
+        if nums[fast] != nums[slow]:
+            slow += 1
+            nums[slow] = nums[fast]
+    return slow + 1</span></pre></details>
+</td></tr>
+<tr><td>Move Zeros</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public void moveZeroes(int[] nums) {
+    int insertPos = 0;
+    for (int num : nums) {
+        if (num != 0) nums[insertPos++] = num;
+    }
+    while (insertPos &lt; nums.length) nums[insertPos++] = 0;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def move_zeroes(nums):
+    insert_pos = 0
+    for num in nums:
+        if num != 0:
+            nums[insert_pos] = num
+            insert_pos += 1
+    for i in range(insert_pos, len(nums)):
+        nums[i] = 0</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Two Sum II (LC 167) • Container With Most Water (LC 11) • 3Sum (LC 15) • Remove Duplicates (LC 26) • Move Zeroes (LC 283)</div>
+
+<!-- Section 6 -->
+<h2 id="s6">6. Sliding Window</h2>
+<p class="section-desc"><strong>When to use:</strong> When you need to find a contiguous subarray/substring satisfying some condition. Fixed-size window for exact length; variable-size for "minimum/maximum/longest" conditions. Signals: "consecutive elements", "substring of length k", "longest without repeating", "minimum window".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Fixed Window: Max Sum Subarray of Size K</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int maxSumSubarray(int[] nums, int k) {
+    int windowSum = 0, maxSum = 0;
+    for (int i = 0; i &lt; nums.length; i++) {
+        windowSum += nums[i];
+        if (i &gt;= k) windowSum -= nums[i - k];
+        if (i &gt;= k - 1) maxSum = Math.max(maxSum, windowSum);
+    }
+    return maxSum;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def max_sum_subarray(nums, k):
+    window_sum = sum(nums[:k])
+    max_sum = window_sum
+    for i in range(k, len(nums)):
+        window_sum += nums[i] - nums[i - k]
+        max_sum = max(max_sum, window_sum)
+    return max_sum</span></pre></details>
+</td></tr>
+<tr><td>Variable Window: Longest Substring Without Repeating</td><td>O(n) / O(min(m,n))</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int lengthOfLongestSubstring(String s) {
+    Map&lt;Character, Integer&gt; map = new HashMap&lt;&gt;();
+    int maxLen = 0, left = 0;
+    for (int right = 0; right &lt; s.length(); right++) {
+        char c = s.charAt(right);
+        if (map.containsKey(c)) left = Math.max(left, map.get(c) + 1);
+        map.put(c, right);
+        maxLen = Math.max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def length_of_longest_substring(s):
+    seen = {}
+    max_len = left = 0
+    for right, ch in enumerate(s):
+        if ch in seen and seen[ch] &gt;= left:
+            left = seen[ch] + 1
+        seen[ch] = right
+        max_len = max(max_len, right - left + 1)
+    return max_len</span></pre></details>
+</td></tr>
+<tr><td>Variable Window: Minimum Window Substring</td><td>O(n) / O(m)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public String minWindow(String s, String t) {
+    int[] need = new int[128], have = new int[128];
+    for (char c : t.toCharArray()) need[c]++;
+    int required = 0;
+    for (int n : need) if (n &gt; 0) required++;
+    int formed = 0, l = 0, minLen = Integer.MAX_VALUE, start = 0;
+    for (int r = 0; r &lt; s.length(); r++) {
+        char c = s.charAt(r);
+        have[c]++;
+        if (need[c] &gt; 0 &amp;&amp; have[c] == need[c]) formed++;
+        while (formed == required) {
+            if (r - l + 1 &lt; minLen) { minLen = r - l + 1; start = l; }
+            char lc = s.charAt(l);
+            have[lc]--;
+            if (need[lc] &gt; 0 &amp;&amp; have[lc] &lt; need[lc]) formed--;
+            l++;
+        }
+    }
+    return minLen == Integer.MAX_VALUE ? "" : s.substring(start, start + minLen);
+}</span>
+<span class="lbl-p">Python</span><span class="p">def min_window(s, t):
+    from collections import Counter
+    need = Counter(t)
+    missing = len(t)
+    l = start = 0
+    min_len = float('inf')
+    for r, ch in enumerate(s):
+        if need[ch] &gt; 0:
+            missing -= 1
+        need[ch] -= 1
+        while missing == 0:
+            if r - l + 1 &lt; min_len:
+                min_len = r - l + 1
+                start = l
+            need[s[l]] += 1
+            if need[s[l]] &gt; 0:
+                missing += 1
+            l += 1
+    return "" if min_len == float('inf') else s[start:start + min_len]</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Maximum Sum Subarray of Size K • Longest Substring Without Repeating Characters (LC 3) • Minimum Window Substring (LC 76) • Permutation in String (LC 567) • Longest Repeating Character Replacement (LC 424)</div>
+
+<!-- Section 7 -->
+<h2 id="s7">7. Prefix Sum</h2>
+<p class="section-desc"><strong>When to use:</strong> When you need O(1) range sum queries after preprocessing, or need to count subarrays with a given sum. Signals: "sum between indices", "subarray sum equals k", "number of subarrays with sum", "range query". Often combined with a hashmap for counting.</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Range Sum Query (Precompute)</td><td>O(n) build, O(1) query / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">class NumArray {
+    int[] prefix;
+    public NumArray(int[] nums) {
+        prefix = new int[nums.length + 1];
+        for (int i = 0; i &lt; nums.length; i++)
+            prefix[i + 1] = prefix[i] + nums[i];
+    }
+    public int sumRange(int l, int r) {
+        return prefix[r + 1] - prefix[l];
+    }
+}</span>
+<span class="lbl-p">Python</span><span class="p">class NumArray:
+    def __init__(self, nums):
+        self.prefix = [0]
+        for num in nums:
+            self.prefix.append(self.prefix[-1] + num)
+
+    def sum_range(self, l, r):
+        return self.prefix[r + 1] - self.prefix[l]</span></pre></details>
+</td></tr>
+<tr><td>Subarray Sum Equals K (Prefix + HashMap)</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int subarraySum(int[] nums, int k) {
+    Map&lt;Integer, Integer&gt; map = new HashMap&lt;&gt;();
+    map.put(0, 1);
+    int sum = 0, count = 0;
+    for (int num : nums) {
+        sum += num;
+        count += map.getOrDefault(sum - k, 0);
+        map.merge(sum, 1, Integer::sum);
+    }
+    return count;
+}
+// Key insight: if prefix[j] - prefix[i] == k, subarray (i,j] has sum k</span>
+<span class="lbl-p">Python</span><span class="p">def subarray_sum(nums, k):
+    prefix_count = {0: 1}
+    total = count = 0
+    for num in nums:
+        total += num
+        count += prefix_count.get(total - k, 0)
+        prefix_count[total] = prefix_count.get(total, 0) + 1
+    return count
+# Key insight: if prefix[j] - prefix[i] == k, subarray (i,j] has sum k</span></pre></details>
+</td></tr>
+<tr><td>Product of Array Except Self</td><td>O(n) / O(1) extra</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] productExceptSelf(int[] nums) {
+    int n = nums.length;
+    int[] res = new int[n];
+    res[0] = 1;
+    for (int i = 1; i &lt; n; i++) res[i] = res[i-1] * nums[i-1];
+    int right = 1;
+    for (int i = n - 1; i &gt;= 0; i--) {
+        res[i] *= right;
+        right *= nums[i];
+    }
+    return res;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def product_except_self(nums):
+    n = len(nums)
+    res = [1] * n
+    for i in range(1, n):
+        res[i] = res[i-1] * nums[i-1]
+    right = 1
+    for i in range(n-1, -1, -1):
+        res[i] *= right
+        right *= nums[i]
+    return res</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Range Sum Query (LC 303) • Subarray Sum Equals K (LC 560) • Product of Array Except Self (LC 238) • Continuous Subarray Sum (LC 523) • Find Pivot Index (LC 724)</div>
+
+<!-- Section 8 -->
+<h2 id="s8">8. Linked List</h2>
+<p class="section-desc"><strong>When to use:</strong> Linked list problems test pointer manipulation. Use a dummy head node to simplify edge cases. Floyd's cycle detection uses slow/fast pointers. Signals: "reverse", "cycle", "merge sorted", "middle node", "remove nth from end".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Reverse Linked List</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public ListNode reverseList(ListNode head) {
+    ListNode prev = null, curr = head;
+    while (curr != null) {
+        ListNode next = curr.next;
+        curr.next = prev;
+        prev = curr;
+        curr = next;
+    }
+    return prev;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def reverse_list(head):
+    prev, curr = None, head
+    while curr:
+        nxt = curr.next
+        curr.next = prev
+        prev = curr
+        curr = nxt
+    return prev</span></pre></details>
+</td></tr>
+<tr><td>Detect Cycle (Floyd's Tortoise &amp; Hare)</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public boolean hasCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null &amp;&amp; fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) return true;
+    }
+    return false;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def has_cycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            return True
+    return False</span></pre></details>
+</td></tr>
+<tr><td>Merge Two Sorted Lists</td><td>O(n+m) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+    ListNode dummy = new ListNode(0), curr = dummy;
+    while (l1 != null &amp;&amp; l2 != null) {
+        if (l1.val &lt;= l2.val) { curr.next = l1; l1 = l1.next; }
+        else { curr.next = l2; l2 = l2.next; }
+        curr = curr.next;
+    }
+    curr.next = (l1 != null) ? l1 : l2;
+    return dummy.next;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def merge_two_lists(l1, l2):
+    dummy = curr = ListNode(0)
+    while l1 and l2:
+        if l1.val &lt;= l2.val:
+            curr.next = l1; l1 = l1.next
+        else:
+            curr.next = l2; l2 = l2.next
+        curr = curr.next
+    curr.next = l1 or l2
+    return dummy.next</span></pre></details>
+</td></tr>
+<tr><td>Find Middle Node</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public ListNode middleNode(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null &amp;&amp; fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+    return slow;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def middle_node(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Reverse Linked List (LC 206) • Linked List Cycle (LC 141) • Merge Two Sorted Lists (LC 21) • Remove Nth Node From End (LC 19) • Reorder List (LC 143)</div>
+
+<!-- Section 9 -->
+<h2 id="s9">9. Stack</h2>
+<p class="section-desc"><strong>When to use:</strong> Use when you need to process elements in LIFO order, match parentheses, or maintain a monotonic sequence. Signals: "valid parentheses", "next greater element", "evaluate expression", "simplify path", nested structure processing.</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Valid Parentheses</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public boolean isValid(String s) {
+    Deque&lt;Character&gt; stack = new ArrayDeque&lt;&gt;();
+    for (char c : s.toCharArray()) {
+        if (c == '(') stack.push(')');
+        else if (c == '{') stack.push('}');
+        else if (c == '[') stack.push(']');
+        else if (stack.isEmpty() || stack.pop() != c) return false;
+    }
+    return stack.isEmpty();
+}</span>
+<span class="lbl-p">Python</span><span class="p">def is_valid(s):
+    stack = []
+    mapping = {')': '(', '}': '{', ']': '['}
+    for ch in s:
+        if ch in mapping:
+            if not stack or stack.pop() != mapping[ch]:
+                return False
+        else:
+            stack.append(ch)
+    return not stack</span></pre></details>
+</td></tr>
+<tr><td>Min Stack</td><td>O(1) all ops / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">class MinStack {
+    Deque&lt;int[]&gt; stack = new ArrayDeque&lt;&gt;(); // [val, currentMin]
+    public void push(int val) {
+        int min = stack.isEmpty() ? val : Math.min(val, stack.peek()[1]);
+        stack.push(new int[]{val, min});
+    }
+    public void pop() { stack.pop(); }
+    public int top() { return stack.peek()[0]; }
+    public int getMin() { return stack.peek()[1]; }
+}</span>
+<span class="lbl-p">Python</span><span class="p">class MinStack:
+    def __init__(self):
+        self.stack = []  # (val, current_min)
+
+    def push(self, val):
+        cur_min = min(val, self.stack[-1][1] if self.stack else val)
+        self.stack.append((val, cur_min))
+
+    def pop(self): self.stack.pop()
+    def top(self): return self.stack[-1][0]
+    def get_min(self): return self.stack[-1][1]</span></pre></details>
+</td></tr>
+<tr><td>Next Greater Element</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] nextGreaterElement(int[] nums) {
+    int n = nums.length;
+    int[] res = new int[n];
+    Arrays.fill(res, -1);
+    Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+    for (int i = 0; i &lt; n; i++) {
+        while (!stack.isEmpty() &amp;&amp; nums[stack.peek()] &lt; nums[i]) {
+            res[stack.pop()] = nums[i];
+        }
+        stack.push(i);
+    }
+    return res;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def next_greater_element(nums):
+    n = len(nums)
+    res = [-1] * n
+    stack = []
+    for i in range(n):
+        while stack and nums[stack[-1]] &lt; nums[i]:
+            res[stack.pop()] = nums[i]
+        stack.append(i)
+    return res</span></pre></details>
+</td></tr>
+<tr><td>Evaluate Reverse Polish Notation</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int evalRPN(String[] tokens) {
+    Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+    for (String t : tokens) {
+        if ("+-*/".contains(t)) {
+            int b = stack.pop(), a = stack.pop();
+            switch (t) {
+                case "+": stack.push(a + b); break;
+                case "-": stack.push(a - b); break;
+                case "*": stack.push(a * b); break;
+                case "/": stack.push(a / b); break;
+            }
+        } else {
+            stack.push(Integer.parseInt(t));
+        }
+    }
+    return stack.pop();
+}</span>
+<span class="lbl-p">Python</span><span class="p">def eval_rpn(tokens):
+    stack = []
+    for t in tokens:
+        if t in "+-*/":
+            b, a = stack.pop(), stack.pop()
+            if t == '+': stack.append(a + b)
+            elif t == '-': stack.append(a - b)
+            elif t == '*': stack.append(a * b)
+            else: stack.append(int(a / b))  # truncate toward zero
+        else:
+            stack.append(int(t))
+    return stack[0]</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Valid Parentheses (LC 20) • Min Stack (LC 155) • Daily Temperatures (LC 739) • Evaluate RPN (LC 150) • Decode String (LC 394)</div>
+
+<!-- Section 10 -->
+<h2 id="s10">10. Queue &amp; Deque</h2>
+<p class="section-desc"><strong>When to use:</strong> Queues for BFS/level-order traversal (FIFO). Deques for sliding window maximum/minimum where you maintain a monotonic sequence with O(1) access to the front. Signals: "shortest path unweighted", "level by level", "sliding window max/min".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>BFS Template (Queue)</td><td>O(V+E) / O(V)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int bfs(int[][] graph, int start, int target) {
+    Queue&lt;Integer&gt; queue = new LinkedList&lt;&gt;();
+    Set&lt;Integer&gt; visited = new HashSet&lt;&gt;();
+    queue.offer(start);
+    visited.add(start);
+    int level = 0;
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        for (int i = 0; i &lt; size; i++) {
+            int node = queue.poll();
+            if (node == target) return level;
+            for (int neighbor : graph[node]) {
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        level++;
+    }
+    return -1;
+}</span>
+<span class="lbl-p">Python</span><span class="p">from collections import deque
+
+def bfs(graph, start, target):
+    queue = deque([start])
+    visited = {start}
+    level = 0
+    while queue:
+        for _ in range(len(queue)):
+            node = queue.popleft()
+            if node == target:
+                return level
+            for neighbor in graph[node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        level += 1
+    return -1</span></pre></details>
+</td></tr>
+<tr><td>Sliding Window Maximum (Monotonic Deque)</td><td>O(n) / O(k)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] maxSlidingWindow(int[] nums, int k) {
+    Deque&lt;Integer&gt; dq = new ArrayDeque&lt;&gt;(); // stores indices
+    int[] res = new int[nums.length - k + 1];
+    for (int i = 0; i &lt; nums.length; i++) {
+        // Remove elements outside window
+        while (!dq.isEmpty() &amp;&amp; dq.peekFirst() &lt; i - k + 1)
+            dq.pollFirst();
+        // Remove smaller elements (maintain decreasing order)
+        while (!dq.isEmpty() &amp;&amp; nums[dq.peekLast()] &lt; nums[i])
+            dq.pollLast();
+        dq.offerLast(i);
+        if (i &gt;= k - 1) res[i - k + 1] = nums[dq.peekFirst()];
+    }
+    return res;
+}</span>
+<span class="lbl-p">Python</span><span class="p">from collections import deque
+
+def max_sliding_window(nums, k):
+    dq = deque()  # stores indices, decreasing order of values
+    res = []
+    for i, num in enumerate(nums):
+        # Remove elements outside window
+        while dq and dq[0] &lt; i - k + 1:
+            dq.popleft()
+        # Remove smaller elements
+        while dq and nums[dq[-1]] &lt; num:
+            dq.pop()
+        dq.append(i)
+        if i &gt;= k - 1:
+            res.append(nums[dq[0]])
+    return res</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Sliding Window Maximum (LC 239) • Rotting Oranges (LC 994) • Walls and Gates (LC 286) • Open the Lock (LC 752) • Design Hit Counter (LC 362)</div>
+
+<!-- Section 11 -->
+<h2 id="s11">11. Heap / Priority Queue</h2>
+<p class="section-desc"><strong>When to use:</strong> When you need quick access to the smallest/largest element, or need to process items by priority. Signals: "top K", "Kth largest/smallest", "merge K sorted", "median of stream", "schedule by deadline".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Top K Elements</td><td>O(n log k) / O(k)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] topKFrequent(int[] nums, int k) {
+    Map&lt;Integer, Integer&gt; freq = new HashMap&lt;&gt;();
+    for (int n : nums) freq.merge(n, 1, Integer::sum);
+    PriorityQueue&lt;Integer&gt; minHeap = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; freq.get(a) - freq.get(b));
+    for (int num : freq.keySet()) {
+        minHeap.offer(num);
+        if (minHeap.size() &gt; k) minHeap.poll();
+    }
+    int[] res = new int[k];
+    for (int i = 0; i &lt; k; i++) res[i] = minHeap.poll();
+    return res;
+}</span>
+<span class="lbl-p">Python</span><span class="p">import heapq
+from collections import Counter
+
+def top_k_frequent(nums, k):
+    freq = Counter(nums)
+    return heapq.nlargest(k, freq.keys(), key=freq.get)</span></pre></details>
+</td></tr>
+<tr><td>Merge K Sorted Lists</td><td>O(n log k) / O(k)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public ListNode mergeKLists(ListNode[] lists) {
+    PriorityQueue&lt;ListNode&gt; pq = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; a.val - b.val);
+    for (ListNode l : lists) if (l != null) pq.offer(l);
+    ListNode dummy = new ListNode(0), curr = dummy;
+    while (!pq.isEmpty()) {
+        ListNode node = pq.poll();
+        curr.next = node;
+        curr = curr.next;
+        if (node.next != null) pq.offer(node.next);
+    }
+    return dummy.next;
+}</span>
+<span class="lbl-p">Python</span><span class="p">import heapq
+
+def merge_k_lists(lists):
+    heap = []
+    for i, l in enumerate(lists):
+        if l:
+            heapq.heappush(heap, (l.val, i, l))
+    dummy = curr = ListNode(0)
+    while heap:
+        val, i, node = heapq.heappop(heap)
+        curr.next = node
+        curr = curr.next
+        if node.next:
+            heapq.heappush(heap, (node.next.val, i, node.next))
+    return dummy.next</span></pre></details>
+</td></tr>
+<tr><td>Find Median from Data Stream</td><td>O(log n) add, O(1) find / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">class MedianFinder {
+    PriorityQueue&lt;Integer&gt; lo = new PriorityQueue&lt;&gt;(Collections.reverseOrder()); // max-heap
+    PriorityQueue&lt;Integer&gt; hi = new PriorityQueue&lt;&gt;(); // min-heap
+
+    public void addNum(int num) {
+        lo.offer(num);
+        hi.offer(lo.poll());
+        if (hi.size() &gt; lo.size()) lo.offer(hi.poll());
+    }
+    public double findMedian() {
+        return lo.size() &gt; hi.size() ? lo.peek() : (lo.peek() + hi.peek()) / 2.0;
+    }
+}</span>
+<span class="lbl-p">Python</span><span class="p">import heapq
+
+class MedianFinder:
+    def __init__(self):
+        self.lo = []  # max-heap (negate values)
+        self.hi = []  # min-heap
+
+    def add_num(self, num):
+        heapq.heappush(self.lo, -num)
+        heapq.heappush(self.hi, -heapq.heappop(self.lo))
+        if len(self.hi) &gt; len(self.lo):
+            heapq.heappush(self.lo, -heapq.heappop(self.hi))
+
+    def find_median(self):
+        if len(self.lo) &gt; len(self.hi):
+            return -self.lo[0]
+        return (-self.lo[0] + self.hi[0]) / 2</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Top K Frequent Elements (LC 347) • Kth Largest Element (LC 215) • Merge K Sorted Lists (LC 23) • Find Median from Data Stream (LC 295) • Task Scheduler (LC 621)</div>
+
+<!-- Section 12 -->
+<h2 id="s12">12. Binary Search</h2>
+<p class="section-desc"><strong>When to use:</strong> Whenever the search space is sorted or has a monotonic property. Can also be applied to answer spaces ("binary search on the answer"). Signals: "sorted array", "find first/last", "rotated sorted", "minimum/maximum that satisfies", "O(log n) required".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Standard Binary Search</td><td>O(log n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int binarySearch(int[] nums, int target) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo &lt;= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] &lt; target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def binary_search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo &lt;= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target: return mid
+        elif nums[mid] &lt; target: lo = mid + 1
+        else: hi = mid - 1
+    return -1</span></pre></details>
+</td></tr>
+<tr><td>First/Last Occurrence</td><td>O(log n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] searchRange(int[] nums, int target) {
+    return new int[]{findFirst(nums, target), findLast(nums, target)};
+}
+int findFirst(int[] nums, int target) {
+    int lo = 0, hi = nums.length - 1, res = -1;
+    while (lo &lt;= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) { res = mid; hi = mid - 1; }
+        else if (nums[mid] &lt; target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return res;
+}
+int findLast(int[] nums, int target) {
+    int lo = 0, hi = nums.length - 1, res = -1;
+    while (lo &lt;= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) { res = mid; lo = mid + 1; }
+        else if (nums[mid] &lt; target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return res;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def search_range(nums, target):
+    def find_first():
+        lo, hi, res = 0, len(nums) - 1, -1
+        while lo &lt;= hi:
+            mid = (lo + hi) // 2
+            if nums[mid] == target: res = mid; hi = mid - 1
+            elif nums[mid] &lt; target: lo = mid + 1
+            else: hi = mid - 1
+        return res
+    def find_last():
+        lo, hi, res = 0, len(nums) - 1, -1
+        while lo &lt;= hi:
+            mid = (lo + hi) // 2
+            if nums[mid] == target: res = mid; lo = mid + 1
+            elif nums[mid] &lt; target: lo = mid + 1
+            else: hi = mid - 1
+        return res
+    return [find_first(), find_last()]</span></pre></details>
+</td></tr>
+<tr><td>Search in Rotated Sorted Array</td><td>O(log n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int search(int[] nums, int target) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo &lt;= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[lo] &lt;= nums[mid]) { // left half sorted
+            if (target &gt;= nums[lo] &amp;&amp; target &lt; nums[mid]) hi = mid - 1;
+            else lo = mid + 1;
+        } else { // right half sorted
+            if (target &gt; nums[mid] &amp;&amp; target &lt;= nums[hi]) lo = mid + 1;
+            else hi = mid - 1;
+        }
+    }
+    return -1;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo &lt;= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target: return mid
+        if nums[lo] &lt;= nums[mid]:  # left sorted
+            if nums[lo] &lt;= target &lt; nums[mid]: hi = mid - 1
+            else: lo = mid + 1
+        else:  # right sorted
+            if nums[mid] &lt; target &lt;= nums[hi]: lo = mid + 1
+            else: hi = mid - 1
+    return -1</span></pre></details>
+</td></tr>
+<tr><td>Find Peak Element</td><td>O(log n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int findPeakElement(int[] nums) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo &lt; hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] &lt; nums[mid + 1]) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def find_peak_element(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo &lt; hi:
+        mid = (lo + hi) // 2
+        if nums[mid] &lt; nums[mid + 1]: lo = mid + 1
+        else: hi = mid
+    return lo</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Binary Search (LC 704) • Search in Rotated Array (LC 33) • Find First and Last Position (LC 34) • Find Peak Element (LC 162) • Search a 2D Matrix (LC 74)</div>
+
+<!-- Section 13 -->
+<h2 id="s13">13. Binary Tree</h2>
+<p class="section-desc"><strong>When to use:</strong> Tree problems use recursion (DFS) or queues (BFS). Think about what info you need from subtrees (bottom-up) vs. what to pass down (top-down). Signals: "root to leaf", "level order", "validate BST", "lowest common ancestor", "serialize/deserialize".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Inorder Traversal (Iterative)</td><td>O(n) / O(h)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public List&lt;Integer&gt; inorderTraversal(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    Deque&lt;TreeNode&gt; stack = new ArrayDeque&lt;&gt;();
+    TreeNode curr = root;
+    while (curr != null || !stack.isEmpty()) {
+        while (curr != null) { stack.push(curr); curr = curr.left; }
+        curr = stack.pop();
+        res.add(curr.val);
+        curr = curr.right;
+    }
+    return res;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def inorder_traversal(root):
+    res, stack, curr = [], [], root
+    while curr or stack:
+        while curr:
+            stack.append(curr)
+            curr = curr.left
+        curr = stack.pop()
+        res.append(curr.val)
+        curr = curr.right
+    return res</span></pre></details>
+</td></tr>
+<tr><td>Level Order BFS</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    if (root == null) return res;
+    Queue&lt;TreeNode&gt; q = new LinkedList&lt;&gt;();
+    q.offer(root);
+    while (!q.isEmpty()) {
+        int size = q.size();
+        List&lt;Integer&gt; level = new ArrayList&lt;&gt;();
+        for (int i = 0; i &lt; size; i++) {
+            TreeNode node = q.poll();
+            level.add(node.val);
+            if (node.left != null) q.offer(node.left);
+            if (node.right != null) q.offer(node.right);
+        }
+        res.add(level);
+    }
+    return res;
+}</span>
+<span class="lbl-p">Python</span><span class="p">from collections import deque
+
+def level_order(root):
+    if not root: return []
+    res, queue = [], deque([root])
+    while queue:
+        level = []
+        for _ in range(len(queue)):
+            node = queue.popleft()
+            level.append(node.val)
+            if node.left: queue.append(node.left)
+            if node.right: queue.append(node.right)
+        res.append(level)
+    return res</span></pre></details>
+</td></tr>
+<tr><td>Max Depth</td><td>O(n) / O(h)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int maxDepth(TreeNode root) {
+    if (root == null) return 0;
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+}</span>
+<span class="lbl-p">Python</span><span class="p">def max_depth(root):
+    if not root: return 0
+    return 1 + max(max_depth(root.left), max_depth(root.right))</span></pre></details>
+</td></tr>
+<tr><td>Validate BST</td><td>O(n) / O(h)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public boolean isValidBST(TreeNode root) {
+    return validate(root, Long.MIN_VALUE, Long.MAX_VALUE);
+}
+boolean validate(TreeNode node, long min, long max) {
+    if (node == null) return true;
+    if (node.val &lt;= min || node.val &gt;= max) return false;
+    return validate(node.left, min, node.val)
+        &amp;&amp; validate(node.right, node.val, max);
+}</span>
+<span class="lbl-p">Python</span><span class="p">def is_valid_bst(root):
+    def validate(node, lo, hi):
+        if not node: return True
+        if node.val &lt;= lo or node.val &gt;= hi:
+            return False
+        return validate(node.left, lo, node.val) and \
+               validate(node.right, node.val, hi)
+    return validate(root, float('-inf'), float('inf'))</span></pre></details>
+</td></tr>
+<tr><td>Lowest Common Ancestor</td><td>O(n) / O(h)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if (root == null || root == p || root == q) return root;
+    TreeNode left = lowestCommonAncestor(root.left, p, q);
+    TreeNode right = lowestCommonAncestor(root.right, p, q);
+    if (left != null &amp;&amp; right != null) return root;
+    return left != null ? left : right;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def lowest_common_ancestor(root, p, q):
+    if not root or root == p or root == q:
+        return root
+    left = lowest_common_ancestor(root.left, p, q)
+    right = lowest_common_ancestor(root.right, p, q)
+    if left and right: return root
+    return left or right</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Max Depth (LC 104) • Level Order Traversal (LC 102) • Validate BST (LC 98) • LCA (LC 236) • Diameter of Binary Tree (LC 543) • Invert Binary Tree (LC 226)</div>
+
+<!-- Section 14 -->
+<h2 id="s14">14. Graphs</h2>
+<p class="section-desc"><strong>When to use:</strong> Graph problems involve nodes and edges (explicit or implicit like grids). BFS for shortest unweighted path, DFS for exploring all paths/components. Signals: "connected components", "shortest path", "course prerequisites", "grid traversal", "detect cycle".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Number of Islands (DFS on Grid)</td><td>O(m×n) / O(m×n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int numIslands(char[][] grid) {
+    int count = 0;
+    for (int i = 0; i &lt; grid.length; i++)
+        for (int j = 0; j &lt; grid[0].length; j++)
+            if (grid[i][j] == '1') { dfs(grid, i, j); count++; }
+    return count;
+}
+void dfs(char[][] grid, int i, int j) {
+    if (i &lt; 0 || i &gt;= grid.length || j &lt; 0 || j &gt;= grid[0].length
+        || grid[i][j] != '1') return;
+    grid[i][j] = '0';
+    dfs(grid, i+1, j); dfs(grid, i-1, j);
+    dfs(grid, i, j+1); dfs(grid, i, j-1);
+}</span>
+<span class="lbl-p">Python</span><span class="p">def num_islands(grid):
+    def dfs(i, j):
+        if i &lt; 0 or i &gt;= len(grid) or j &lt; 0 or j &gt;= len(grid[0]) \
+           or grid[i][j] != '1':
+            return
+        grid[i][j] = '0'
+        dfs(i+1, j); dfs(i-1, j); dfs(i, j+1); dfs(i, j-1)
+
+    count = 0
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == '1':
+                dfs(i, j)
+                count += 1
+    return count</span></pre></details>
+</td></tr>
+<tr><td>Topological Sort (Kahn's BFS)</td><td>O(V+E) / O(V+E)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] topologicalSort(int numCourses, int[][] prereqs) {
+    List&lt;List&lt;Integer&gt;&gt; graph = new ArrayList&lt;&gt;();
+    int[] indegree = new int[numCourses];
+    for (int i = 0; i &lt; numCourses; i++) graph.add(new ArrayList&lt;&gt;());
+    for (int[] p : prereqs) {
+        graph.get(p[1]).add(p[0]);
+        indegree[p[0]]++;
+    }
+    Queue&lt;Integer&gt; q = new LinkedList&lt;&gt;();
+    for (int i = 0; i &lt; numCourses; i++)
+        if (indegree[i] == 0) q.offer(i);
+    int[] order = new int[numCourses];
+    int idx = 0;
+    while (!q.isEmpty()) {
+        int node = q.poll();
+        order[idx++] = node;
+        for (int next : graph.get(node))
+            if (--indegree[next] == 0) q.offer(next);
+    }
+    return idx == numCourses ? order : new int[]{};
+}</span>
+<span class="lbl-p">Python</span><span class="p">from collections import deque, defaultdict
+
+def topological_sort(num_courses, prereqs):
+    graph = defaultdict(list)
+    indegree = [0] * num_courses
+    for a, b in prereqs:
+        graph[b].append(a)
+        indegree[a] += 1
+    queue = deque(i for i in range(num_courses) if indegree[i] == 0)
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for nxt in graph[node]:
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                queue.append(nxt)
+    return order if len(order) == num_courses else []</span></pre></details>
+</td></tr>
+<tr><td>Detect Cycle (Directed - DFS)</td><td>O(V+E) / O(V)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public boolean hasCycle(int n, List&lt;List&lt;Integer&gt;&gt; graph) {
+    int[] state = new int[n]; // 0=unvisited, 1=visiting, 2=done
+    for (int i = 0; i &lt; n; i++)
+        if (state[i] == 0 &amp;&amp; dfs(graph, i, state)) return true;
+    return false;
+}
+boolean dfs(List&lt;List&lt;Integer&gt;&gt; g, int node, int[] state) {
+    state[node] = 1;
+    for (int next : g.get(node)) {
+        if (state[next] == 1) return true;
+        if (state[next] == 0 &amp;&amp; dfs(g, next, state)) return true;
+    }
+    state[node] = 2;
+    return false;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def has_cycle(n, graph):
+    state = [0] * n  # 0=unvisited, 1=visiting, 2=done
+    def dfs(node):
+        state[node] = 1
+        for nxt in graph[node]:
+            if state[nxt] == 1: return True
+            if state[nxt] == 0 and dfs(nxt): return True
+        state[node] = 2
+        return False
+    return any(state[i] == 0 and dfs(i) for i in range(n))</span></pre></details>
+</td></tr>
+<tr><td>Dijkstra's Shortest Path</td><td>O((V+E) log V) / O(V)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] dijkstra(List&lt;int[]&gt;[] graph, int src) {
+    int n = graph.length;
+    int[] dist = new int[n];
+    Arrays.fill(dist, Integer.MAX_VALUE);
+    dist[src] = 0;
+    PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;&gt;((a,b) -&gt; a[1]-b[1]);
+    pq.offer(new int[]{src, 0});
+    while (!pq.isEmpty()) {
+        int[] cur = pq.poll();
+        int u = cur[0], d = cur[1];
+        if (d &gt; dist[u]) continue;
+        for (int[] edge : graph[u]) {
+            int v = edge[0], w = edge[1];
+            if (dist[u] + w &lt; dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.offer(new int[]{v, dist[v]});
+            }
+        }
+    }
+    return dist;
+}</span>
+<span class="lbl-p">Python</span><span class="p">import heapq
+
+def dijkstra(graph, src):
+    dist = {src: 0}
+    heap = [(0, src)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d &gt; dist.get(u, float('inf')):
+            continue
+        for v, w in graph[u]:
+            nd = d + w
+            if nd &lt; dist.get(v, float('inf')):
+                dist[v] = nd
+                heapq.heappush(heap, (nd, v))
+    return dist</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Number of Islands (LC 200) • Course Schedule (LC 207) • Clone Graph (LC 133) • Pacific Atlantic Water Flow (LC 417) • Network Delay Time (LC 743)</div>
+
+<!-- Section 15 -->
+<h2 id="s15">15. Sorting</h2>
+<p class="section-desc"><strong>When to use:</strong> Sorting is a prerequisite for binary search, two pointers, and interval problems. Merge Sort: stable, O(n log n) guaranteed. Quick Sort: in-place, O(n log n) average. Counting Sort: O(n+k) when range is small. Signals: "sort then process", "kth element", "custom ordering".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Merge Sort</td><td>O(n log n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public void mergeSort(int[] arr, int l, int r) {
+    if (l &gt;= r) return;
+    int mid = (l + r) / 2;
+    mergeSort(arr, l, mid);
+    mergeSort(arr, mid + 1, r);
+    merge(arr, l, mid, r);
+}
+void merge(int[] arr, int l, int mid, int r) {
+    int[] tmp = new int[r - l + 1];
+    int i = l, j = mid + 1, k = 0;
+    while (i &lt;= mid &amp;&amp; j &lt;= r)
+        tmp[k++] = arr[i] &lt;= arr[j] ? arr[i++] : arr[j++];
+    while (i &lt;= mid) tmp[k++] = arr[i++];
+    while (j &lt;= r) tmp[k++] = arr[j++];
+    System.arraycopy(tmp, 0, arr, l, tmp.length);
+}</span>
+<span class="lbl-p">Python</span><span class="p">def merge_sort(arr):
+    if len(arr) &lt;= 1: return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+
+def merge(left, right):
+    res, i, j = [], 0, 0
+    while i &lt; len(left) and j &lt; len(right):
+        if left[i] &lt;= right[j]: res.append(left[i]); i += 1
+        else: res.append(right[j]); j += 1
+    return res + left[i:] + right[j:]</span></pre></details>
+</td></tr>
+<tr><td>Quick Sort (Lomuto Partition)</td><td>O(n log n) avg / O(log n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public void quickSort(int[] arr, int lo, int hi) {
+    if (lo &gt;= hi) return;
+    int pivotIdx = partition(arr, lo, hi);
+    quickSort(arr, lo, pivotIdx - 1);
+    quickSort(arr, pivotIdx + 1, hi);
+}
+int partition(int[] arr, int lo, int hi) {
+    int pivot = arr[hi], i = lo;
+    for (int j = lo; j &lt; hi; j++) {
+        if (arr[j] &lt; pivot) {
+            int t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+            i++;
+        }
+    }
+    int t = arr[i]; arr[i] = arr[hi]; arr[hi] = t;
+    return i;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def quick_sort(arr, lo, hi):
+    if lo &gt;= hi: return
+    pivot_idx = partition(arr, lo, hi)
+    quick_sort(arr, lo, pivot_idx - 1)
+    quick_sort(arr, pivot_idx + 1, hi)
+
+def partition(arr, lo, hi):
+    pivot, i = arr[hi], lo
+    for j in range(lo, hi):
+        if arr[j] &lt; pivot:
+            arr[i], arr[j] = arr[j], arr[i]
+            i += 1
+    arr[i], arr[hi] = arr[hi], arr[i]
+    return i</span></pre></details>
+</td></tr>
+<tr><td>Counting Sort</td><td>O(n+k) / O(k)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public void countingSort(int[] arr, int maxVal) {
+    int[] count = new int[maxVal + 1];
+    for (int num : arr) count[num]++;
+    int idx = 0;
+    for (int i = 0; i &lt;= maxVal; i++)
+        while (count[i]-- &gt; 0) arr[idx++] = i;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def counting_sort(arr, max_val):
+    count = [0] * (max_val + 1)
+    for num in arr:
+        count[num] += 1
+    idx = 0
+    for i in range(max_val + 1):
+        while count[i] &gt; 0:
+            arr[idx] = i
+            idx += 1
+            count[i] -= 1</span></pre></details>
+</td></tr>
+</table>
+
+<h3>When to Use Which Sort</h3>
+<table>
+<tr><th>Scenario</th><th>Best Sort</th><th>Why</th></tr>
+<tr><td>Need stable sort, guaranteed O(n log n)</td><td>Merge Sort</td><td>Stable, predictable performance</td></tr>
+<tr><td>In-place, average case matters</td><td>Quick Sort</td><td>O(1) extra space, fast in practice</td></tr>
+<tr><td>Small integer range (0..k)</td><td>Counting Sort</td><td>O(n+k) beats comparison sorts</td></tr>
+<tr><td>Nearly sorted data</td><td>Insertion Sort</td><td>O(n) best case, adaptive</td></tr>
+<tr><td>Linked list sorting</td><td>Merge Sort</td><td>No random access needed</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Sort an Array (LC 912) • Kth Largest Element (LC 215) • Sort Colors (LC 75) • Merge Intervals (LC 56) • Largest Number (LC 179)</div>
+
+<!-- Section 16 -->
+<h2 id="s16">16. Dynamic Programming</h2>
+<p class="section-desc"><strong>When to use:</strong> When a problem has overlapping subproblems and optimal substructure. Signals: "minimum/maximum ways", "count number of ways", "is it possible", "longest/shortest", "can you reach". Start with recursion → add memoization → convert to bottom-up if needed.</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Climbing Stairs (1D DP)</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int climbStairs(int n) {
+    if (n &lt;= 2) return n;
+    int a = 1, b = 2;
+    for (int i = 3; i &lt;= n; i++) {
+        int c = a + b;
+        a = b; b = c;
+    }
+    return b;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def climb_stairs(n):
+    if n &lt;= 2: return n
+    a, b = 1, 2
+    for _ in range(3, n + 1):
+        a, b = b, a + b
+    return b</span></pre></details>
+</td></tr>
+<tr><td>Coin Change</td><td>O(n×amount) / O(amount)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int coinChange(int[] coins, int amount) {
+    int[] dp = new int[amount + 1];
+    Arrays.fill(dp, amount + 1);
+    dp[0] = 0;
+    for (int i = 1; i &lt;= amount; i++)
+        for (int coin : coins)
+            if (coin &lt;= i) dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+    return dp[amount] &gt; amount ? -1 : dp[amount];
+}</span>
+<span class="lbl-p">Python</span><span class="p">def coin_change(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for i in range(1, amount + 1):
+        for coin in coins:
+            if coin &lt;= i:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1</span></pre></details>
+</td></tr>
+<tr><td>Longest Common Subsequence (2D DP)</td><td>O(m×n) / O(m×n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int longestCommonSubsequence(String text1, String text2) {
+    int m = text1.length(), n = text2.length();
+    int[][] dp = new int[m + 1][n + 1];
+    for (int i = 1; i &lt;= m; i++)
+        for (int j = 1; j &lt;= n; j++)
+            if (text1.charAt(i-1) == text2.charAt(j-1))
+                dp[i][j] = dp[i-1][j-1] + 1;
+            else
+                dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    return dp[m][n];
+}</span>
+<span class="lbl-p">Python</span><span class="p">def longest_common_subsequence(text1, text2):
+    m, n = len(text1), len(text2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if text1[i-1] == text2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    return dp[m][n]</span></pre></details>
+</td></tr>
+<tr><td>0/1 Knapsack</td><td>O(n×W) / O(W)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int knapsack(int[] weights, int[] values, int W) {
+    int[] dp = new int[W + 1];
+    for (int i = 0; i &lt; weights.length; i++)
+        for (int w = W; w &gt;= weights[i]; w--)
+            dp[w] = Math.max(dp[w], dp[w - weights[i]] + values[i]);
+    return dp[W];
+}</span>
+<span class="lbl-p">Python</span><span class="p">def knapsack(weights, values, W):
+    dp = [0] * (W + 1)
+    for i in range(len(weights)):
+        for w in range(W, weights[i] - 1, -1):
+            dp[w] = max(dp[w], dp[w - weights[i]] + values[i])
+    return dp[W]</span></pre></details>
+</td></tr>
+<tr><td>House Robber</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int rob(int[] nums) {
+    int prev2 = 0, prev1 = 0;
+    for (int num : nums) {
+        int curr = Math.max(prev1, prev2 + num);
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    return prev1;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def rob(nums):
+    prev2, prev1 = 0, 0
+    for num in nums:
+        prev2, prev1 = prev1, max(prev1, prev2 + num)
+    return prev1</span></pre></details>
+</td></tr>
+<tr><td>Edit Distance</td><td>O(m×n) / O(m×n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int minDistance(String word1, String word2) {
+    int m = word1.length(), n = word2.length();
+    int[][] dp = new int[m + 1][n + 1];
+    for (int i = 0; i &lt;= m; i++) dp[i][0] = i;
+    for (int j = 0; j &lt;= n; j++) dp[0][j] = j;
+    for (int i = 1; i &lt;= m; i++)
+        for (int j = 1; j &lt;= n; j++)
+            if (word1.charAt(i-1) == word2.charAt(j-1))
+                dp[i][j] = dp[i-1][j-1];
+            else
+                dp[i][j] = 1 + Math.min(dp[i-1][j-1],
+                    Math.min(dp[i-1][j], dp[i][j-1]));
+    return dp[m][n];
+}</span>
+<span class="lbl-p">Python</span><span class="p">def min_distance(word1, word2):
+    m, n = len(word1), len(word2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1): dp[i][0] = i
+    for j in range(n + 1): dp[0][j] = j
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if word1[i-1] == word2[j-1]:
+                dp[i][j] = dp[i-1][j-1]
+            else:
+                dp[i][j] = 1 + min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1])
+    return dp[m][n]</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Climbing Stairs (LC 70) • Coin Change (LC 322) • LCS (LC 1143) • House Robber (LC 198) • Edit Distance (LC 72) • Longest Increasing Subsequence (LC 300) • Word Break (LC 139)</div>
+
+<!-- Section 17 -->
+<h2 id="s17">17. Greedy</h2>
+<p class="section-desc"><strong>When to use:</strong> When a locally optimal choice at each step leads to a globally optimal solution. Signals: "minimum number of", "maximum events/meetings", "jump game", "activity selection". Prove greedy works by showing that choosing greedily never eliminates a better answer.</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Jump Game (Can Reach End)</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public boolean canJump(int[] nums) {
+    int maxReach = 0;
+    for (int i = 0; i &lt; nums.length; i++) {
+        if (i &gt; maxReach) return false;
+        maxReach = Math.max(maxReach, i + nums[i]);
+    }
+    return true;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def can_jump(nums):
+    max_reach = 0
+    for i, jump in enumerate(nums):
+        if i &gt; max_reach:
+            return False
+        max_reach = max(max_reach, i + jump)
+    return True</span></pre></details>
+</td></tr>
+<tr><td>Jump Game II (Min Jumps)</td><td>O(n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int jump(int[] nums) {
+    int jumps = 0, curEnd = 0, farthest = 0;
+    for (int i = 0; i &lt; nums.length - 1; i++) {
+        farthest = Math.max(farthest, i + nums[i]);
+        if (i == curEnd) { jumps++; curEnd = farthest; }
+    }
+    return jumps;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def jump(nums):
+    jumps = cur_end = farthest = 0
+    for i in range(len(nums) - 1):
+        farthest = max(farthest, i + nums[i])
+        if i == cur_end:
+            jumps += 1
+            cur_end = farthest
+    return jumps</span></pre></details>
+</td></tr>
+<tr><td>Meeting Rooms II (Min Rooms)</td><td>O(n log n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int minMeetingRooms(int[][] intervals) {
+    int[] starts = new int[intervals.length];
+    int[] ends = new int[intervals.length];
+    for (int i = 0; i &lt; intervals.length; i++) {
+        starts[i] = intervals[i][0];
+        ends[i] = intervals[i][1];
+    }
+    Arrays.sort(starts); Arrays.sort(ends);
+    int rooms = 0, endIdx = 0;
+    for (int s : starts) {
+        if (s &lt; ends[endIdx]) rooms++;
+        else endIdx++;
+    }
+    return rooms;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def min_meeting_rooms(intervals):
+    starts = sorted(iv[0] for iv in intervals)
+    ends = sorted(iv[1] for iv in intervals)
+    rooms = end_idx = 0
+    for s in starts:
+        if s &lt; ends[end_idx]:
+            rooms += 1
+        else:
+            end_idx += 1
+    return rooms</span></pre></details>
+</td></tr>
+<tr><td>Activity Selection (Max Non-overlapping)</td><td>O(n log n) / O(1)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int maxActivities(int[][] activities) {
+    Arrays.sort(activities, (a, b) -&gt; a[1] - b[1]); // sort by end time
+    int count = 1, lastEnd = activities[0][1];
+    for (int i = 1; i &lt; activities.length; i++) {
+        if (activities[i][0] &gt;= lastEnd) {
+            count++;
+            lastEnd = activities[i][1];
+        }
+    }
+    return count;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def max_activities(activities):
+    activities.sort(key=lambda x: x[1])  # sort by end time
+    count, last_end = 1, activities[0][1]
+    for start, end in activities[1:]:
+        if start &gt;= last_end:
+            count += 1
+            last_end = end
+    return count</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Jump Game (LC 55) • Jump Game II (LC 45) • Meeting Rooms II (LC 253) • Non-overlapping Intervals (LC 435) • Gas Station (LC 134) • Task Scheduler (LC 621)</div>
+
+<!-- Section 18 -->
+<h2 id="s18">18. Backtracking</h2>
+<p class="section-desc"><strong>When to use:</strong> When you need to explore all possible combinations/permutations/paths and potentially prune invalid branches. Signals: "generate all", "find all combinations", "permutations", "N-Queens", "word search on grid". Template: choose → explore → unchoose.</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Subsets</td><td>O(2ⁿ) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public List&lt;List&lt;Integer&gt;&gt; subsets(int[] nums) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    backtrack(nums, 0, new ArrayList&lt;&gt;(), res);
+    return res;
+}
+void backtrack(int[] nums, int start, List&lt;Integer&gt; path, List&lt;List&lt;Integer&gt;&gt; res) {
+    res.add(new ArrayList&lt;&gt;(path));
+    for (int i = start; i &lt; nums.length; i++) {
+        path.add(nums[i]);
+        backtrack(nums, i + 1, path, res);
+        path.remove(path.size() - 1);
+    }
+}</span>
+<span class="lbl-p">Python</span><span class="p">def subsets(nums):
+    res = []
+    def backtrack(start, path):
+        res.append(path[:])
+        for i in range(start, len(nums)):
+            path.append(nums[i])
+            backtrack(i + 1, path)
+            path.pop()
+    backtrack(0, [])
+    return res</span></pre></details>
+</td></tr>
+<tr><td>Permutations</td><td>O(n!) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public List&lt;List&lt;Integer&gt;&gt; permute(int[] nums) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    backtrack(nums, new ArrayList&lt;&gt;(), new boolean[nums.length], res);
+    return res;
+}
+void backtrack(int[] nums, List&lt;Integer&gt; path, boolean[] used, List&lt;List&lt;Integer&gt;&gt; res) {
+    if (path.size() == nums.length) { res.add(new ArrayList&lt;&gt;(path)); return; }
+    for (int i = 0; i &lt; nums.length; i++) {
+        if (used[i]) continue;
+        used[i] = true; path.add(nums[i]);
+        backtrack(nums, path, used, res);
+        path.remove(path.size() - 1); used[i] = false;
+    }
+}</span>
+<span class="lbl-p">Python</span><span class="p">def permute(nums):
+    res = []
+    def backtrack(path, remaining):
+        if not remaining:
+            res.append(path[:])
+            return
+        for i in range(len(remaining)):
+            path.append(remaining[i])
+            backtrack(path, remaining[:i] + remaining[i+1:])
+            path.pop()
+    backtrack([], nums)
+    return res</span></pre></details>
+</td></tr>
+<tr><td>Combination Sum</td><td>O(2ⁿ) / O(target)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
+    List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+    backtrack(candidates, target, 0, new ArrayList&lt;&gt;(), res);
+    return res;
+}
+void backtrack(int[] cands, int remain, int start, List&lt;Integer&gt; path, List&lt;List&lt;Integer&gt;&gt; res) {
+    if (remain == 0) { res.add(new ArrayList&lt;&gt;(path)); return; }
+    for (int i = start; i &lt; cands.length; i++) {
+        if (cands[i] &gt; remain) continue;
+        path.add(cands[i]);
+        backtrack(cands, remain - cands[i], i, path, res); // i not i+1: reuse allowed
+        path.remove(path.size() - 1);
+    }
+}</span>
+<span class="lbl-p">Python</span><span class="p">def combination_sum(candidates, target):
+    res = []
+    def backtrack(remain, start, path):
+        if remain == 0:
+            res.append(path[:])
+            return
+        for i in range(start, len(candidates)):
+            if candidates[i] &gt; remain: continue
+            path.append(candidates[i])
+            backtrack(remain - candidates[i], i, path)  # i: reuse allowed
+            path.pop()
+    backtrack(target, 0, [])
+    return res</span></pre></details>
+</td></tr>
+<tr><td>N-Queens</td><td>O(n!) / O(n²)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public List&lt;List&lt;String&gt;&gt; solveNQueens(int n) {
+    List&lt;List&lt;String&gt;&gt; res = new ArrayList&lt;&gt;();
+    char[][] board = new char[n][n];
+    for (char[] row : board) Arrays.fill(row, '.');
+    solve(board, 0, res);
+    return res;
+}
+void solve(char[][] board, int row, List&lt;List&lt;String&gt;&gt; res) {
+    if (row == board.length) {
+        List&lt;String&gt; snapshot = new ArrayList&lt;&gt;();
+        for (char[] r : board) snapshot.add(new String(r));
+        res.add(snapshot); return;
+    }
+    for (int col = 0; col &lt; board.length; col++) {
+        if (isValid(board, row, col)) {
+            board[row][col] = 'Q';
+            solve(board, row + 1, res);
+            board[row][col] = '.';
+        }
+    }
+}</span>
+<span class="lbl-p">Python</span><span class="p">def solve_n_queens(n):
+    res = []
+    cols, diag1, diag2 = set(), set(), set()
+    board = [['.' ] * n for _ in range(n)]
+
+    def backtrack(row):
+        if row == n:
+            res.append([''.join(r) for r in board])
+            return
+        for col in range(n):
+            if col in cols or row-col in diag1 or row+col in diag2:
+                continue
+            cols.add(col); diag1.add(row-col); diag2.add(row+col)
+            board[row][col] = 'Q'
+            backtrack(row + 1)
+            board[row][col] = '.'
+            cols.remove(col); diag1.remove(row-col); diag2.remove(row+col)
+
+    backtrack(0)
+    return res</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Subsets (LC 78) • Permutations (LC 46) • Combination Sum (LC 39) • N-Queens (LC 51) • Word Search (LC 79) • Letter Combinations of Phone (LC 17)</div>
+
+<!-- Section 19 -->
+<h2 id="s19">19. Monotonic Stack</h2>
+<p class="section-desc"><strong>When to use:</strong> When you need to find the next/previous greater/smaller element for each position, or compute areas bounded by heights. The stack maintains a monotonically increasing or decreasing sequence. Signals: "next greater/smaller", "histogram", "trapping water", "stock span".</p>
+
+<table>
+<tr><th>Pattern / Technique</th><th>Time / Space</th><th>Example</th></tr>
+<tr><td>Next Greater Element (Circular)</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int[] nextGreaterElements(int[] nums) {
+    int n = nums.length;
+    int[] res = new int[n];
+    Arrays.fill(res, -1);
+    Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+    for (int i = 0; i &lt; 2 * n; i++) {
+        while (!stack.isEmpty() &amp;&amp; nums[stack.peek()] &lt; nums[i % n])
+            res[stack.pop()] = nums[i % n];
+        if (i &lt; n) stack.push(i);
+    }
+    return res;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def next_greater_elements(nums):
+    n = len(nums)
+    res = [-1] * n
+    stack = []
+    for i in range(2 * n):
+        while stack and nums[stack[-1]] &lt; nums[i % n]:
+            res[stack.pop()] = nums[i % n]
+        if i &lt; n:
+            stack.append(i)
+    return res</span></pre></details>
+</td></tr>
+<tr><td>Largest Rectangle in Histogram</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int largestRectangleArea(int[] heights) {
+    Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+    int maxArea = 0, n = heights.length;
+    for (int i = 0; i &lt;= n; i++) {
+        int h = (i == n) ? 0 : heights[i];
+        while (!stack.isEmpty() &amp;&amp; h &lt; heights[stack.peek()]) {
+            int height = heights[stack.pop()];
+            int width = stack.isEmpty() ? i : i - stack.peek() - 1;
+            maxArea = Math.max(maxArea, height * width);
+        }
+        stack.push(i);
+    }
+    return maxArea;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def largest_rectangle_area(heights):
+    stack = []
+    max_area = 0
+    heights.append(0)  # sentinel
+    for i, h in enumerate(heights):
+        while stack and h &lt; heights[stack[-1]]:
+            height = heights[stack.pop()]
+            width = i if not stack else i - stack[-1] - 1
+            max_area = max(max_area, height * width)
+        stack.append(i)
+    heights.pop()  # restore
+    return max_area</span></pre></details>
+</td></tr>
+<tr><td>Trapping Rain Water</td><td>O(n) / O(n)</td><td>
+<details><summary>▶ Show</summary><pre><span class="lbl-j">Java</span><span class="j">public int trap(int[] height) {
+    Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+    int water = 0;
+    for (int i = 0; i &lt; height.length; i++) {
+        while (!stack.isEmpty() &amp;&amp; height[i] &gt; height[stack.peek()]) {
+            int bottom = height[stack.pop()];
+            if (stack.isEmpty()) break;
+            int dist = i - stack.peek() - 1;
+            int bounded = Math.min(height[i], height[stack.peek()]) - bottom;
+            water += dist * bounded;
+        }
+        stack.push(i);
+    }
+    return water;
+}
+// Alternative two-pointer O(1) space:
+public int trapTwoPointer(int[] height) {
+    int l = 0, r = height.length - 1, lMax = 0, rMax = 0, water = 0;
+    while (l &lt; r) {
+        if (height[l] &lt; height[r]) {
+            lMax = Math.max(lMax, height[l]);
+            water += lMax - height[l++];
+        } else {
+            rMax = Math.max(rMax, height[r]);
+            water += rMax - height[r--];
+        }
+    }
+    return water;
+}</span>
+<span class="lbl-p">Python</span><span class="p">def trap(height):
+    # Two-pointer approach: O(n) time, O(1) space
+    l, r = 0, len(height) - 1
+    l_max = r_max = water = 0
+    while l &lt; r:
+        if height[l] &lt; height[r]:
+            l_max = max(l_max, height[l])
+            water += l_max - height[l]
+            l += 1
+        else:
+            r_max = max(r_max, height[r])
+            water += r_max - height[r]
+            r -= 1
+    return water</span></pre></details>
+</td></tr>
+</table>
+
+<div class="practice"><strong>Key Problems:</strong> Daily Temperatures (LC 739) • Next Greater Element II (LC 503) • Largest Rectangle in Histogram (LC 84) • Trapping Rain Water (LC 42) • Stock Span Problem (LC 901)</div>
+
+<!-- Section 20 -->
+<h2 id="s20">20. Pattern Recognition — Decision Flowchart</h2>
+<p class="section-desc"><strong>How to use:</strong> When you encounter an interview problem, scan for the signals below. Match the problem characteristics to a pattern. This is the most important meta-skill for coding interviews — identifying WHICH technique to apply.</p>
+
+<table>
+<tr><th>If You See This Signal…</th><th>→ Use This Pattern</th><th>Classic Example</th></tr>
+<tr><td>"Find pair/triplet with target sum" + sorted array</td><td>Two Pointers (opposite direction)</td><td>Two Sum II, 3Sum</td></tr>
+<tr><td>"Find pair with target sum" + unsorted array</td><td>HashMap (complement lookup)</td><td>Two Sum</td></tr>
+<tr><td>"Longest/shortest subarray/substring with condition"</td><td>Sliding Window (variable)</td><td>Longest Substring Without Repeating</td></tr>
+<tr><td>"Subarray of exact size k" or "max sum of k consecutive"</td><td>Sliding Window (fixed)</td><td>Max Sum Subarray of Size K</td></tr>
+<tr><td>"Subarray sum equals k" or "number of subarrays with sum"</td><td>Prefix Sum + HashMap</td><td>Subarray Sum Equals K</td></tr>
+<tr><td>"Top K" / "Kth largest" / "K most frequent"</td><td>Heap (Priority Queue)</td><td>Top K Frequent, Kth Largest</td></tr>
+<tr><td>"Sorted array" + "O(log n) required"</td><td>Binary Search</td><td>Search in Rotated Array</td></tr>
+<tr><td>"Minimum/maximum that satisfies X" (monotonic)</td><td>Binary Search on Answer</td><td>Koko Eating Bananas</td></tr>
+<tr><td>"Shortest path" + unweighted graph/grid</td><td>BFS (Queue)</td><td>Rotting Oranges, Word Ladder</td></tr>
+<tr><td>"Connected components" / "flood fill" / "island"</td><td>DFS or BFS on Grid</td><td>Number of Islands</td></tr>
+<tr><td>"Prerequisites" / "ordering" / "dependency"</td><td>Topological Sort</td><td>Course Schedule</td></tr>
+<tr><td>"Generate ALL combinations/permutations/subsets"</td><td>Backtracking</td><td>Subsets, Permutations, N-Queens</td></tr>
+<tr><td>"Minimum/maximum ways" + "overlapping subproblems"</td><td>Dynamic Programming</td><td>Coin Change, House Robber</td></tr>
+<tr><td>"Make locally optimal choice at each step"</td><td>Greedy</td><td>Jump Game, Activity Selection</td></tr>
+<tr><td>"Next greater/smaller element"</td><td>Monotonic Stack</td><td>Daily Temperatures, Histogram</td></tr>
+<tr><td>"Valid brackets/parentheses" / "nested structure"</td><td>Stack</td><td>Valid Parentheses, Decode String</td></tr>
+<tr><td>"Merge K sorted" / "process by priority"</td><td>Heap (Min/Max)</td><td>Merge K Lists, Task Scheduler</td></tr>
+<tr><td>"In-place, remove duplicates" + sorted</td><td>Two Pointers (same direction)</td><td>Remove Duplicates, Move Zeros</td></tr>
+<tr><td>"Detect cycle in linked list"</td><td>Floyd's Slow/Fast Pointers</td><td>Linked List Cycle</td></tr>
+<tr><td>"Intervals overlap/merge"</td><td>Sort by start + linear scan</td><td>Merge Intervals, Meeting Rooms</td></tr>
+<tr><td>"Tree traversal level-by-level"</td><td>BFS with Queue</td><td>Level Order Traversal</td></tr>
+<tr><td>"Longest common subsequence/substring"</td><td>2D Dynamic Programming</td><td>LCS, Edit Distance</td></tr>
+</table>
+
+<h3>Quick Decision Tree</h3>
+<pre style="background:#1e1e1e;color:#d4d4d4;padding:14px;border-radius:6px;font-size:12px;line-height:1.6;">
+Is it asking for an OPTIMAL value (min/max/count)?
+├── YES → Can you make a LOCAL choice that's always correct?
+│   ├── YES → <span class="j">GREEDY</span>
+│   └── NO → Does it have OVERLAPPING subproblems?
+│       ├── YES → <span class="p">DYNAMIC PROGRAMMING</span>
+│       └── NO → <span class="j">DFS / BFS / Binary Search</span>
+└── NO → Is it asking to GENERATE all possibilities?
+    ├── YES → <span class="p">BACKTRACKING</span>
+    └── NO → Is the input SORTED or can it be sorted?
+        ├── YES → <span class="j">TWO POINTERS / BINARY SEARCH</span>
+        └── NO → Does it involve a SEQUENCE / SUBARRAY?
+            ├── YES → <span class="p">SLIDING WINDOW / PREFIX SUM</span>
+            └── NO → Does it involve NODES &amp; EDGES?
+                ├── YES → <span class="j">BFS / DFS / TOPOLOGICAL SORT</span>
+                └── NO → <span class="p">HASHMAP / STACK / HEAP</span>
+</pre>
+
+<div class="practice"><strong>Pro Tips:</strong> 1) Always clarify constraints first (input size determines acceptable complexity). 2) n ≤ 20 → backtracking/bitmask; n ≤ 10⁴ → O(n²); n ≤ 10⁶ → O(n log n) or O(n). 3) When stuck, think about what DATA STRUCTURE gives you the operation you need efficiently.</div>
+
+</body>
+</html>

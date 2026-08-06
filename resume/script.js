@@ -22,15 +22,34 @@ sidebarToggle.addEventListener('click', () => {
   setSidebarExpanded(!isExpanded);
 });
 
-// Mobile: floating button opens/closes bottom sidebar
+// Mobile: floating button opens/closes bottom sidebar (FAB hidden on mobile, kept for safety)
 sidebarOpen.addEventListener('click', () => {
-  sidebar.classList.toggle('mobile-open');
+  toggleMobileSidebar();
 });
+
+// Backdrop for mobile sidebar
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+function toggleMobileSidebar(forceClose) {
+  const isOpen = sidebar.classList.contains('mobile-open');
+  if (forceClose || isOpen) {
+    sidebar.classList.remove('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove('visible');
+  } else {
+    sidebar.classList.add('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.add('visible');
+  }
+}
+
+// Close mobile sidebar when backdrop is tapped
+if (sidebarBackdrop) {
+  sidebarBackdrop.addEventListener('click', () => toggleMobileSidebar(true));
+}
 
 // Close mobile sidebar when a link is clicked
 document.querySelectorAll('.sidebar-link').forEach(link => {
   link.addEventListener('click', () => {
-    sidebar.classList.remove('mobile-open');
+    toggleMobileSidebar(true);
   });
 });
 
@@ -171,19 +190,36 @@ document.getElementById('backToTop').addEventListener('click', () => {
 /* ─── Mobile nav toggle (top navbar) ────────────────────── */
 const navToggle  = document.getElementById('navToggle');
 const navLinksEl = document.querySelector('.nav-links');
-if (navToggle && navLinksEl) {
+if (navToggle) {
   navToggle.addEventListener('click', () => {
-    navLinksEl.classList.toggle('open');
-    navToggle.querySelector('i').classList.toggle('fa-bars');
-    navToggle.querySelector('i').classList.toggle('fa-xmark');
+    // On mobile (<= 700px): toggle the bottom sidebar drawer
+    if (window.innerWidth <= 700) {
+      toggleMobileSidebar();
+      const icon = navToggle.querySelector('i');
+      const isOpen = sidebar.classList.contains('mobile-open');
+      icon.className = isOpen ? 'fas fa-xmark' : 'fas fa-bars';
+    } else if (navLinksEl) {
+      // Desktop fallback (navbar hidden on desktop anyway)
+      navLinksEl.classList.toggle('open');
+      navToggle.querySelector('i').classList.toggle('fa-bars');
+      navToggle.querySelector('i').classList.toggle('fa-xmark');
+    }
   });
-  navLinksEl.querySelectorAll('a').forEach(a => {
+  // Reset hamburger icon when sidebar closes via backdrop or link
+  document.querySelectorAll('.sidebar-link').forEach(a => {
     a.addEventListener('click', () => {
-      navLinksEl.classList.remove('open');
-      navToggle.querySelector('i').classList.add('fa-bars');
-      navToggle.querySelector('i').classList.remove('fa-xmark');
+      if (navToggle.querySelector('i')) {
+        navToggle.querySelector('i').className = 'fas fa-bars';
+      }
     });
   });
+  if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener('click', () => {
+      if (navToggle.querySelector('i')) {
+        navToggle.querySelector('i').className = 'fas fa-bars';
+      }
+    });
+  }
 }
 
 /* ─── Fade-in on scroll ──────────────────────────────────── */

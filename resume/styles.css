@@ -1148,6 +1148,8 @@ body.sidebar-expanded {
    RESPONSIVE — sidebar
    ========================================================= */
 @media (max-width: 700px) {
+
+  /* ── Hide the left sidebar entirely on mobile ── */
   #sidebar {
     top: auto;
     bottom: 0;
@@ -1158,45 +1160,86 @@ body.sidebar-expanded {
     border-radius: var(--radius) var(--radius) 0 0;
     border-left: 1px solid var(--border);
     border-bottom: none;
+    border-right: none;
     flex-direction: row;
     justify-content: space-around;
-    padding: 0.6rem 0.5rem;
+    padding: 0.6rem 0.5rem calc(0.6rem + env(safe-area-inset-bottom));
     gap: 0;
     max-height: 0;
     opacity: 0;
     pointer-events: none;
     overflow: hidden;
     transition: max-height 0.35s ease, opacity 0.3s ease;
+    z-index: 300;
   }
   #sidebar.mobile-open {
-    max-height: 200px;
+    max-height: 260px;
     opacity: 1;
     pointer-events: all;
   }
   #sidebar.expanded { width: 100% !important; }
+
+  /* Hide desktop-only sidebar elements */
   .sidebar-logo,
   #sidebarToggle,
-  #collapseAllBtn { display: none; }
+  #collapseAllBtn,
+  #collapseHint { display: none !important; }
+
   .sidebar-link {
     flex-direction: column;
     gap: 0.2rem;
-    padding: 0.4rem 0.6rem;
+    padding: 0.5rem 0.75rem;
     font-size: 0.7rem;
+    border-radius: var(--radius-sm);
+    min-width: 3.5rem;
+    text-align: center;
+    align-items: center;
+  }
+  .sidebar-link i {
+    font-size: 1.1rem;
+    width: auto;
   }
   .sidebar-link span {
     opacity: 1;
     max-width: 100px;
-    font-size: 0.65rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.2px;
   }
   .sidebar-link.active::before { display: none; }
-  #sidebarOpen { display: flex; }
 
+  /* ── Hide the floating FAB — top navbar handles mobile nav ── */
+  #sidebarOpen { display: none !important; }
+
+  /* ── Show top navbar on mobile ── */
+  #navbar { display: flex !important; }
+
+  /* ── Body: no left padding, add bottom padding for safety ── */
   body,
   body.sidebar-expanded {
     padding-left: 0 !important;
+    padding-bottom: 0;
+  }
+
+  /* ── Hero: account for top navbar height ── */
+  #hero { padding-top: 5rem; }
+
+  /* ── Backdrop overlay when mobile nav drawer is open ── */
+  #sidebarBackdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 299;
+    backdrop-filter: blur(2px);
+  }
+  #sidebarBackdrop.visible { display: block; }
+
+  /* ── Back to top — keep clear of bottom edge ── */
+  #backToTop {
+    bottom: 1.25rem;
+    right: 1rem;
   }
 }
-
 
 /* ─── Hide top navbar on desktop (sidebar handles nav) ─── */
 @media (min-width: 701px) {

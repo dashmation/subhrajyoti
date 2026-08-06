@@ -143,3 +143,24 @@ The site will be live at: `https://<username>.github.io/<repo-name>/`
 - Add a `robots.txt` and `sitemap.xml`
 - Add project showcase section (GitHub repos via API)
 - Add certifications section if Subhrajyoti acquires any
+
+
+---
+
+## Deployment Status (Updated: 2026-08-06)
+
+### Git Repository
+- **Remote:** https://github.com/dashmation/subhrajyoti.git
+- **Branch:** main
+- **Commit:** aeaf1f4 — "Add GitHub Pages CV site for Subhrajyoti Dash"
+- **Files pushed:** index.html, styles.css, script.js, context.md, .gitignore
+- **Excluded (via .gitignore):** *.pdf (Subhrajyoti_Dash_GenAI-SDET.pdf, Profile-linkedin.pdf)
+
+### GitHub Pages
+- **Status:** Manually enable at → https://github.com/dashmation/subhrajyoti/settings/pages
+- **Source:** Deploy from branch → `main` / `/ (root)`
+- **Live URL (once enabled):** https://dashmation.github.io/subhrajyoti/
+
+### Notes
+- `gh` CLI not available on this machine; Pages must be enabled via GitHub web UI
+- `.gitignore` created with `*.pdf` to prevent PDF files from being committed

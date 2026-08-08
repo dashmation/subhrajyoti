@@ -233,7 +233,8 @@ if (statsSection) statsObserver.observe(statsSection);
 const timelineObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
+      entry.target.style.opacity   = '1';
+      entry.target.style.transform = 'translateY(0)';
       timelineObserver.unobserve(entry.target);
     }
   });
@@ -241,7 +242,8 @@ const timelineObserver = new IntersectionObserver(entries => {
 
 document.querySelectorAll('.timeline-item').forEach((item, i) => {
   item.style.opacity    = '0';
-  item.style.transition = `opacity 0.4s ease ${i * 0.06}s`;
+  item.style.transform  = 'translateY(20px)';
+  item.style.transition = `opacity 0.45s ease ${i * 0.06}s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${i * 0.06}s`;
   timelineObserver.observe(item);
 });
 
@@ -249,7 +251,8 @@ document.querySelectorAll('.timeline-item').forEach((item, i) => {
 const cardObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
+      entry.target.style.opacity   = '1';
+      entry.target.style.transform = 'translateY(0)';
       cardObserver.unobserve(entry.target);
     }
   });
@@ -257,7 +260,8 @@ const cardObserver = new IntersectionObserver(entries => {
 
 document.querySelectorAll('.highlight-card, .edu-card, .about-card, .contact-card').forEach((c, i) => {
   c.style.opacity    = '0';
-  c.style.transition = `opacity 0.4s ease ${i * 0.05}s`;
+  c.style.transform  = 'translateY(22px)';
+  c.style.transition = `opacity 0.5s ease ${i * 0.05}s, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) ${i * 0.05}s`;
   cardObserver.observe(c);
 });
 

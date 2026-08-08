@@ -290,6 +290,35 @@ ul { list-style: none; }
   font-size: 1.1rem;
 }
 
+
+/* =========================================================
+   HERO ENTRANCE ANIMATION
+   ========================================================= */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* All hero elements start invisible; animation fires on page load */
+.hero-animate {
+  opacity: 0;
+  animation: heroFadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Staggered delays — badge → name → title+location → tagline → buttons → stats → scroll-cue */
+.hero-animate-1 { animation-delay: 0.05s; }
+.hero-animate-2 { animation-delay: 0.18s; }
+.hero-animate-3 { animation-delay: 0.30s; }
+.hero-animate-4 { animation-delay: 0.42s; }
+.hero-animate-5 { animation-delay: 0.54s; }
+.hero-animate-6 { animation-delay: 0.66s; }
+.hero-animate-7 { animation-delay: 0.78s; }
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .hero-animate { animation: none; opacity: 1; }
+}
+
 /* =========================================================
    SECTIONS — common
    ========================================================= */
@@ -318,13 +347,15 @@ ul { list-style: none; }
   letter-spacing: -0.5px;
 }
 
-/* Fade-in animation */
+/* Fade-in + slide-up animation */
 .fade-in {
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transform: translateY(22px);
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .fade-in.visible {
   opacity: 1;
+  transform: translateY(0);
 }
 
 /* =========================================================
@@ -654,6 +685,15 @@ ul { list-style: none; }
   border: 2px solid var(--bg-section);
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
+/* Pulse on the first (current) role marker */
+@keyframes markerPulse {
+  0%   { box-shadow: 0 0 0 3px var(--accent-glow), 0 0 0 3px rgba(88,166,255,0.4); }
+  60%  { box-shadow: 0 0 0 3px var(--accent-glow), 0 0 0 9px rgba(88,166,255,0); }
+  100% { box-shadow: 0 0 0 3px var(--accent-glow), 0 0 0 9px rgba(88,166,255,0); }
+}
+.timeline-marker--current {
+  animation: markerPulse 2.2s ease-out infinite;
+}
 .timeline-content {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -890,8 +930,13 @@ footer {
   /* Hero */
   #hero { padding: 5rem 1rem 3rem; min-height: auto; }
   .hero-tagline { font-size: 0.9rem; }
-  .hero-cta { gap: 0.5rem; }
-  .btn { padding: 0.55rem 1rem; font-size: 0.825rem; }
+  .hero-cta {
+    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .hero-cta .btn-primary { grid-column: 1 / -1; }
+  .btn { padding: 0.55rem 1rem; font-size: 0.825rem; justify-content: center; }
 
   /* Hero stats */
   .hero-stats { flex-direction: column; gap: 1px; }

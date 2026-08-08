@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -28,6 +28,7 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
   --nav-height: 60px;
   --toc-width: 280px;
+  --toc-width-collapsed: 52px;
 }
 
 [data-theme="dark"] {
@@ -82,6 +83,14 @@ body {
   transition: background 0.3s;
 }
 
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .nav-brand {
   font-size: 16px;
   font-weight: 700;
@@ -94,7 +103,30 @@ body {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.nav-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
 }
 
 /* Hamburger Menu Button */
@@ -160,13 +192,21 @@ body {
   background: var(--bg-card);
   border-right: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
-  overflow-y: auto;
+  overflow: hidden;
   z-index: 900;
-  transition: left 0.3s ease;
-  padding: 16px;
+  transition: left 0.3s ease, width 0.3s ease, box-shadow 0.3s ease;
+  padding: 0;
 }
 
-.sidebar.open { left: 0; }
+.sidebar-inner {
+  width: var(--toc-width);
+  padding: 16px;
+  min-height: 100%;
+  overflow-y: auto;
+  transition: opacity 0.15s ease;
+}
+
+.sidebar.open { left: 0; width: min(var(--toc-width), 85vw); }
 
 .sidebar-overlay {
   position: fixed;
@@ -570,22 +610,40 @@ details pre {
 }
 
 @media (min-width: 1024px) {
-  .main-content { padding: calc(var(--nav-height) + 40px) 32px 100px; }
-  
+  body { padding-left: var(--toc-width-collapsed); }
+  .main-content {
+    padding: calc(var(--nav-height) + 40px) 32px 100px;
+    margin: 0 auto;
+    max-width: 900px;
+  }
   .sidebar {
     left: 0;
+    width: var(--toc-width-collapsed);
     box-shadow: none;
-    border-right: 1px solid var(--border);
   }
-  
+  .sidebar:hover {
+    width: var(--toc-width);
+    overflow: visible;
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebar:not(:hover) .sidebar-inner { opacity: 0; pointer-events: none; }
+  .sidebar:hover .sidebar-inner { opacity: 1; pointer-events: all; transition: opacity 0.2s ease 0.1s; }
+  .sidebar:hover a { pointer-events: all; }
+  .sidebar:not(:hover)::after {
+    content: '\203A';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    color: var(--primary);
+    opacity: 0.7;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .sidebar:hover::after { opacity: 0; }
   .sidebar-overlay { display: none; }
-  
   .menu-btn { display: none; }
-  
-  .main-content {
-    margin-left: var(--toc-width);
-    max-width: calc(900px + var(--toc-width));
-  }
 }
 
 @media (min-width: 1200px) {
@@ -654,9 +712,13 @@ details pre {
 
 <!-- Top Navigation -->
 <nav class="top-nav">
+  <div class="nav-left">
   <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation">☰</button>
   <span class="nav-brand">🤖 AI Testing Cheatsheet</span>
+  </div>
   <div class="nav-actions">
+    <a href="../index.html" class="nav-btn">&#127968; Home</a>
+    <a href="index.html" class="nav-btn">&#128218; Knowledge Base</a>
     <button class="expand-toggle" id="expandToggle" title="Expand all code examples">
       <span>⟐</span> <span class="expand-label">Expand All</span>
     </button>
@@ -669,6 +731,7 @@ details pre {
 
 <!-- Sidebar TOC -->
 <aside class="sidebar" id="sidebar">
+  <div class="sidebar-inner">
   <h3>📑 Contents</h3>
   <ol>
     <li><a href="#fundamentals">1. AI Testing Fundamentals</a></li>
@@ -688,6 +751,7 @@ details pre {
     <li><a href="#cicd-mlops">15. CI/CD &amp; MLOps</a></li>
     <li><a href="#interview-qa">16. Interview Q&amp;A (50+)</a></li>
   </ol>
+  </div>
 </aside>
 
 <!-- Main Content -->
@@ -2447,19 +2511,22 @@ jobs:
   // Active TOC link highlighting
   const sections = document.querySelectorAll('h2[id]');
   const tocLinks = sidebar.querySelectorAll('a');
-  
+  let activeId = sections.length ? sections[0].id : '';
+
   function updateActiveTocLink() {
-    let currentSection = '';
+    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 60;
+    const threshold = navH + Math.floor(window.innerHeight * 0.25);
+    let best = '';
     sections.forEach(section => {
-      const rect = section.getBoundingClientRect();
-      if (rect.top <= 100) {
-        currentSection = section.id;
-      }
+      if (section.getBoundingClientRect().top <= threshold) best = section.id;
     });
-    
-    tocLinks.forEach(link => {
-      link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection);
-    });
+    if (best === '') best = sections.length ? sections[0].id : '';
+    if (best !== activeId) {
+      activeId = best;
+      tocLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + activeId);
+      });
+    }
   }
 
   // Throttled scroll handler

@@ -1,64 +1,149 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mobile Testing Cheatsheet - Android &amp; iOS</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>" />
-<link rel="stylesheet" href="cheatsheet.css">
+<title>Mobile Testing Cheatsheet</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1F916;</text></svg>" />
 <style>
-  :root {
-    --accent:    #ce93d8;
-    --accent-h2: #2d0a4e;
-    --accent-th: #6a1b9a;
-    --accent-dim: rgba(206,147,216,0.12);
-  }
+:root{--primary:#1565c0;--primary-dark:#0d47a1;--primary-light:#e3f2fd;--accent:#ff6f00;--bg:#f8fafc;--bg-card:#ffffff;--bg-code:#1e1e1e;--text:#1e293b;--text-muted:#64748b;--text-code:#d4d4d4;--border:#e2e8f0;--border-light:#f1f5f9;--shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow-md:0 4px 12px rgba(0,0,0,.1);--shadow-lg:0 8px 24px rgba(0,0,0,.12);--radius:8px;--radius-lg:12px;--font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Inter',sans-serif;--font-mono:'JetBrains Mono','Fira Code','Consolas','Monaco',monospace;--nav-height:60px;--toc-width:280px;--toc-width-collapsed:52px}
+[data-theme=dark]{--primary:#64b5f6;--primary-dark:#90caf9;--primary-light:#1a2332;--accent:#ffab40;--bg:#0f172a;--bg-card:#1e293b;--bg-code:#0d1117;--text:#e2e8f0;--text-muted:#94a3b8;--text-code:#d4d4d4;--border:#334155;--border-light:#1e293b;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);--shadow-lg:0 8px 24px rgba(0,0,0,.5)}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-height) + 16px)}
+body{font-family:var(--font-sans);font-size:15px;line-height:1.7;color:var(--text);background:var(--bg);transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+a{color:var(--primary)}
+.top-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-height);background:var(--bg-card);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:1000;backdrop-filter:blur(10px);transition:background .3s}
+.nav-left{display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden}
+.nav-brand{font-size:16px;font-weight:700;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.nav-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius);font-size:12px;font-weight:600;color:var(--text-muted);text-decoration:none;cursor:pointer;white-space:nowrap;transition:all .2s}
+.nav-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.menu-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;background:var(--primary-light);border-radius:var(--radius);cursor:pointer;color:var(--primary);font-size:20px;transition:all .2s;flex-shrink:0}
+.menu-btn:hover{background:var(--primary);color:#fff}
+.theme-toggle{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border:none;background:var(--primary-light);border-radius:var(--radius);cursor:pointer;font-size:17px;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{background:var(--primary);color:#fff}
+.expand-toggle{display:flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius);cursor:pointer;font-size:12px;color:var(--text-muted);transition:all .2s;white-space:nowrap}
+.expand-toggle:hover{border-color:var(--primary);color:var(--primary)}
+.expand-toggle.active{background:var(--primary-light);border-color:var(--primary);color:var(--primary)}
+.sidebar{position:fixed;top:var(--nav-height);left:-100%;width:min(var(--toc-width),85vw);height:calc(100vh - var(--nav-height));background:var(--bg-card);border-right:1px solid var(--border);overflow:hidden;z-index:900;transition:left .25s ease,width .25s ease;padding:0}
+.sidebar.open{left:0;width:min(var(--toc-width),85vw)}
+.sidebar-overlay{position:fixed;inset:0;top:var(--nav-height);background:rgba(0,0,0,.4);z-index:899;opacity:0;pointer-events:none;transition:opacity .3s}
+.sidebar-overlay.open{opacity:1;pointer-events:all}
+.sidebar-inner{width:var(--toc-width);padding:16px;min-height:100%}
+.sidebar h3{font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);white-space:nowrap}
+.sidebar ol{list-style:none;padding:0}
+.sidebar li{margin:2px 0}
+.sidebar a{display:block;padding:7px 10px;color:var(--text);text-decoration:none;font-size:13px;border-radius:6px;transition:all .2s;line-height:1.4;white-space:nowrap}
+.sidebar a:hover{background:var(--primary-light);color:var(--primary)}
+.sidebar a.active{background:var(--primary);color:#fff;font-weight:500}
+.sidebar-collapse-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:var(--primary-light);border-radius:var(--radius);cursor:pointer;color:var(--primary);font-size:14px;margin-bottom:12px;transition:all .2s;flex-shrink:0}
+.sidebar-collapse-btn:hover{background:var(--primary);color:#fff}
+.scroll-progress{position:fixed;top:var(--nav-height);left:0;height:3px;background:var(--primary);z-index:1001;transition:width .1s;width:0}
+.main-content{max-width:900px;margin:0 auto;padding:calc(var(--nav-height) + 24px) 16px 60px}
+.page-header{text-align:center;margin-bottom:32px;padding:32px 16px;background:linear-gradient(135deg,var(--primary-light),var(--bg-card));border-radius:var(--radius-lg);border:1px solid var(--border)}
+.page-header h1{font-size:clamp(22px,5vw,32px);font-weight:800;color:var(--primary);margin-bottom:8px;line-height:1.2}
+.page-header .subtitle{font-size:clamp(12px,3vw,15px);color:var(--text-muted);line-height:1.5}
+h2{font-size:clamp(18px,4vw,22px);font-weight:700;color:var(--primary);margin:48px 0 16px;padding:12px 0;border-bottom:2px solid var(--primary);scroll-margin-top:calc(var(--nav-height) + 16px)}
+h3{font-size:clamp(14px,3.5vw,16px);font-weight:600;color:var(--primary-dark);margin:24px 0 12px}
+.section-desc{color:var(--text-muted);font-size:14px;margin:0 0 16px;padding:12px 16px;border-left:3px solid var(--primary);background:var(--primary-light);border-radius:0 var(--radius) var(--radius) 0;font-style:italic}
+.table-wrapper,.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0 24px;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:400px}
+th{background:var(--primary);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:nth-child(even){background:var(--border-light)}
+tr:hover{background:var(--primary-light)}
+[data-theme=dark] th{background:#1e3a5f}
+code{background:var(--bg-code);color:var(--text-code);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:12px}
+.cmd{background:var(--bg-code);color:var(--text-code);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:12px}
+details{margin:4px 0}
+details summary{cursor:pointer;color:var(--primary);font-weight:600;font-size:12px;padding:4px 8px;border-radius:4px;transition:background .2s;user-select:none;-webkit-user-select:none}
+details summary:hover{background:var(--primary-light)}
+details pre,pre{background:var(--bg-code);color:var(--text-code);padding:14px 16px;border-radius:var(--radius);font-family:var(--font-mono);font-size:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0;line-height:1.6;max-height:400px;overflow-y:auto}
+.code-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.code-modal-overlay.active{opacity:1;pointer-events:all}
+.code-modal{background:var(--bg-code);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:100%;max-width:700px;max-height:80vh;display:flex;flex-direction:column;transform:scale(.9) translateY(20px);transition:transform .25s ease;overflow:hidden}
+.code-modal-overlay.active .code-modal{transform:scale(1) translateY(0)}
+.code-modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--primary);color:#fff;font-size:13px;font-weight:600}
+.code-modal-close{width:32px;height:32px;border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:6px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.code-modal-close:hover{background:rgba(255,255,255,.3)}
+.code-modal-body{overflow:auto;-webkit-overflow-scrolling:touch;padding:16px 20px;flex:1}
+.code-modal-body pre{background:transparent;color:var(--text-code);font-family:var(--font-mono);font-size:13px;line-height:1.7;margin:0;white-space:pre-wrap;word-break:break-word;max-height:none}
+.back-to-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:var(--primary);color:#fff;border:none;border-radius:50%;font-size:22px;cursor:pointer;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(20px);transition:all .3s;z-index:800}
+.back-to-top.visible{opacity:1;transform:translateY(0)}
+.back-to-top:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.tip{background:#ecfdf5;border-left:4px solid #10b981;padding:12px 16px;margin:16px 0;font-size:13px;border-radius:0 var(--radius) var(--radius) 0;line-height:1.6}
+[data-theme=dark] .tip{background:#064e3b30;border-color:#10b981}
+.cmt{color:#6a9955}.kw{color:#569cd6}.str{color:#ce9178}.fn{color:#dcdcaa}
+@media(max-width:640px){.code-modal{max-height:85vh;border-radius:var(--radius-lg) var(--radius-lg) 0 0}.code-modal-overlay{align-items:flex-end;padding:0}.expand-label,.nav-brand{display:none}}
+@media(min-width:768px){.main-content{padding:calc(var(--nav-height) + 32px) 24px 80px}.page-header{padding:40px 32px}}
+@media(min-width:1024px){
+  body{padding-left:var(--toc-width-collapsed)}
+  .main-content{padding:calc(var(--nav-height) + 40px) 32px 100px;margin:0 auto;max-width:900px}
+  .sidebar{left:0;width:var(--toc-width-collapsed);overflow:hidden;transition:width .3s ease,box-shadow .3s ease}
+  .sidebar:hover{width:var(--toc-width);overflow:visible;box-shadow:var(--shadow-lg)}
+  .sidebar:not(:hover) .sidebar-inner{opacity:0;pointer-events:none}
+  .sidebar:hover .sidebar-inner{opacity:1;pointer-events:all;transition:opacity .2s ease .1s}
+  .sidebar-inner{width:var(--toc-width);transition:opacity .15s ease}
+  .sidebar:hover a{pointer-events:all}
+  .sidebar:not(:hover)::after{content:"\203A";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;color:var(--primary);opacity:0.7;pointer-events:none;transition:opacity .2s ease}
+  .sidebar:hover::after{opacity:0}
+  .sidebar-overlay,.menu-btn{display:none}
+}
+@media(min-width:1200px){.main-content{padding-left:48px;padding-right:48px}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.main-content>*{animation:fadeIn .3s ease forwards}
+@media print{.top-nav,.sidebar,.sidebar-overlay,.back-to-top,.scroll-progress,.code-modal-overlay{display:none!important}.main-content{margin:0;padding:10px;max-width:100%}body{font-size:11px;background:#fff;color:#000}}
 </style>
 </head>
 <body>
 
-<header class="cs-header">
-  <div class="cs-header-left">
-    <a href="index.html" class="cs-back-btn">&#8592; Knowledge Base</a>
-    <span class="cs-page-title">Mobile Testing</span>
-  </div>
-  <div class="cs-header-right">
-    <button class="cs-theme-btn" id="themeToggle" title="Toggle light/dark mode">&#9788;</button>
-  </div>
-</header>
-<h1>📱 Mobile Testing Cheatsheet</h1>
-<p class="subtitle">Android &amp; iOS — Native, Hybrid, Flutter, React Native | Beginner → Advanced</p>
+<div class="scroll-progress" id="scrollProgress"></div>
 
-<div class="toggle-all">
-  <label class="switch">
-    <input type="checkbox" id="toggleAll">
-    <span class="slider"></span>
-  </label>
-  <span class="toggle-label">Expand All Examples</span>
+<nav class="top-nav">
+  <div class="nav-left">
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">&#9776;</button>
+    <span class="nav-brand">Mobile Testing</span>
+  </div>
+  <div class="nav-actions">
+    <a href="../index.html" class="nav-btn">&#127968; Home</a>
+    <a href="index.html" class="nav-btn">&#128218; Knowledge Base</a>
+    <button class="expand-toggle" id="expandToggle">&#10016; <span class="expand-label">Expand All</span></button>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#127769;</button>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-inner">
+  <h3>&#128209; Contents</h3>
+  <ol>
+      <li><a href="#fundamentals">1. Testing Fundamentals</a></li>
+      <li><a href="#android-native">2. Android Native Testing</a></li>
+      <li><a href="#ios-native">3. iOS Native Testing</a></li>
+      <li><a href="#appium-basics">4. Appium Setup &amp; Basics</a></li>
+      <li><a href="#appium-advanced">5. Appium Advanced</a></li>
+      <li><a href="#flutter">6. Flutter Testing</a></li>
+      <li><a href="#react-native">7. React Native Testing</a></li>
+      <li><a href="#hybrid">8. Hybrid App Testing</a></li>
+      <li><a href="#locators">9. Locator Strategies</a></li>
+      <li><a href="#gestures">10. Gestures &amp; Interactions</a></li>
+      <li><a href="#devices">11. Device Management</a></li>
+      <li><a href="#performance">12. Performance Testing</a></li>
+      <li><a href="#cicd">13. CI/CD Integration</a></li>
+      <li><a href="#advanced">14. Advanced Techniques</a></li>
+      <li><a href="#ios-techniques">15. iOS Testing Techniques (Interview Prep)</a></li>
+  </ol>
+  </div>
+</aside>
+
+<main class="main-content">
+
+<div class="page-header">
+  <h1>Mobile Testing Cheatsheet</h1>
+  <p class="subtitle">Android + iOS &mdash; Native, Hybrid, Flutter, React Native | Appium, Espresso, XCUITest</p>
 </div>
 
-<div class="toc">
-<h3>📑 Table of Contents</h3>
-<ol>
-<li><a href="#fundamentals">Testing Fundamentals</a></li>
-<li><a href="#android-native">Android Native Testing</a></li>
-<li><a href="#ios-native">iOS Native Testing</a></li>
-<li><a href="#appium-basics">Appium Setup &amp; Basics</a></li>
-<li><a href="#appium-advanced">Appium Advanced</a></li>
-<li><a href="#flutter">Flutter Testing</a></li>
-<li><a href="#react-native">React Native Testing</a></li>
-<li><a href="#hybrid">Hybrid App Testing</a></li>
-<li><a href="#locators">Locator Strategies</a></li>
-<li><a href="#gestures">Gestures &amp; Interactions</a></li>
-<li><a href="#devices">Device Management</a></li>
-<li><a href="#performance">Performance Testing</a></li>
-<li><a href="#cicd">CI/CD Integration</a></li>
-<li><a href="#advanced">Advanced Techniques</a></li>
-<li><a href="#ios-techniques">iOS Testing Techniques (Interview Prep)</a></li>
-</ol>
-</div>
-
-<!-- Section 1: Testing Fundamentals -->
 <h2 id="fundamentals">1. Testing Fundamentals</h2>
 <p class="section-desc">Understanding the test pyramid and mobile-specific concerns helps you invest testing effort where it matters most.</p>
 
@@ -2238,20 +2323,6 @@ driver.executeScript("mobile: sendBiometricMatch", ImmutableMap.of(
 }</pre></details></td></tr>
 </table>
 
-<script>
-// toggleAll handler — also initialised again in end-of-file script
-document.addEventListener('DOMContentLoaded', function() {
-  var toggle = document.getElementById('toggleAll');
-  if (toggle) {
-    toggle.addEventListener('change', function() {
-      document.querySelectorAll('details').forEach(d => d.open = this.checked);
-      var lbl = document.querySelector('.toggle-label');
-      if (lbl) lbl.textContent = this.checked ? 'Collapse All' : 'Expand All Examples';
-    });
-  }
-});
-</script>
-
 <!-- Section 15: iOS Testing Techniques (Interview Prep) -->
 <h2 id="ios-techniques">15. iOS Testing Techniques (Interview Prep)</h2>
 <p class="section-desc">Comprehensive iOS debugging, profiling, and testing techniques — from capturing system logs to network debugging, crash analysis, and advanced topics frequently asked in interviews.</p>
@@ -3283,29 +3354,62 @@ A: Debug build flag, Frida/objection runtime bypass, or
    configure test environment with pinning disabled.</span></pre></details></td></tr>
 </table>
 
-<button id="back-to-top" title="Back to top">&#8679;</button>
+</main>
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">&#8679;</button>
+
+<div class="code-modal-overlay" id="codeModal">
+  <div class="code-modal">
+    <div class="code-modal-header">
+      <span>Code Example</span>
+      <button class="code-modal-close" id="codeModalClose">&#10005;</button>
+    </div>
+    <div class="code-modal-body"><pre id="codeModalContent"></pre></div>
+  </div>
+</div>
 
 <script>
-const themeBtn = document.getElementById('themeToggle');
-if (localStorage.getItem('cs-theme') === 'light') document.body.classList.add('light');
-themeBtn.textContent = document.body.classList.contains('light') ? '☽' : '☀';
-themeBtn.addEventListener('click', () => {
-  document.body.classList.toggle('light');
-  const isLight = document.body.classList.contains('light');
-  themeBtn.textContent = isLight ? '☽' : '☀';
-  localStorage.setItem('cs-theme', isLight ? 'light' : 'dark');
-});
-const btt = document.getElementById('back-to-top');
-window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400));
-btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-document.querySelectorAll('table').forEach(t => {
-  if (!t.parentElement.classList.contains('table-wrap')) {
-    const w = document.createElement('div');
-    w.className = 'table-wrap';
-    t.parentNode.insertBefore(w, t);
-    w.appendChild(t);
+(function(){
+  var K='cs-theme',H=document.documentElement;
+  var saved=localStorage.getItem(K)||'light';
+  H.setAttribute('data-theme',saved);
+  var tt=document.getElementById('themeToggle');
+  tt.textContent=saved==='dark'?'\u2600\uFE0F':'\uD83C\uDF19';
+  tt.addEventListener('click',function(){
+    var n=H.getAttribute('data-theme')==='dark'?'light':'dark';
+    H.setAttribute('data-theme',n);localStorage.setItem(K,n);
+    tt.textContent=n==='dark'?'\u2600\uFE0F':'\uD83C\uDF19';
+  });
+  var mb=document.getElementById('menuBtn'),sb=document.getElementById('sidebar'),ov=document.getElementById('sidebarOverlay');
+  function tog(){sb.classList.toggle('open');ov.classList.toggle('open');}
+  mb.addEventListener('click',tog);ov.addEventListener('click',tog);
+  sb.querySelectorAll('a').forEach(function(l){l.addEventListener('click',function(){if(window.innerWidth<1024){sb.classList.remove('open');ov.classList.remove('open');}});});
+  var et=document.getElementById('expandToggle'),ae=false;
+  et.addEventListener('click',function(){ae=!ae;document.querySelectorAll('details').forEach(function(d){d.open=ae;});et.classList.toggle('active',ae);et.querySelector('.expand-label').textContent=ae?'Collapse All':'Expand All';});
+  var cm=document.getElementById('codeModal'),cc=document.getElementById('codeModalContent'),cl=document.getElementById('codeModalClose');
+  function openM(p){cc.innerHTML=p.innerHTML;cm.classList.add('active');document.body.style.overflow='hidden';}
+  function closeM(){cm.classList.remove('active');document.body.style.overflow='';}
+  document.querySelectorAll('details summary').forEach(function(s){s.addEventListener('click',function(e){e.preventDefault();var p=s.parentElement.querySelector('pre');if(p)openM(p);});});
+  cl.addEventListener('click',closeM);
+  cm.addEventListener('click',function(e){if(e.target===cm)closeM();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&cm.classList.contains('active'))closeM();});
+  var sp=document.getElementById('scrollProgress'),bt=document.getElementById('backToTop');
+  var secs=document.querySelectorAll('h2[id]'),tls=sb.querySelectorAll('a[href^="#"]');
+  var activeId=secs.length?secs[0].id:'';
+  function updToc(){
+    var navH=(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height'))||60);
+    var threshold=navH+Math.floor(window.innerHeight*0.25);
+    var best='';
+    secs.forEach(function(s){if(s.getBoundingClientRect().top<=threshold)best=s.id;});
+    if(best==='')best=secs.length?secs[0].id:'';
+    if(best!==activeId){activeId=best;tls.forEach(function(l){l.classList.toggle('active',l.getAttribute('href')==='#'+activeId);});}
   }
-});
+  var tk=false;
+  window.addEventListener('scroll',function(){if(!tk){window.requestAnimationFrame(function(){var p=document.documentElement.scrollHeight-window.innerHeight;sp.style.width=(p>0?(window.scrollY/p)*100:0)+'%';bt.classList.toggle('visible',window.scrollY>400);updToc();tk=false;});tk=true;}});
+  bt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  updToc();
+})();
 </script>
+
 </body>
 </html>

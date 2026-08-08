@@ -20,22 +20,22 @@
       <span class="logo-full">Subhrajyoti</span>
     </div>
     <nav class="sidebar-nav">
-      <a href="#about"       class="sidebar-link" data-section="about">
+      <a href="#about"       class="sidebar-link" data-section="about"       data-config="cvSections.about">
         <i class="fas fa-user"></i><span>About</span>
       </a>
-      <a href="#highlights"  class="sidebar-link" data-section="highlights">
+      <a href="#highlights"  class="sidebar-link" data-section="highlights"  data-config="cvSections.highlights">
         <i class="fas fa-trophy"></i><span>Highlights</span>
       </a>
-      <a href="#skills"      class="sidebar-link" data-section="skills">
+      <a href="#skills"      class="sidebar-link" data-section="skills"      data-config="cvSections.skills">
         <i class="fas fa-code"></i><span>Skills</span>
       </a>
-      <a href="#experience"  class="sidebar-link" data-section="experience">
+      <a href="#experience"  class="sidebar-link" data-section="experience"  data-config="cvSections.experience">
         <i class="fas fa-briefcase"></i><span>Experience</span>
       </a>
-      <a href="#education"   class="sidebar-link" data-section="education">
+      <a href="#education"   class="sidebar-link" data-section="education"   data-config="cvSections.education">
         <i class="fas fa-graduation-cap"></i><span>Education</span>
       </a>
-      <a href="#contact"     class="sidebar-link" data-section="contact">
+      <a href="#contact"     class="sidebar-link" data-section="contact"     data-config="cvSections.contact">
         <i class="fas fa-envelope"></i><span>Contact</span>
       </a>
     </nav>
@@ -109,7 +109,7 @@
   </section>
 
   <!-- About / Summary -->
-  <section id="about" class="section collapsible-section">
+  <section id="about" class="section collapsible-section" data-config="cvSections.about">
     <div class="container">
       <div class="section-header fade-in">
         <div class="section-title-row">
@@ -161,7 +161,7 @@
       </div><!-- /.section-body -->
     </div><!-- /.container -->
   </section><!-- /#about -->
-  <section id="highlights" class="section section-dark collapsible-section">
+  <section id="highlights" class="section section-dark collapsible-section" data-config="cvSections.highlights">
     <div class="container">
       <div class="section-header fade-in">
         <div class="section-title-row">
@@ -238,7 +238,7 @@
   </section><!-- /#highlights -->
 
   <!-- Technical Skills -->
-  <section id="skills" class="section collapsible-section">
+  <section id="skills" class="section collapsible-section" data-config="cvSections.skills">
     <div class="container">
       <div class="section-header fade-in">
         <div class="section-title-row">
@@ -393,7 +393,7 @@
   </section><!-- /#skills -->
 
   <!-- Professional Experience -->
-  <section id="experience" class="section section-dark collapsible-section">
+  <section id="experience" class="section section-dark collapsible-section" data-config="cvSections.experience">
     <div class="container">
       <div class="section-header fade-in">
         <div class="section-title-row">
@@ -583,7 +583,7 @@
   </section><!-- /#experience -->
 
   <!-- Education -->
-  <section id="education" class="section collapsible-section">
+  <section id="education" class="section collapsible-section" data-config="cvSections.education">
     <div class="container">
       <div class="section-header fade-in">
         <div class="section-title-row">
@@ -631,7 +631,7 @@
   </section><!-- /#education -->
 
   <!-- Contact -->
-  <section id="contact" class="section section-dark collapsible-section">
+  <section id="contact" class="section section-dark collapsible-section" data-config="cvSections.contact">
     <div class="container">
       <div class="section-header fade-in">
         <div class="section-title-row">
@@ -709,6 +709,23 @@
     </div>
   </div>
 
+  <script src="../site.config.js"></script>
+  <script>
+    /* Apply site.config.js toggles — hide any element whose config key is false */
+    (function () {
+      var cfg = window.SITE_CONFIG || {};
+      function get(path) {
+        return path.split('.').reduce(function (o, k) {
+          return o && o[k] !== undefined ? o[k] : true; /* default ON */
+        }, cfg);
+      }
+      document.querySelectorAll('[data-config]').forEach(function (el) {
+        if (get(el.dataset.config) === false) {
+          el.style.display = 'none';
+        }
+      });
+    })();
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

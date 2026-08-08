@@ -266,21 +266,21 @@
         <i class="fas fa-circle-check"></i> Open to Senior QA / SDET Opportunities
       </div>
       <h1>Subhrajyoti <span>Dash</span></h1>
-      <p class="identity-role">QA Lead &nbsp;|&nbsp; SDET &nbsp;|&nbsp; AI-Driven Test Automation</p>
+      <p class="identity-role">AI-Driven Test Automation &nbsp;|&nbsp; QA Lead &nbsp;|&nbsp;SDET </p>
       <p class="identity-location"><i class="fas fa-location-dot"></i> Bengaluru, India</p>
     </div>
 
     <!-- Portal cards -->
     <div class="portal-grid">
 
-      <a href="cv/index.html" class="portal-card card-profile">
+      <a href="cv/index.html" class="portal-card card-profile" data-config="pages.myProfile">
         <div class="portal-card-icon"><i class="fas fa-user"></i></div>
         <div class="portal-card-title">My Profile</div>
         <div class="portal-card-desc">10+ years of QA engineering, automation architecture, and engineering leadership.</div>
         <span class="portal-card-cta">View Profile <i class="fas fa-arrow-right"></i></span>
       </a>
 
-      <a href="knowledge/index.html" class="portal-card card-knowledge">
+      <a href="knowledge/index.html" class="portal-card card-knowledge" data-config="pages.knowledgeBase">
         <div class="portal-card-icon"><i class="fas fa-book-open"></i></div>
         <div class="portal-card-title">Knowledge Base</div>
         <div class="portal-card-desc">Beginner to advanced cheatsheets built for quick reference and interview prep.</div>
@@ -291,10 +291,10 @@
 
     <!-- Quick links -->
     <div class="quick-links">
-      <a href="mailto:sjdash13@gmail.com" class="quick-link"><i class="fas fa-envelope"></i> sjdash13@gmail.com</a>
-      <a href="https://linkedin.com/in/subhrajyotidash" target="_blank" rel="noopener" class="quick-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
-      <a href="https://github.com/dashmation" target="_blank" rel="noopener" class="quick-link"><i class="fab fa-github"></i> GitHub</a>
-      <a href="assets/Subhrajyoti_Dash_GenAI-SDET.pdf" target="_blank" class="quick-link"><i class="fas fa-file-pdf"></i> Resume PDF</a>
+      <a href="mailto:sjdash13@gmail.com" class="quick-link" data-config="quickLinks.email"><i class="fas fa-envelope"></i> sjdash13@gmail.com</a>
+      <a href="https://linkedin.com/in/subhrajyotidash" target="_blank" rel="noopener" class="quick-link" data-config="quickLinks.linkedin"><i class="fab fa-linkedin"></i> LinkedIn</a>
+      <a href="https://github.com/dashmation" target="_blank" rel="noopener" class="quick-link" data-config="quickLinks.github"><i class="fab fa-github"></i> GitHub</a>
+      <a href="assets/Subhrajyoti_Dash_GenAI-SDET.pdf" target="_blank" class="quick-link" data-config="quickLinks.resume"><i class="fas fa-file-pdf"></i> Resume PDF</a>
     </div>
 
   </div>
@@ -302,6 +302,24 @@
   <footer>
     &copy; 2026 Subhrajyoti Dash &nbsp;·&nbsp; Built with care & deployed on GitHub Pages
   </footer>
+
+  <script src="site.config.js"></script>
+  <script>
+    /* Apply site.config.js toggles — hide any element whose config key is false */
+    (function () {
+      var cfg = window.SITE_CONFIG || {};
+      function get(path) {
+        return path.split('.').reduce(function (o, k) {
+          return o && o[k] !== undefined ? o[k] : true; /* default ON */
+        }, cfg);
+      }
+      document.querySelectorAll('[data-config]').forEach(function (el) {
+        if (get(el.dataset.config) === false) {
+          el.style.display = 'none';
+        }
+      });
+    })();
+  </script>
 
 </body>
 </html>

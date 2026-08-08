@@ -12,7 +12,7 @@ window.SITE_CONFIG = {
    * ---------------------------------------------------------- */
   pages: {
     myProfile:     true,   // "My Profile" portal card → cv/index.html
-    knowledgeBase: false,   // "Knowledge Base" portal card → knowledge/index.html
+    knowledgeBase: true,   // "Knowledge Base" portal card → knowledge/index.html
   },
 
   /* ----------------------------------------------------------

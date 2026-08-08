@@ -2,6 +2,19 @@
    SUBHRAJYOTI DASH — CV Interactivity
    ========================================================= */
 
+/* ─── iOS-safe scroll lock ───────────────────────────────── */
+let _scrollY = 0;
+function lockScroll() {
+  _scrollY = window.scrollY;
+  document.body.style.top = `-${_scrollY}px`;
+  document.body.classList.add('scroll-locked');
+}
+function unlockScroll() {
+  document.body.classList.remove('scroll-locked');
+  document.body.style.top = '';
+  window.scrollTo({ top: _scrollY, behavior: 'instant' });
+}
+
 /* ─── Sidebar expand / collapse ─────────────────────────── */
 const sidebar      = document.getElementById('sidebar');
 const sidebarToggle = document.getElementById('sidebarToggle');
@@ -386,7 +399,7 @@ function openModal(key, triggerEl) {
   // Force a reflow so the CSS transition fires from the initial state
   void projModal.offsetHeight;
   projModal.classList.add('open');
-  document.body.classList.add('proj-open');
+  lockScroll();
   // Accessibility: move focus into the modal
   const closeBtn = projModal.querySelector('.proj-close');
   if (closeBtn) closeBtn.focus();
@@ -394,7 +407,7 @@ function openModal(key, triggerEl) {
 
 function closeModal() {
   projModal.classList.remove('open');
-  document.body.classList.remove('proj-open');
+  unlockScroll();
   // Wait for the CSS transition to finish, then truly hide the element
   projModal.addEventListener('transitionend', function handler() {
     projModal.setAttribute('hidden', '');
@@ -654,7 +667,7 @@ function showPopup(card) {
   hlPopup.innerHTML = buildPopupHTML(key);
   hlPopup.classList.remove('hlp-visible', 'hlp-dir-up', 'hlp-dir-down', 'hlp-dir-center');
   hlPopup.style.visibility = 'hidden';
-  hlPopup.style.display    = 'block';
+  hlPopup.style.display    = 'flex';
 
   // Position centered in viewport
   placePopup();
@@ -669,8 +682,8 @@ function showPopup(card) {
   hlBackdrop.style.display = 'block';
   requestAnimationFrame(() => hlBackdrop.classList.add('hlp-visible'));
 
-  // Lock body scroll
-  document.body.style.overflow = 'hidden';
+  // Lock body scroll (iOS-safe)
+  lockScroll();
 
   // Animate in next frame
   requestAnimationFrame(() => {
@@ -685,7 +698,7 @@ function hidePopup() {
   hlPopup.classList.remove('hlp-visible');
   hlBackdrop.classList.remove('hlp-visible');
   hlActiveCard = null;
-  document.body.style.overflow = '';
+  unlockScroll();
   hlPopup.addEventListener('transitionend', function handler() {
     if (!hlPopup.classList.contains('hlp-visible')) {
       hlPopup.style.display = 'none';

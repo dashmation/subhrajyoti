@@ -1,2 +1,4 @@
 # PDF files
 *.pdf
+*.txt
+.kiro

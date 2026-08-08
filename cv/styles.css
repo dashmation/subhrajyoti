@@ -222,6 +222,22 @@ ul { list-style: none; }
   border-color: var(--accent);
   color: var(--accent);
 }
+.btn-resume {
+  background: rgba(63,185,80,0.10);
+  color: #3fb950;
+  border-color: rgba(63,185,80,0.35);
+}
+.btn-resume:hover {
+  background: rgba(63,185,80,0.20);
+  border-color: #3fb950;
+  color: #3fb950;
+  box-shadow: 0 4px 16px rgba(63,185,80,0.20);
+  transform: translateY(-1px);
+}
+.btn-resume:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
 
 /* Hero Stats */
 .hero-stats {
